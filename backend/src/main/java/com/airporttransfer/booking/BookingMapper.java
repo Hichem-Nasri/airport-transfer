@@ -20,6 +20,7 @@ public abstract class BookingMapper {
     @Mapping(target = "priceDemo", source = "priceDemo")
     @Mapping(target = "cancellable",
         expression = "java(statuses.canTransition(booking.getStatus(), BookingStatus.CANCELLED))")
+    @Mapping(target = "editable", expression = "java(statuses.isCustomerEditable(booking.getStatus()))")
     public abstract BookingDto toDto(Booking booking);
 
     abstract AirportSummary toSummary(Airport airport);

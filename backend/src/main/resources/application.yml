@@ -35,6 +35,8 @@ management:
         include: health,info
 
 app:
+  # Base URL of the web app, used in e-mailed links (password reset).
+  public-url: ${PUBLIC_URL:http://localhost:4200}
   cors:
     allowed-origins: ${CORS_ORIGINS:http://localhost:4200}
   jwt:

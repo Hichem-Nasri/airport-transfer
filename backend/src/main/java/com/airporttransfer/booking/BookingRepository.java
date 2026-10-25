@@ -43,6 +43,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, JpaSpec
     boolean existsByAssignedDriverIdAndIdNotAndStatusInAndPickupAtBetween(
         Long driverId, Long excludedBookingId, Collection<BookingStatus> statuses, Instant from, Instant to);
 
+    List<Booking> findByGroupIdAndIdNot(java.util.UUID groupId, Long id);
+
     boolean existsByAssignedDriverIdAndStatusIn(Long driverId, Collection<BookingStatus> statuses);
 
     // ---- statistics (pickup time inside [from, to))

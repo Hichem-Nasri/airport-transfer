@@ -49,7 +49,7 @@ class BookingStatusMailListenerTest {
             new ZoneSummary(1L, "Z01", "Grand Tunis", "Greater Tunis", "تونس الكبرى"), "12 Rue de Marseille", null,
             Instant.parse("2026-12-01T10:30:00Z"), 2, 1,
             new VehicleTypeSummary(1L, "SEDAN", "Berline", "Sedan", "سيارة", 3), null, new BigDecimal("50.000"),
-            "TND", null, new BigDecimal("50.000"), false, PaymentMethod.CASH, false, Instant.now());
+            "TND", null, new BigDecimal("50.000"), false, PaymentMethod.CASH, false, false, Instant.now());
     }
 
     private BookingStatusMailListener listener() {

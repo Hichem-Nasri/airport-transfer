@@ -36,6 +36,11 @@ public class BookingStatusService {
         return ALLOWED.get(from).contains(to);
     }
 
+    /** A customer may edit the practical details of a booking until a driver is assigned. */
+    public boolean isCustomerEditable(BookingStatus status) {
+        return status == PENDING || status == CONFIRMED;
+    }
+
     /** Applies the transition or throws 409 INVALID_STATUS_TRANSITION. */
     public void transition(Booking booking, BookingStatus to) {
         BookingStatus from = booking.getStatus();

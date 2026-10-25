@@ -89,4 +89,13 @@ public class User {
         this.role = role;
         this.enabled = enabled;
     }
+
+    public void applyProfile(String fullName, String phone) {
+        this.fullName = fullName;
+        this.phone = phone;
+    }
+
+    public void changePasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
 }

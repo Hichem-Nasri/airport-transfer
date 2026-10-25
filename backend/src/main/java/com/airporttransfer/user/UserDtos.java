@@ -37,6 +37,25 @@ public final class UserDtos {
         @NotNull Role role) {
     }
 
+    /** Self-service profile edit. */
+    public record ProfileRequest(
+        @NotBlank @Size(max = 120) String fullName,
+        @Size(max = 30) @Pattern(regexp = "^[+0-9 ()-]*$") String phone) {
+    }
+
+    public record ChangePasswordRequest(
+        @NotBlank @Size(max = 72) String currentPassword,
+        @NotBlank @Size(min = 8, max = 72) String newPassword) {
+    }
+
+    public record ForgotPasswordRequest(@NotBlank @Email @Size(max = 254) String email) {
+    }
+
+    public record ResetPasswordRequest(
+        @NotBlank @Size(max = 200) String token,
+        @NotBlank @Size(min = 8, max = 72) String newPassword) {
+    }
+
     /** Admin edit of an account. The e-mail is the login and is not editable here. */
     public record AdminUpdateUserRequest(
         @NotBlank @Size(max = 120) String fullName,

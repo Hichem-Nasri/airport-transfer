@@ -27,7 +27,8 @@ public class SecurityConfig {
                 .authenticationEntryPoint(errors)
                 .accessDeniedHandler(errors))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/public/**", "/api/auth/register", "/api/auth/login", "/actuator/health",
+                .requestMatchers("/api/public/**", "/api/auth/register", "/api/auth/login",
+                    "/api/auth/forgot-password", "/api/auth/reset-password", "/actuator/health",
                     "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/staff/**").hasAnyRole("MODERATOR", "ADMIN")

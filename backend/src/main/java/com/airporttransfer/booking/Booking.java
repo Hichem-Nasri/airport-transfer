@@ -152,6 +152,16 @@ public class Booking {
         this.updatedAt = Instant.now();
     }
 
+    /** Practical details only; the price snapshot, vehicle, zone and passengers never change here. */
+    void applyCustomerEdit(String address, String flightNumber, Instant pickupAt, int luggageCount, String notes) {
+        this.address = address;
+        this.flightNumber = flightNumber;
+        this.pickupAt = pickupAt;
+        this.luggageCount = luggageCount;
+        this.notes = notes;
+        this.updatedAt = Instant.now();
+    }
+
     void setCustomerLanguage(String language) {
         this.customerLanguage = language;
     }

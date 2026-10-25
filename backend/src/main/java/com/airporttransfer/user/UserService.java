@@ -64,6 +64,34 @@ public class UserService {
             .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "Account not available"));
     }
 
+    /** Profile edit by the account owner (the e-mail is the login and does not change here). */
+    @Transactional
+    public User updateProfile(Long id, String fullName, String phone) {
+        User user = users.findById(id).orElseThrow(() -> ApiException.notFound("USER_NOT_FOUND", "User not found"));
+        String cleanPhone = phone == null || phone.isBlank() ? null : phone.trim();
+        user.applyProfile(fullName.trim(), cleanPhone);
+        return users.save(user);
+    }
+
+    /** 400 CURRENT_PASSWORD_INVALID (not 401: the user is signed in, the client must not log out). */
+    @Transactional
+    public void changePassword(Long id, String currentPassword, String newPassword) {
+        User user = users.findById(id).orElseThrow(() -> ApiException.notFound("USER_NOT_FOUND", "User not found"));
+        if (!passwordEncoder.matches(currentPassword, user.getPasswordHash())) {
+            throw ApiException.badRequest("CURRENT_PASSWORD_INVALID", "The current password is incorrect");
+        }
+        user.changePasswordHash(passwordEncoder.encode(newPassword));
+        users.save(user);
+    }
+
+    /** Used by the reset flow once the token has been verified. */
+    @Transactional
+    public void setPassword(Long id, String newPassword) {
+        User user = users.findById(id).orElseThrow(() -> ApiException.notFound("USER_NOT_FOUND", "User not found"));
+        user.changePasswordHash(passwordEncoder.encode(newPassword));
+        users.save(user);
+    }
+
     private static String normalizeEmail(String email) {
         return email.trim().toLowerCase(Locale.ROOT);
     }

@@ -4,6 +4,7 @@ import com.airporttransfer.booking.BookingDtos.BookingDto;
 import com.airporttransfer.booking.BookingDtos.BookingQuoteDto;
 import com.airporttransfer.booking.BookingDtos.BookingsCreatedDto;
 import com.airporttransfer.booking.BookingDtos.CreateBookingRequest;
+import com.airporttransfer.booking.BookingDtos.UpdateBookingRequest;
 import com.airporttransfer.catalog.Airport;
 import com.airporttransfer.catalog.AirportRepository;
 import com.airporttransfer.catalog.VehicleType;
@@ -42,11 +43,13 @@ public class BookingService {
     private final BookingMapper mapper;
     private final UserService users;
     private final ApplicationEventPublisher events;
+    private final BookingStatusService statuses;
 
     public BookingService(BookingRepository bookings, AirportRepository airports, ZoneRepository zones,
                           VehicleTypeRepository vehicleTypes, BookingPricingService pricing,
                           BookingWorkflowService workflow, ReferenceGenerator references, BookingMapper mapper,
-                          UserService users, ApplicationEventPublisher events) {
+                          UserService users, ApplicationEventPublisher events,
+                          BookingStatusService statuses) {
         this.bookings = bookings;
         this.airports = airports;
         this.zones = zones;
@@ -57,6 +60,7 @@ public class BookingService {
         this.mapper = mapper;
         this.users = users;
         this.events = events;
+        this.statuses = statuses;
     }
 
     @Transactional
@@ -124,6 +128,36 @@ public class BookingService {
     @Transactional(readOnly = true)
     public BookingDto getMine(Long customerId, Long id) {
         return mapper.toDto(findMine(customerId, id));
+    }
+
+    /**
+     * Edits address, flight, pickup time, luggage and notes while the booking is PENDING or CONFIRMED.
+     * In a round trip the outbound leg (created first) must stay before the return leg.
+     */
+    @Transactional
+    public BookingDto update(Long customerId, Long id, UpdateBookingRequest request) {
+        Booking booking = findMine(customerId, id);
+        if (!statuses.isCustomerEditable(booking.getStatus())) {
+            throw ApiException.conflict("BOOKING_NOT_EDITABLE",
+                "A booking can only be edited while it is PENDING or CONFIRMED");
+        }
+        if (!request.pickupAt().isAfter(Instant.now())) {
+            throw ApiException.badRequest("PICKUP_IN_PAST", "The pickup time must be in the future");
+        }
+        if (booking.getGroupId() != null) {
+            for (Booking other : bookings.findByGroupIdAndIdNot(booking.getGroupId(), booking.getId())) {
+                boolean thisIsOutbound = booking.getId() < other.getId();
+                boolean ordered = thisIsOutbound ? request.pickupAt().isBefore(other.getPickupAt())
+                    : request.pickupAt().isAfter(other.getPickupAt());
+                if (!ordered) {
+                    throw ApiException.badRequest("RETURN_BEFORE_OUTBOUND", "The return must be after the first trip");
+                }
+            }
+        }
+        booking.applyCustomerEdit(request.address().trim(), normalizeFlight(request.flightNumber()),
+            request.pickupAt(), request.luggageCount(), blankToNull(request.notes()));
+        workflow.recordEdited(booking, new Actor(customerId, Role.CUSTOMER), "Details edited by the customer");
+        return mapper.toDto(booking);
     }
 
     /** Cancels one of the customer's own bookings; legal only before IN_PROGRESS (see BookingStatusService). */

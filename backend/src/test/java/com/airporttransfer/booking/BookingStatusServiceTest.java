@@ -58,6 +58,15 @@ class BookingStatusServiceTest {
     }
 
     @Test
+    void customersMayEditOnlyBeforeADriverIsAssigned() {
+        for (BookingStatus status : BookingStatus.values()) {
+            assertThat(service.isCustomerEditable(status))
+                .as("%s", status)
+                .isEqualTo(status == PENDING || status == CONFIRMED);
+        }
+    }
+
+    @Test
     void transitionChangesTheStatusWhenLegal() {
         Booking booking = booking(PENDING);
 

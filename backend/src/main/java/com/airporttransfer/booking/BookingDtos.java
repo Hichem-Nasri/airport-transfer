@@ -54,7 +54,19 @@ public final class BookingDtos {
         AirportSummary airport, ZoneSummary zone, String address, String flightNumber,
         Instant pickupAt, int passengers, int luggageCount, VehicleTypeSummary vehicleType, String notes,
         BigDecimal priceTnd, String currency, BigDecimal exchangeRate, BigDecimal amount, boolean priceDemo,
-        PaymentMethod paymentMethod, boolean cancellable, Instant createdAt) {
+        PaymentMethod paymentMethod, boolean cancellable, boolean editable, Instant createdAt) {
+    }
+
+    /**
+     * Customer edit of a booking that is still PENDING or CONFIRMED. The vehicle, destination, passengers and price
+     * cannot change (to change them, cancel and rebook), so the price snapshot stays valid.
+     */
+    public record UpdateBookingRequest(
+        @NotBlank @Size(max = 500) String address,
+        @Pattern(regexp = "^$|^[A-Za-z0-9 ]{2,10}$") String flightNumber,
+        @NotNull Instant pickupAt,
+        @NotNull @Min(0) @Max(100) Integer luggageCount,
+        @Size(max = 1000) String notes) {
     }
 
     public record BookingsCreatedDto(UUID groupId, List<BookingDto> bookings) {

@@ -46,6 +46,12 @@ public class BookingWorkflowService {
         history.save(new BookingStatusHistory(booking.getId(), null, BookingStatus.PENDING, actor, null));
     }
 
+    /** Records a change of practical details (from = to = the current status) with a human-readable note. */
+    public void recordEdited(Booking booking, Actor actor, String note) {
+        history.save(new BookingStatusHistory(booking.getId(), booking.getStatus(), booking.getStatus(), actor, note));
+        bookings.saveAndFlush(booking);
+    }
+
     /** Applies the transition (409 if illegal), records it, and notifies when the customer or driver should know. */
     public void changeStatus(Booking booking, BookingStatus to, Actor actor, String note) {
         BookingStatus from = booking.getStatus();
