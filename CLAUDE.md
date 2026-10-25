@@ -22,6 +22,11 @@ The owner (Hichem) is an experienced Java Spring / Angular developer and writes 
 - Step 1 done: monorepo skeleton, `GET /api/public/ping`, CORS, Swagger.
 - Step 2 done: JWT auth (`/api/auth/register|login|me`), roles CUSTOMER / DRIVER / ADMIN, `users` table (`V2__users.sql`), admin seeding via `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD`, Angular login / register / account pages, auth interceptor and guard.
 - Public sign-up only creates CUSTOMER. DRIVER and ADMIN accounts are created by an admin. Admins create them with `POST /api/admin/users`. Token lifetime: `JWT_EXPIRATION_MINUTES` (default 120). `/api/driver/**` requires DRIVER.
+- Step 3 done (branch `feat/data-model`): migrations `V3__catalog.sql`, `V4__pricing.sql`, `V5__seed_catalog.sql`, `V6__seed_demo_pricing.sql` (`V2` is kept for `users`). Packages `catalog` (airports, zones, areas, vehicle types) and `pricing` (currencies, exchange rates, tariffs, quote), `common` (`ApiException`, `GlobalExceptionHandler`, error format `{code, message, fieldErrors}`).
+  - Zones: 15 pricing zones; an *area* is a governorate (Médenine is split into Djerba / mainland) that belongs to exactly one zone. Admins regroup by changing an area's zone (`PUT /api/admin/areas/{id}`).
+  - Exchange rates are stored as **TND per 1 unit** of the currency, as an append-only history; the latest row applies. Quote = TND price / rate, rounded HALF_UP to the currency's decimals.
+  - **Seeded tariffs and exchange rates are DEMO data** (`is_demo = true`, flagged in `V6`, `"demo": true` in quotes, WARN at startup in the `prod` profile). Replace them with the real price grid before going live; tariffs saved through the admin API are real (`is_demo = false`).
+  - Endpoints: public `GET /api/public/{airports,zones,vehicle-types,currencies}` and `GET /api/public/quote?airportId&zoneId&vehicleTypeId&currency`; admin (ROLE_ADMIN, enforced in `SecurityConfig`) under `/api/admin/{airports,zones,areas,vehicle-types,tariffs,currencies,exchange-rates}`.
 
 ## Product rules
 - **Coverage**: all of Tunisia. Airports: Tunis-Carthage (TUN), Monastir (MIR), Enfidha-Hammamet (NBE), Djerba-Zarzis (DJE), Sfax (SFA), Tozeur (TOE), Tabarka (TBJ), Gafsa (GAF). Airports are data, not code: admins can add more.
@@ -41,7 +46,7 @@ The owner (Hichem) is an experienced Java Spring / Angular developer and writes 
 ## Roadmap
 1. ~~Monorepo skeleton~~ done
 2. ~~Authentication (JWT, roles)~~ done
-3. **Data model**: Flyway migrations + entities + admin CRUD endpoints for airports, zones, vehicle types, tariffs, currencies and exchange rates. Seed the 8 airports, the 3 vehicle types and TND/EUR/USD. Public read endpoints for the booking form. Price quote endpoint: `GET /api/public/quote?airportId&zoneId&vehicleTypeId&currency`.
+3. ~~Data model~~ done
 4. **Booking flow**: bookings API (create, list mine, cancel) with the price snapshot rule above; Angular 3-step booking form (trip → vehicle and price → details and confirmation) that matches the design below; "My bookings" page.
 5. **Payment**: `PaymentGateway` abstraction, cash flow, Stripe card flow with webhook, payment status on bookings.
 6. **Driver and admin areas**: admin dashboard (bookings list and filters, assign driver, manage tariffs, zones and exchange rates, create driver accounts); driver page (my assigned trips, change status).
