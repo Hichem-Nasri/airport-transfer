@@ -48,6 +48,12 @@ import { AuthService, homeFor } from '../../core/auth.service';
         </button>
       </form>
 
+      <p class="mt-4 text-sm">
+        <a routerLink="/forgot-password" class="font-semibold text-brand hover:underline">
+          {{ 'auth.login.forgot' | translate }}
+        </a>
+      </p>
+
       <p class="mt-6 text-sm text-muted">
         {{ 'auth.login.noAccount' | translate }}
         <a routerLink="/register" [queryParams]="returnUrlParams" class="font-semibold text-brand hover:underline">

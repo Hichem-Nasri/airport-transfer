@@ -1,4 +1,4 @@
-import { formatTunis, todayInTunis, tunisDayEndIso, tunisDayStartIso, tunisLocalToIso } from './tunis-time';
+import { formatTunis, isoToTunisParts, todayInTunis, tunisDayEndIso, tunisDayStartIso, tunisLocalToIso } from './tunis-time';
 
 describe('Tunis time', () => {
   it('converts a Tunis wall-clock time to UTC (UTC+1, no daylight saving time)', () => {
@@ -23,5 +23,12 @@ describe('Tunis time', () => {
   it('turns a Tunis calendar day into a half-open UTC range', () => {
     expect(tunisDayStartIso('2026-12-02')).toBe('2026-12-01T23:00:00.000Z');
     expect(tunisDayEndIso('2026-12-02')).toBe('2026-12-02T23:00:00.000Z');
+  });
+
+  it('splits an instant into Tunis date and time and round-trips with tunisLocalToIso', () => {
+    expect(isoToTunisParts('2026-12-01T10:30:00Z')).toEqual({ date: '2026-12-01', time: '11:30' });
+    expect(isoToTunisParts('2026-11-30T23:30:00Z')).toEqual({ date: '2026-12-01', time: '00:30' });
+    const parts = isoToTunisParts('2026-07-15T08:05:00Z');
+    expect(tunisLocalToIso(parts.date, parts.time)).toBe('2026-07-15T08:05:00.000Z');
   });
 });

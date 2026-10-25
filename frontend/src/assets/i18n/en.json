@@ -16,7 +16,47 @@
     "badge": "All over Tunisia, 7 days a week",
     "title": "From the terminal to your door, anywhere in Tunisia.",
     "subtitle": "Book a private driver in a few clicks. Fixed price in advance, meet and greet on arrival, pay in the currency of your choice.",
-    "cta": "Book a transfer"
+    "cta": "Book a transfer",
+    "points": {
+      "fixed": "Fixed price in advance",
+      "meet": "Meet and greet on arrival",
+      "currency": "TND, EUR or USD"
+    },
+    "card": {
+      "title": "Book your transfer",
+      "from": "From · {{vehicle}} · per trip",
+      "loading": "Calculating the price…",
+      "none": "No tariff for this trip: please contact us.",
+      "hint": "Choose the airport and destination to see the price."
+    },
+    "vehicles": {
+      "title": "Our vehicles",
+      "subtitle": "You choose the vehicle when booking. A larger vehicle can always carry fewer people.",
+      "capacity": "{{min}} to {{max}} passengers"
+    },
+    "airports": {
+      "title": "From and to every airport in Tunisia"
+    },
+    "how": {
+      "title": "How it works",
+      "s1": {
+        "title": "Book",
+        "text": "Choose the airport, destination, date and vehicle. The price is shown before you confirm."
+      },
+      "s2": {
+        "title": "We confirm",
+        "text": "You receive a confirmation e-mail, then your driver’s name and phone number."
+      },
+      "s3": {
+        "title": "Travel with peace of mind",
+        "text": "Your driver waits for you at arrivals or at the agreed address. Pay the driver in cash."
+      }
+    },
+    "footer": {
+      "tagline": "AIRPORT TRANSFER",
+      "links": "Footer links",
+      "rights": "© {{year}} Marhba. All rights reserved."
+    }
   },
   "api": {
     "checking": "Connecting to the API…",
@@ -36,7 +76,8 @@
       "subtitle": "Access your bookings.",
       "submit": "Log in",
       "noAccount": "No account yet?",
-      "register": "Create an account"
+      "register": "Create an account",
+      "forgot": "Forgot your password?"
     },
     "register": {
       "title": "Create an account",
@@ -44,12 +85,36 @@
       "submit": "Create my account",
       "haveAccount": "Already have an account?",
       "login": "Log in"
+    },
+    "forgot": {
+      "title": "Forgot your password",
+      "subtitle": "Enter your e-mail: we will send you a link to choose a new password.",
+      "sent": "If an account exists with this address, an e-mail has just been sent. The link is valid for 1 hour.",
+      "submit": "Send the link",
+      "back": "Back to sign in"
+    },
+    "reset": {
+      "title": "New password",
+      "done": "Password changed. You can now sign in.",
+      "again": "Ask for a new link",
+      "newPassword": "New password",
+      "submit": "Save the password"
     }
   },
   "account": {
     "title": "My account",
     "role": "Role",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "profile": {
+      "title": "My details",
+      "saved": "Details saved."
+    },
+    "password": {
+      "title": "Change password",
+      "current": "Current password",
+      "saved": "Password changed.",
+      "submit": "Change password"
+    }
   },
   "roles": {
     "CUSTOMER": "Customer",
@@ -103,7 +168,10 @@
     "BASE_CURRENCY_LOCKED": "The base currency (TND) cannot be changed this way.",
     "BASE_CURRENCY_NO_RATE": "The dinar is the base currency: it has no rate.",
     "CURRENCY_CODE_MISMATCH": "The currency code does not match.",
-    "INVALID_CAPACITY": "Maximum passengers must be at least the minimum."
+    "INVALID_CAPACITY": "Maximum passengers must be at least the minimum.",
+    "BOOKING_NOT_EDITABLE": "This booking can no longer be edited.",
+    "CURRENT_PASSWORD_INVALID": "The current password is incorrect.",
+    "RESET_TOKEN_INVALID": "This link is invalid or has expired."
   },
   "status": {
     "PENDING": "Pending",
@@ -121,7 +189,8 @@
     "cancel": "Cancel this booking",
     "cancelConfirm": "Cancel this booking for good?",
     "cancelYes": "Yes, cancel",
-    "cancelNo": "No, keep it"
+    "cancelNo": "No, keep it",
+    "details": "Details and receipt"
   },
   "booking": {
     "title": "Booking",
@@ -184,6 +253,13 @@
       "text": "A confirmation e-mail has been sent. Pay the driver in cash.",
       "viewAll": "View my bookings",
       "another": "New booking"
+    },
+    "edit": {
+      "title": "Edit the booking",
+      "hint": "The price does not change. To change the vehicle or destination, cancel and book again.",
+      "open": "Edit",
+      "saved": "Booking updated.",
+      "locked": "A driver is assigned: to change anything, contact us or cancel the booking."
     }
   },
   "staff": {
@@ -325,5 +401,14 @@
       "rateSaved": "Rate saved.",
       "invalidRate": "Invalid rate: positive number, 6 decimals at most."
     }
+  },
+  "receipt": {
+    "title": "Booking receipt",
+    "issued": "Issued {{date}} (Tunis time)",
+    "total": "Amount",
+    "baseTnd": "Base price: {{amount}}",
+    "cashNote": "To be paid in cash to the driver.",
+    "demo": "Demonstration price, not binding.",
+    "print": "Print the receipt"
   }
 }

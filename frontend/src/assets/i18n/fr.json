@@ -16,7 +16,47 @@
     "badge": "Toute la Tunisie, 7j/7",
     "title": "Du terminal à votre porte, partout en Tunisie.",
     "subtitle": "Réservez un chauffeur privé en quelques clics. Prix fixé à l’avance, accueil à l’arrivée, paiement dans la devise de votre choix.",
-    "cta": "Réserver un transfert"
+    "cta": "Réserver un transfert",
+    "points": {
+      "fixed": "Prix fixé à l’avance",
+      "meet": "Accueil à l’arrivée",
+      "currency": "TND, EUR ou USD"
+    },
+    "card": {
+      "title": "Réservez votre transfert",
+      "from": "À partir de · {{vehicle}} · par trajet",
+      "loading": "Calcul du prix…",
+      "none": "Pas de tarif pour ce trajet : contactez-nous.",
+      "hint": "Choisissez l’aéroport et la destination pour voir le prix."
+    },
+    "vehicles": {
+      "title": "Nos véhicules",
+      "subtitle": "Le véhicule est choisi à la réservation. Un plus grand véhicule peut toujours transporter moins de personnes.",
+      "capacity": "{{min}} à {{max}} passagers"
+    },
+    "airports": {
+      "title": "Depuis et vers tous les aéroports de Tunisie"
+    },
+    "how": {
+      "title": "Comment ça marche",
+      "s1": {
+        "title": "Réservez",
+        "text": "Choisissez l’aéroport, la destination, la date et le véhicule. Le prix est affiché avant de valider."
+      },
+      "s2": {
+        "title": "Nous confirmons",
+        "text": "Vous recevez un e-mail de confirmation, puis le nom et le téléphone de votre chauffeur."
+      },
+      "s3": {
+        "title": "Voyagez sereinement",
+        "text": "Votre chauffeur vous attend à l’arrivée ou à l’adresse prévue. Paiement en espèces au chauffeur."
+      }
+    },
+    "footer": {
+      "tagline": "TRANSFERT AÉROPORT",
+      "links": "Liens du pied de page",
+      "rights": "© {{year}} Marhba. Tous droits réservés."
+    }
   },
   "api": {
     "checking": "Connexion à l’API…",
@@ -36,7 +76,8 @@
       "subtitle": "Accédez à vos réservations.",
       "submit": "Se connecter",
       "noAccount": "Pas encore de compte ?",
-      "register": "Créer un compte"
+      "register": "Créer un compte",
+      "forgot": "Mot de passe oublié ?"
     },
     "register": {
       "title": "Créer un compte",
@@ -44,12 +85,36 @@
       "submit": "Créer mon compte",
       "haveAccount": "Déjà un compte ?",
       "login": "Se connecter"
+    },
+    "forgot": {
+      "title": "Mot de passe oublié",
+      "subtitle": "Saisissez votre e-mail : nous vous envoyons un lien pour choisir un nouveau mot de passe.",
+      "sent": "Si un compte existe avec cette adresse, un e-mail vient d’être envoyé. Le lien est valable 1 heure.",
+      "submit": "Envoyer le lien",
+      "back": "Retour à la connexion"
+    },
+    "reset": {
+      "title": "Nouveau mot de passe",
+      "done": "Mot de passe modifié. Vous pouvez vous connecter.",
+      "again": "Demander un nouveau lien",
+      "newPassword": "Nouveau mot de passe",
+      "submit": "Enregistrer le mot de passe"
     }
   },
   "account": {
     "title": "Mon compte",
     "role": "Profil",
-    "loading": "Chargement…"
+    "loading": "Chargement…",
+    "profile": {
+      "title": "Mes informations",
+      "saved": "Informations enregistrées."
+    },
+    "password": {
+      "title": "Changer le mot de passe",
+      "current": "Mot de passe actuel",
+      "saved": "Mot de passe modifié.",
+      "submit": "Changer le mot de passe"
+    }
   },
   "roles": {
     "CUSTOMER": "Client",
@@ -103,7 +168,10 @@
     "BASE_CURRENCY_LOCKED": "La devise de base (TND) ne peut pas être modifiée ainsi.",
     "BASE_CURRENCY_NO_RATE": "Le dinar est la devise de base : il n’a pas de taux.",
     "CURRENCY_CODE_MISMATCH": "Le code de la devise ne correspond pas.",
-    "INVALID_CAPACITY": "Le maximum de passagers doit être au moins égal au minimum."
+    "INVALID_CAPACITY": "Le maximum de passagers doit être au moins égal au minimum.",
+    "BOOKING_NOT_EDITABLE": "Cette réservation ne peut plus être modifiée.",
+    "CURRENT_PASSWORD_INVALID": "Le mot de passe actuel est incorrect.",
+    "RESET_TOKEN_INVALID": "Ce lien est invalide ou a expiré."
   },
   "status": {
     "PENDING": "En attente",
@@ -121,7 +189,8 @@
     "cancel": "Annuler cette réservation",
     "cancelConfirm": "Annuler définitivement cette réservation ?",
     "cancelYes": "Oui, annuler",
-    "cancelNo": "Non, la garder"
+    "cancelNo": "Non, la garder",
+    "details": "Détails et reçu"
   },
   "booking": {
     "title": "Réservation",
@@ -184,6 +253,13 @@
       "text": "Un e-mail de confirmation vous a été envoyé. Paiement en espèces au chauffeur.",
       "viewAll": "Voir mes réservations",
       "another": "Nouvelle réservation"
+    },
+    "edit": {
+      "title": "Modifier la réservation",
+      "hint": "Le prix ne change pas. Pour changer de véhicule ou de destination, annulez et réservez à nouveau.",
+      "open": "Modifier",
+      "saved": "Réservation mise à jour.",
+      "locked": "Un chauffeur est affecté : pour toute modification, contactez-nous ou annulez la réservation."
     }
   },
   "staff": {
@@ -325,5 +401,14 @@
       "rateSaved": "Taux enregistré.",
       "invalidRate": "Taux invalide : nombre positif, 6 décimales maximum."
     }
+  },
+  "receipt": {
+    "title": "Reçu de réservation",
+    "issued": "Édité le {{date}} (heure de Tunis)",
+    "total": "Montant",
+    "baseTnd": "Prix de base : {{amount}}",
+    "cashNote": "À régler en espèces au chauffeur.",
+    "demo": "Prix de démonstration, non contractuel.",
+    "print": "Imprimer le reçu"
   }
 }

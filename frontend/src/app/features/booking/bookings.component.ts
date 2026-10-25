@@ -61,6 +61,7 @@ import { StatusBadgeComponent } from '../../shared/status-badge.component';
                 <dd class="font-semibold">{{ 'booking.payment.' + b.paymentMethod | translate }}</dd>
               </dl>
               <p class="mt-3 text-lg font-extrabold">{{ money(b) }}</p>
+              <a [routerLink]="['/bookings', b.id]" class="btn-secondary mt-3 me-2">{{ 'bookings.details' | translate }}</a>
 
               @if (b.cancellable) {
                 @if (confirming() === b.id) {

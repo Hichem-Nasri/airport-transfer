@@ -101,6 +101,25 @@ export class AuthService {
     return this.http.post<AuthResponse>('/api/auth/register', payload).pipe(tap((r) => this.start(r)));
   }
 
+  updateProfile(fullName: string, phone: string): Observable<User> {
+    return this.http
+      .put<User>('/api/auth/me', { fullName, phone: phone.trim() })
+      .pipe(tap((user) => this.user.set(user)));
+  }
+
+  changePassword(currentPassword: string, newPassword: string): Observable<void> {
+    return this.http.post<void>('/api/auth/change-password', { currentPassword, newPassword });
+  }
+
+  /** Always succeeds from the client's point of view: the API never reveals whether the e-mail has an account. */
+  forgotPassword(email: string): Observable<void> {
+    return this.http.post<void>('/api/auth/forgot-password', { email });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<void> {
+    return this.http.post<void>('/api/auth/reset-password', { token, newPassword });
+  }
+
   logout(redirect = true): void {
     this.tokenSignal.set(null);
     this.user.set(null);

@@ -1,6 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Airport, CatalogService, VehicleType, ZoneWithAreas } from '../../core/catalog.service';
 import { Direction } from '../../core/booking.service';
@@ -9,6 +10,7 @@ import { localName } from '../../core/localized';
 import { todayInTunis, tunisLocalToIso } from '../../core/tunis-time';
 import { StickyBarComponent } from '../../shared/sticky-bar.component';
 import { BookingDraftService } from './booking-draft.service';
+import { TripPrefill, parsePrefill } from './prefill';
 
 interface TripFormValue {
   roundTrip: boolean;
@@ -174,19 +176,21 @@ export class TripStepComponent {
   readonly maxPassengers = computed(() => Math.max(1, ...this.vehicleTypes().map((v) => v.maxPassengers)));
 
   private readonly saved = this.draft.trip();
+  /** The home page's booking card hands over its choices in the URL; a saved draft wins over them. */
+  private readonly prefill: TripPrefill = this.saved ? {} : parsePrefill(inject(ActivatedRoute).snapshot.queryParamMap, this.today);
 
   readonly form = inject(FormBuilder).nonNullable.group(
     {
-      direction: [this.saved?.direction ?? ('AIRPORT_TO_ADDRESS' as Direction)],
+      direction: [this.saved?.direction ?? this.prefill.direction ?? ('AIRPORT_TO_ADDRESS' as Direction)],
       roundTrip: [this.saved?.roundTrip ?? false],
-      airportId: [this.saved?.airportId ?? (null as number | null), Validators.required],
-      areaId: [this.saved?.areaId ?? (null as number | null), Validators.required],
-      date: [this.saved?.date ?? '', Validators.required],
-      time: [this.saved?.time ?? '', Validators.required],
+      airportId: [this.saved?.airportId ?? this.prefill.airportId ?? (null as number | null), Validators.required],
+      areaId: [this.saved?.areaId ?? this.prefill.areaId ?? (null as number | null), Validators.required],
+      date: [this.saved?.date ?? this.prefill.date ?? '', Validators.required],
+      time: [this.saved?.time ?? this.prefill.time ?? '', Validators.required],
       returnDate: [this.saved?.returnDate ?? ''],
       returnTime: [this.saved?.returnTime ?? ''],
       passengers: [
-        this.saved?.passengers ?? 1,
+        this.saved?.passengers ?? this.prefill.passengers ?? 1,
         [
           Validators.required,
           Validators.min(1),

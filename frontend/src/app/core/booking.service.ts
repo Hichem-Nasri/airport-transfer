@@ -72,7 +72,17 @@ export interface Booking {
   priceDemo: boolean;
   paymentMethod: PaymentMethod;
   cancellable: boolean;
+  editable: boolean;
   createdAt: string;
+}
+
+/** The practical details a customer may change while a booking is PENDING or CONFIRMED. */
+export interface UpdateBookingRequest {
+  address: string;
+  flightNumber: string;
+  pickupAt: string;
+  luggageCount: number;
+  notes: string;
 }
 
 export interface BookingsCreated {
@@ -100,6 +110,14 @@ export class BookingService {
 
   mine(): Observable<Booking[]> {
     return this.http.get<Booking[]>('/api/bookings');
+  }
+
+  get(id: number): Observable<Booking> {
+    return this.http.get<Booking>(`/api/bookings/${id}`);
+  }
+
+  update(id: number, request: UpdateBookingRequest): Observable<Booking> {
+    return this.http.put<Booking>(`/api/bookings/${id}`, request);
   }
 
   cancel(id: number): Observable<Booking> {

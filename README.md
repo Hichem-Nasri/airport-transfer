@@ -88,3 +88,12 @@ ADMIN only (`/api/admin/**`, screens under `/admin`):
 - **Tariffs, catalog, currencies**: screens on top of the step 3 endpoints. Saving a tariff in the grid replaces the demo price with a real one. Catalog items are deactivated, not deleted.
 
 No new environment variable and no migration.
+
+## Customer experience (step 8)
+
+- Home page with a booking card: the price preview comes from `GET /api/public/booking-quote` (smallest vehicle that carries the group); the card opens `/book` pre-filled.
+- A customer can edit address, flight, pickup time, luggage and notes of a booking while it is PENDING or CONFIRMED (`PUT /api/bookings/{id}`). The price never changes: to change the vehicle or destination, cancel and book again.
+- Profile and password change on `/account`. Forgot password: `/forgot-password` sends a one-hour, single-use link to `PUBLIC_URL/reset-password?token=...` (read it in MailHog at http://localhost:8025 in development).
+- Receipt: open a booking (`/bookings/:id`) and use "Imprimer le reçu".
+
+New environment variable: `PUBLIC_URL` (default `http://localhost:4200`). New migration: `V9__password_reset.sql`.

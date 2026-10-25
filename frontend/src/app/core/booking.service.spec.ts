@@ -37,4 +37,19 @@ describe('BookingService', () => {
     expect(req.request.method).toBe('POST');
     req.flush({});
   });
+
+  it('edits only the practical details and reads one booking', () => {
+    service
+      .update(7, { address: '1 Rue X', flightNumber: 'TU714', pickupAt: '2026-12-01T10:30:00.000Z', luggageCount: 2, notes: '' })
+      .subscribe();
+    const put = http.expectOne('/api/bookings/7');
+    expect(put.request.method).toBe('PUT');
+    expect(Object.keys(put.request.body as object).sort()).toEqual(
+      ['address', 'flightNumber', 'luggageCount', 'notes', 'pickupAt']
+    );
+    put.flush({});
+
+    service.get(7).subscribe();
+    http.expectOne('/api/bookings/7').flush({});
+  });
 });

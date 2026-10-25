@@ -11,6 +11,12 @@ export function tunisLocalToIso(date: string, time: string): string {
   return new Date(`${date}T${time}:00${TUNIS_OFFSET}`).toISOString();
 }
 
+/** Splits a UTC instant into the Tunis wall-clock date (yyyy-MM-dd) and time (HH:mm), for form fields. */
+export function isoToTunisParts(iso: string): { date: string; time: string } {
+  const shifted = new Date(Date.parse(iso) + 60 * 60 * 1000).toISOString();
+  return { date: shifted.slice(0, 10), time: shifted.slice(11, 16) };
+}
+
 /** Today's date in Tunis as yyyy-MM-dd (value for a date input's `min`). */
 export function todayInTunis(now: Date = new Date()): string {
   return new Intl.DateTimeFormat('en-CA', {

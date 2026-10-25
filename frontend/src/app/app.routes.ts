@@ -23,6 +23,20 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./features/booking/bookings.component').then((m) => m.BookingsComponent)
   },
+  {
+    path: 'bookings/:id',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/booking/booking-detail.component').then((m) => m.BookingDetailComponent)
+  },
+  {
+    path: 'forgot-password',
+    loadComponent: () =>
+      import('./features/auth/forgot-password.component').then((m) => m.ForgotPasswordComponent)
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () => import('./features/auth/reset-password.component').then((m) => m.ResetPasswordComponent)
+  },
   { path: 'staff', pathMatch: 'full', redirectTo: 'staff/bookings' },
   {
     path: 'staff/bookings',

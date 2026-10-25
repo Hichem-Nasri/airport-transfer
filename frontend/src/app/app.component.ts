@@ -11,7 +11,7 @@ import { LogoComponent } from './shared/logo.component';
   standalone: true,
   imports: [RouterOutlet, RouterLink, TranslateModule, LogoComponent],
   template: `
-    <header class="flex flex-wrap items-center justify-between gap-4 px-6 py-5 md:px-12">
+    <header class="flex flex-wrap print:hidden items-center justify-between gap-4 px-6 py-5 md:px-12">
       <a routerLink="/" aria-label="Marhba"><app-logo /></a>
       <nav class="flex flex-wrap gap-7 text-[15px] font-semibold">
         <a routerLink="/book" class="hover:text-brand">{{ 'nav.book' | translate }}</a>
