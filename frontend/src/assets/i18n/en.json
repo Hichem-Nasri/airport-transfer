@@ -1,0 +1,9 @@
+{
+  "nav": { "destinations": "Destinations", "vehicles": "Vehicles", "how": "How it works" },
+  "home": {
+    "badge": "All over Tunisia, 7 days a week",
+    "title": "From the terminal to your door, anywhere in Tunisia.",
+    "subtitle": "Book a private driver in a few clicks. Fixed price in advance, meet and greet on arrival, pay in the currency of your choice."
+  },
+  "api": { "checking": "Connecting to the API…", "up": "API connected", "down": "API unavailable" }
+}

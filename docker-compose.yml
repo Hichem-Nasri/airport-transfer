@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: airport_transfer
+      POSTGRES_USER: airport
+      POSTGRES_PASSWORD: airport
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+  mailhog:
+    image: mailhog/mailhog
+    ports: ["1025:1025", "8025:8025"]
+volumes:
+  pgdata:

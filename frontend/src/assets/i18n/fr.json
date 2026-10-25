@@ -1,0 +1,9 @@
+{
+  "nav": { "destinations": "Destinations", "vehicles": "Véhicules", "how": "Comment ça marche" },
+  "home": {
+    "badge": "Toute la Tunisie, 7j/7",
+    "title": "Du terminal à votre porte, partout en Tunisie.",
+    "subtitle": "Réservez un chauffeur privé en quelques clics. Prix fixé à l’avance, accueil à l’arrivée, paiement dans la devise de votre choix."
+  },
+  "api": { "checking": "Connexion à l’API…", "up": "API connectée", "down": "API indisponible" }
+}
