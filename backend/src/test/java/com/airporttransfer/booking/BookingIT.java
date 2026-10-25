@@ -92,7 +92,7 @@ class BookingIT extends AbstractIT {
         return json.readTree(res);
     }
 
-    private JsonNode get(String token, String url) throws Exception {
+    private JsonNode getJson(String token, String url) throws Exception {
         String res = mvc.perform(get(url).header("Authorization", "Bearer " + token))
             .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         return json.readTree(res);
@@ -154,7 +154,7 @@ class BookingIT extends AbstractIT {
         newRate.setDemo(false);
         rates.saveAndFlush(newRate);
 
-        JsonNode again = get(token, "/api/bookings/" + b.get("id").asLong());
+        JsonNode again = getJson(token, "/api/bookings/" + b.get("id").asLong());
         assertDecimal(again.get("exchangeRate"), "3.4");
         assertDecimal(again.get("amount"), "14.71");
 
@@ -184,7 +184,7 @@ class BookingIT extends AbstractIT {
         assertThat(Instant.parse(back.get("pickupAt").asText())).isEqualTo(Instant.parse(req.get("returnPickupAt").asText()));
         assertDecimal(out.get("amount"), "50.000");
         assertDecimal(back.get("amount"), "50.000");
-        assertThat(get(token, "/api/bookings")).hasSize(2);
+        assertThat(getJson(token, "/api/bookings")).hasSize(2);
     }
 
     @Test
@@ -291,13 +291,13 @@ class BookingIT extends AbstractIT {
         String bob = newCustomerToken();
         long id = createOk(alice, request()).get("bookings").get(0).get("id").asLong();
 
-        assertThat(get(alice, "/api/bookings")).hasSize(1);
-        assertThat(get(bob, "/api/bookings")).isEmpty();
+        assertThat(getJson(alice, "/api/bookings")).hasSize(1);
+        assertThat(getJson(bob, "/api/bookings")).isEmpty();
         mvc.perform(get("/api/bookings/" + id).header("Authorization", "Bearer " + bob))
             .andExpect(status().isNotFound()).andExpect(jsonPath("$.code").value("BOOKING_NOT_FOUND"));
         mvc.perform(post("/api/bookings/" + id + "/cancel").header("Authorization", "Bearer " + bob))
             .andExpect(status().isNotFound());
-        assertThat(get(alice, "/api/bookings/" + id).get("status").asText()).isEqualTo("PENDING");
+        assertThat(getJson(alice, "/api/bookings/" + id).get("status").asText()).isEqualTo("PENDING");
     }
 
     @Test
@@ -310,7 +310,7 @@ class BookingIT extends AbstractIT {
         createOk(token, soon);
         createOk(token, later);
 
-        JsonNode list = get(token, "/api/bookings");
+        JsonNode list = getJson(token, "/api/bookings");
 
         assertThat(Instant.parse(list.get(0).get("pickupAt").asText()))
             .isAfter(Instant.parse(list.get(1).get("pickupAt").asText()));
@@ -334,7 +334,7 @@ class BookingIT extends AbstractIT {
         bookings.flush();
         mvc.perform(post("/api/bookings/" + second + "/cancel").header("Authorization", "Bearer " + token))
             .andExpect(status().isConflict());
-        assertThat(get(token, "/api/bookings/" + second).get("cancellable").asBoolean()).isFalse();
+        assertThat(getJson(token, "/api/bookings/" + second).get("cancellable").asBoolean()).isFalse();
     }
 
     @Test
@@ -347,7 +347,7 @@ class BookingIT extends AbstractIT {
         mvc.perform(post("/api/bookings/" + created.get(0).get("id").asLong() + "/cancel")
             .header("Authorization", "Bearer " + token)).andExpect(status().isOk());
 
-        assertThat(get(token, "/api/bookings/" + created.get(1).get("id").asLong()).get("status").asText())
+        assertThat(getJson(token, "/api/bookings/" + created.get(1).get("id").asLong()).get("status").asText())
             .isEqualTo("PENDING");
     }
 }
