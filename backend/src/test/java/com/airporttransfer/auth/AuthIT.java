@@ -163,9 +163,9 @@ class AuthIT extends AbstractIT {
             .andExpect(jsonPath("$.role").value("DRIVER"));
 
         String driverToken = login(driverEmail, "driver-pass-1");
-        // No controller exists yet under /api/driver (step 6): passing the role check means 404, not 403.
         mvc.perform(get("/api/driver/trips").header("Authorization", "Bearer " + driverToken))
-            .andExpect(status().isNotFound());
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isEmpty());
         mvc.perform(get("/api/driver/trips").header("Authorization", "Bearer " + adminToken))
             .andExpect(status().isForbidden());
     }

@@ -98,6 +98,14 @@ public class Booking {
     @Column(name = "assigned_driver_id")
     private Long assignedDriverId;
 
+    /** Language of the customer's confirmation e-mail and later notifications: fr, en or ar. */
+    @Column(name = "customer_language", nullable = false)
+    private String customerLanguage = "fr";
+
+    /** Optimistic lock: two staff members acting on the same booking at once cannot both win. */
+    @jakarta.persistence.Version
+    private Long version;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 
@@ -137,6 +145,19 @@ public class Booking {
     void changeStatus(BookingStatus status) {
         this.status = status;
         this.updatedAt = Instant.now();
+    }
+
+    void assignDriver(Long driverId) {
+        this.assignedDriverId = driverId;
+        this.updatedAt = Instant.now();
+    }
+
+    void setCustomerLanguage(String language) {
+        this.customerLanguage = language;
+    }
+
+    public String getCustomerLanguage() {
+        return customerLanguage;
     }
 
     public Long getId() {

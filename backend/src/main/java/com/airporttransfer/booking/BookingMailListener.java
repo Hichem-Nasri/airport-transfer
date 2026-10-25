@@ -1,8 +1,6 @@
 package com.airporttransfer.booking;
 
 import com.airporttransfer.booking.BookingDtos.BookingDto;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +21,6 @@ import org.springframework.transaction.event.TransactionalEventListener;
 public class BookingMailListener {
 
     private static final Logger log = LoggerFactory.getLogger(BookingMailListener.class);
-    private static final ZoneId TUNIS = ZoneId.of("Africa/Tunis");
-    private static final DateTimeFormatter WHEN = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     private final ObjectProvider<JavaMailSender> mailSender;
     private final MessageSource messages;
@@ -61,24 +57,9 @@ public class BookingMailListener {
         StringBuilder text = new StringBuilder(
             messages.getMessage("mail.booking.hello", new Object[] {event.fullName()}, locale)).append("\n\n");
         for (BookingDto b : event.bookings()) {
-            text.append(messages.getMessage("mail.booking.leg", new Object[] {
-                b.reference(),
-                messages.getMessage("mail.direction." + b.direction(), null, locale),
-                airportName(b, locale),
-                b.address(),
-                WHEN.format(b.pickupAt().atZone(TUNIS)),
-                b.amount().toPlainString() + " " + b.currency()
-            }, locale)).append("\n");
+            text.append(MailTexts.leg(messages, b, locale)).append("\n");
         }
         text.append("\n").append(messages.getMessage("mail.booking.footer", null, locale));
         return text.toString();
-    }
-
-    private static String airportName(BookingDto b, Locale locale) {
-        return switch (locale.getLanguage()) {
-            case "en" -> b.airport().nameEn();
-            case "ar" -> b.airport().nameAr();
-            default -> b.airport().nameFr();
-        };
     }
 }

@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -42,5 +43,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> conflict(DataIntegrityViolationException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
             .body(ApiError.of("CONFLICT", "The operation conflicts with existing data (duplicate or still in use)"));
+    }
+
+    /** Two people changed the same record at once (for example two staff members on one booking). */
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ApiError> concurrentUpdate(ObjectOptimisticLockingFailureException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+            .body(ApiError.of("CONCURRENT_UPDATE", "The record was changed by someone else, reload and try again"));
     }
 }

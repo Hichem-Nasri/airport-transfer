@@ -30,6 +30,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/public/**", "/api/auth/register", "/api/auth/login", "/actuator/health",
                     "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/staff/**").hasAnyRole("MODERATOR", "ADMIN")
                 .requestMatchers("/api/driver/**").hasRole("DRIVER")
                 .anyRequest().authenticated());
         return http.build();

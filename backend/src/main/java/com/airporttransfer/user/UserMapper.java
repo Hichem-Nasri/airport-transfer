@@ -1,5 +1,6 @@
 package com.airporttransfer.user;
 
+import com.airporttransfer.user.UserDtos.PersonDto;
 import com.airporttransfer.user.UserDtos.UserDto;
 import org.mapstruct.Mapper;
 
@@ -7,4 +8,6 @@ import org.mapstruct.Mapper;
 public interface UserMapper {
 
     UserDto toDto(User user);
+
+    PersonDto toPerson(User user);
 }

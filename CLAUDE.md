@@ -34,6 +34,12 @@ The owner (Hichem) is an experienced Java Spring / Angular developer and writes 
   - Frontend: `/book` (guarded; 3 steps in `features/booking`, state in `BookingDraftService`) and `/bookings` (guarded). The customer picks a governorate (area); its zone is derived. Dates are entered in Tunis time and sent as UTC (Tunisia is UTC+1 all year). Prices are fetched from the API in the chosen currency; the browser only formats them. Unit tests: `ng test` (Karma/Jasmine added in `package.json`, run `npm install` to refresh the lockfile).
   - Not in V1 step 4 (left for later steps): card payment (5), admin/driver status changes (6), the home page booking card (the home page only has a "Réserver" button for now).
 
+- Step 5 done (branch `feat/operations`): migration `V8__operations.sql` (MODERATOR role, `booking_status_history`, `bookings.customer_language`, `bookings.version` for optimistic locking; existing bookings get a creation history row). No new environment variable.
+  - Staff API (MODERATOR and ADMIN, `/api/staff/**`): `GET /bookings` (filters `status, from, to, airportId, driverId, unassigned, q`; `page, size` (max 100), `order=asc|desc` on pickup time; `q` searches reference and customer name, e-mail or phone), `GET /bookings/{id}` (with history), `GET /drivers`, `POST /bookings/{id}/confirm|assign|start|complete|cancel`. Assign body `{driverId, force}`: refused with 409 `DRIVER_UNAVAILABLE` when the driver has another ASSIGNED or IN_PROGRESS trip within 2 hours of the pickup, unless `force`; only CONFIRMED or ASSIGNED bookings can be assigned (`BOOKING_NOT_ASSIGNABLE`); reassigning keeps ASSIGNED and logs the change. Cancel body `{reason}` is optional.
+  - Driver API (`/api/driver/trips`, ROLE_DRIVER only): `GET ?scope=upcoming|past`, `GET /{id}`, `POST /{id}/start`, `POST /{id}/complete`. A trip of another driver answers 404 `TRIP_NOT_FOUND`. Drivers see the customer's name and phone and the amount to collect.
+  - Every status change goes through `BookingWorkflowService` (rules in `BookingStatusService`, then history row, then event). E-mails after commit: customer on CONFIRMED, COMPLETED, driver assigned, and cancellation by staff (in the booking's `customer_language`); driver (in French) on assignment and cancellation. Two people acting on the same booking at once: the second gets 409 `CONCURRENT_UPDATE`.
+  - Roles: MODERATOR manages bookings and drivers' assignments only; `/api/admin/**` stays ADMIN-only. Accounts are still created by an admin (`POST /api/admin/users`, role MODERATOR now accepted).
+
 ## Product rules
 - **Coverage**: all of Tunisia. Airports: Tunis-Carthage (TUN), Monastir (MIR), Enfidha-Hammamet (NBE), Djerba-Zarzis (DJE), Sfax (SFA), Tozeur (TOE), Tabarka (TBJ), Gafsa (GAF). Airports are data, not code: admins can add more.
 - **Directions**: airport → address, address → airport, or round trip (two bookings linked by a shared group id).
@@ -44,6 +50,7 @@ The owner (Hichem) is an experienced Java Spring / Angular developer and writes 
   - A booking stores a snapshot: base price in TND, the currency chosen, the rate used, and the final charged amount. Later rate changes never alter an existing booking.
   - Use `BigDecimal` everywhere for money, never `double`. TND has 3 decimals (millimes), EUR and USD have 2. Round `HALF_UP` only when converting for display or charging.
 - **Booking fields**: reference (human-readable, unique), customer, airport, direction, destination zone, address, flight number (optional), pickup date and time (stored as UTC, shown in Africa/Tunis), passengers, luggage count, vehicle type, notes, price snapshot, status, payment method, assigned driver (optional).
+- **Roles**: CUSTOMER, DRIVER, MODERATOR (manages bookings and drivers' assignments, no access to users, tariffs or catalog), ADMIN (everything).
 - **Statuses**: PENDING → CONFIRMED → ASSIGNED → IN_PROGRESS → COMPLETED, and CANCELLED from any state before IN_PROGRESS. Enforce transitions in one place (a service), not in controllers.
 - **Payment**: cash to the driver, or card online. Put every provider behind a `PaymentGateway` interface: Stripe for EUR and USD cards, and an optional local TND gateway (Konnect or Flouci) added later. A webhook marks the booking paid; never trust the browser for payment status.
 - **Notifications**: confirmation e-mail on booking (MailHog in dev). WhatsApp is out of scope for V1.
@@ -54,12 +61,17 @@ The owner (Hichem) is an experienced Java Spring / Angular developer and writes 
 2. ~~Authentication (JWT, roles)~~ done
 3. ~~Data model~~ done
 4. ~~Booking flow~~ done
-5. **Payment**: `PaymentGateway` abstraction, cash flow, Stripe card flow with webhook, payment status on bookings.
-6. **Driver and admin areas**: admin dashboard (bookings list and filters, assign driver, manage tariffs, zones and exchange rates, create driver accounts); driver page (my assigned trips, change status).
-7. **Quality and deployment**: error handling and consistent API error format, validation messages translated, accessibility pass, Dockerfiles for both apps, production `docker-compose`, README deployment section.
+5. ~~Booking operations (backend)~~ done
+6. **Staff and driver web apps**: role-aware navigation and guards; moderator/admin dashboard (bookings table with filters, detail, confirm, assign driver, cancel); driver page (my trips, start, complete).
+7. **Administration**: user management (list, search, create, disable, change role); screens for tariffs, zones and areas, airports, vehicle types, currencies and exchange rates (replacing the demo prices); statistics (bookings and revenue per currency).
+8. **Customer experience**: home page as designed (floating booking card with live price preview, vehicle cards, airport chips, how it works, footer); booking detail; edit address, flight, notes, luggage and pickup time while PENDING or CONFIRMED (price never changes: to change the vehicle or destination, cancel and rebook); profile (name, phone, password); forgot-password e-mail flow; printable receipt.
+9. **Payment**: `PaymentGateway` abstraction, cash flow, payment status on bookings, Stripe card flow with webhook (when a Stripe account exists), refund on cancel, optional local TND gateway later.
+10. **Quality and deployment**: integration tests runnable with `mvn verify` (Failsafe), consistent API error format, translated validation messages, accessibility pass, Dockerfiles, production `docker-compose`, README deployment section.
+
+Later, not planned: promo codes, driver ratings, WhatsApp, real distance pricing.
 
 ## API conventions
-- REST under `/api`, JSON, ISO-8601 dates in UTC. Admin endpoints under `/api/admin/**`, driver under `/api/driver/**`, public under `/api/public/**`.
+- REST under `/api`, JSON, ISO-8601 dates in UTC. Admin endpoints (ADMIN only) under `/api/admin/**`, staff endpoints (MODERATOR and ADMIN) under `/api/staff/**`, driver under `/api/driver/**`, public under `/api/public/**`.
 - DTOs are records. Never expose JPA entities. Map with MapStruct.
 - Validation with Jakarta annotations; one global `@RestControllerAdvice` returning `{ "code", "message", "fieldErrors" }`. Error `code` is a stable key the frontend translates.
 - Database changes only through Flyway (`V<n>__description.sql`). `ddl-auto` stays `validate`. Never edit an applied migration.

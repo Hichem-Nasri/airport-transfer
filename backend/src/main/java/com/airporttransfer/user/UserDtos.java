@@ -15,6 +15,10 @@ public final class UserDtos {
     public record UserDto(Long id, String email, String fullName, String phone, Role role, Instant createdAt) {
     }
 
+    /** Minimal public identity of a person involved in a booking (customer, driver). */
+    public record PersonDto(Long id, String fullName, String email, String phone) {
+    }
+
     /** Public sign-up. There is deliberately no role field: this endpoint only creates customers. */
     public record RegisterRequest(
         @NotBlank @Email @Size(max = 254) String email,

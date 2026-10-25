@@ -12,6 +12,7 @@ import com.airporttransfer.catalog.Zone;
 import com.airporttransfer.catalog.ZoneRepository;
 import com.airporttransfer.common.ApiException;
 import com.airporttransfer.pricing.PricingDtos.QuoteDto;
+import com.airporttransfer.user.Role;
 import com.airporttransfer.user.User;
 import com.airporttransfer.user.UserService;
 import java.time.Instant;
@@ -36,7 +37,7 @@ public class BookingService {
     private final ZoneRepository zones;
     private final VehicleTypeRepository vehicleTypes;
     private final BookingPricingService pricing;
-    private final BookingStatusService statuses;
+    private final BookingWorkflowService workflow;
     private final ReferenceGenerator references;
     private final BookingMapper mapper;
     private final UserService users;
@@ -44,14 +45,14 @@ public class BookingService {
 
     public BookingService(BookingRepository bookings, AirportRepository airports, ZoneRepository zones,
                           VehicleTypeRepository vehicleTypes, BookingPricingService pricing,
-                          BookingStatusService statuses, ReferenceGenerator references, BookingMapper mapper,
+                          BookingWorkflowService workflow, ReferenceGenerator references, BookingMapper mapper,
                           UserService users, ApplicationEventPublisher events) {
         this.bookings = bookings;
         this.airports = airports;
         this.zones = zones;
         this.vehicleTypes = vehicleTypes;
         this.pricing = pricing;
-        this.statuses = statuses;
+        this.workflow = workflow;
         this.references = references;
         this.mapper = mapper;
         this.users = users;
@@ -104,7 +105,12 @@ public class BookingService {
             : List.of(build(groupId, customerId, airport, request.direction(), zone, address,
                 request.flightNumber(), request.pickupAt(), request, luggage, vehicle, notes, leg));
 
-        List<BookingDto> created = bookings.saveAllAndFlush(legs).stream().map(mapper::toDto).toList();
+        String language = language(LocaleContextHolder.getLocale());
+        legs.forEach(l -> l.setCustomerLanguage(language));
+        List<Booking> saved = bookings.saveAllAndFlush(legs);
+        Actor actor = new Actor(customerId, Role.CUSTOMER);
+        saved.forEach(b -> workflow.recordCreated(b, actor));
+        List<BookingDto> created = saved.stream().map(mapper::toDto).toList();
         events.publishEvent(new BookingsCreatedEvent(customer.getEmail(), customer.getFullName(),
             LocaleContextHolder.getLocale(), created));
         return new BookingsCreatedDto(groupId, created);
@@ -124,8 +130,8 @@ public class BookingService {
     @Transactional
     public BookingDto cancel(Long customerId, Long id) {
         Booking booking = findMine(customerId, id);
-        statuses.transition(booking, BookingStatus.CANCELLED);
-        return mapper.toDto(bookings.saveAndFlush(booking));
+        workflow.changeStatus(booking, BookingStatus.CANCELLED, new Actor(customerId, Role.CUSTOMER), null);
+        return mapper.toDto(booking);
     }
 
     /** Someone else's booking looks exactly like a missing one, so ids cannot be probed. */
@@ -142,6 +148,12 @@ public class BookingService {
             normalizeFlight(flightNumber), pickupAt, request.passengers(), luggage, vehicle, notes,
             leg.priceTnd(), leg.currency(), leg.exchangeRate(), leg.amount(), leg.demo(),
             request.paymentMethod());
+    }
+
+    /** Only fr, en and ar have mail texts; anything else (including a missing header) means French. */
+    private static String language(Locale locale) {
+        String lang = locale.getLanguage();
+        return lang.equals("en") || lang.equals("ar") ? lang : "fr";
     }
 
     private static String normalizeFlight(String flight) {

@@ -64,3 +64,11 @@ Each booking stores its own price snapshot (TND price, currency, exchange rate, 
 Environment variable: `MAIL_FROM` (default `noreply@marhba.tn`), next to `MAIL_HOST` / `MAIL_PORT`.
 
 Frontend tests: `cd frontend && npm install && npm test` (Karma + Jasmine, needs Chrome).
+
+## Booking operations (step 5)
+
+Staff (MODERATOR or ADMIN) manage every booking under `/api/staff`; drivers work their own trips under `/api/driver/trips`. See CLAUDE.md for the full endpoint list and rules.
+
+Typical flow: a customer books (PENDING) → staff confirm (CONFIRMED, customer e-mailed) → staff assign a driver (ASSIGNED, customer and driver e-mailed) → the driver starts (IN_PROGRESS) and completes (COMPLETED) the trip. Staff can cancel with a reason until the trip starts; every change is kept in the booking's history.
+
+Try it: start the backend with `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD`, sign in as that admin in Swagger (`/api/auth/login`, then "Authorize"), create a moderator and a driver with `POST /api/admin/users` (roles `MODERATOR`, `DRIVER`). The web screens for staff and drivers come in step 6.
