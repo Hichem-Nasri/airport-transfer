@@ -78,3 +78,13 @@ Try it: start the backend with `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD`, sign 
 - Moderator or admin: `/staff/bookings` (also reached from "Gestion" in the header). Click a booking for its detail: confirm, assign a driver, start, complete, cancel with a reason, and the full history.
 - Driver: `/driver` ("Mes courses"): upcoming trips with the customer's phone and the amount to collect, buttons to start and complete.
 - Each role is sent to its own page after signing in. Create moderator and driver accounts with `POST /api/admin/users` until the user-management screen of step 7.
+
+## Administration (step 7)
+
+ADMIN only (`/api/admin/**`, screens under `/admin`):
+
+- **Users**: `GET /api/admin/users?q&role&enabled&page&size`, `GET|PUT /api/admin/users/{id}`, `POST /api/admin/users`. An admin cannot demote or disable their own account; a driver with an assigned or in-progress trip cannot be disabled or changed to another role. A disabled account cannot sign in; a token already issued stays valid until it expires, and a role change applies at the next sign-in.
+- **Statistics**: `GET /api/admin/stats?from&to` (default: 30 days back to 30 days ahead, 366 days max). Revenue is given per currency and never added across currencies.
+- **Tariffs, catalog, currencies**: screens on top of the step 3 endpoints. Saving a tariff in the grid replaces the demo price with a real one. Catalog items are deactivated, not deleted.
+
+No new environment variable and no migration.

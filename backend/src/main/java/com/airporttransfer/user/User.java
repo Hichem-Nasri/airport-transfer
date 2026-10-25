@@ -81,4 +81,12 @@ public class User {
     public Instant getCreatedAt() {
         return createdAt;
     }
+
+    /** Profile and access changes made by an admin; the rules around them live in AdminUserService. */
+    public void applyAdminUpdate(String fullName, String phone, Role role, boolean enabled) {
+        this.fullName = fullName;
+        this.phone = phone;
+        this.role = role;
+        this.enabled = enabled;
+    }
 }

@@ -40,5 +40,34 @@ export const routes: Routes = [
     canActivate: [roleGuard('DRIVER')],
     loadComponent: () => import('./features/driver/driver-trips.component').then((m) => m.DriverTripsComponent)
   },
+  {
+    path: 'admin',
+    canActivate: [roleGuard('ADMIN')],
+    loadComponent: () => import('./features/admin/admin-shell.component').then((m) => m.AdminShellComponent),
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'stats' },
+      {
+        path: 'stats',
+        loadComponent: () => import('./features/admin/admin-stats.component').then((m) => m.AdminStatsComponent)
+      },
+      {
+        path: 'users',
+        loadComponent: () => import('./features/admin/admin-users.component').then((m) => m.AdminUsersComponent)
+      },
+      {
+        path: 'tariffs',
+        loadComponent: () => import('./features/admin/admin-tariffs.component').then((m) => m.AdminTariffsComponent)
+      },
+      {
+        path: 'catalog',
+        loadComponent: () => import('./features/admin/admin-catalog.component').then((m) => m.AdminCatalogComponent)
+      },
+      {
+        path: 'currencies',
+        loadComponent: () =>
+          import('./features/admin/admin-currencies.component').then((m) => m.AdminCurrenciesComponent)
+      }
+    ]
+  },
   { path: '**', redirectTo: '' }
 ];

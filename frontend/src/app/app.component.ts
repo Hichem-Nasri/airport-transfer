@@ -21,6 +21,9 @@ import { LogoComponent } from './shared/logo.component';
         @if (auth.hasRole('MODERATOR', 'ADMIN')) {
           <a routerLink="/staff/bookings" class="hover:text-brand">{{ 'nav.staff' | translate }}</a>
         }
+        @if (auth.hasRole('ADMIN')) {
+          <a routerLink="/admin" class="hover:text-brand">{{ 'nav.admin' | translate }}</a>
+        }
         @if (auth.hasRole('DRIVER')) {
           <a routerLink="/driver" class="hover:text-brand">{{ 'nav.driver' | translate }}</a>
         }

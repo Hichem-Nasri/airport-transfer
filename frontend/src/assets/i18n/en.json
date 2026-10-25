@@ -9,7 +9,8 @@
     "book": "Book",
     "bookings": "My bookings",
     "staff": "Management",
-    "driver": "My trips"
+    "driver": "My trips",
+    "admin": "Administration"
   },
   "home": {
     "badge": "All over Tunisia, 7 days a week",
@@ -91,7 +92,18 @@
     "BOOKING_NOT_ASSIGNABLE": "Confirm the booking before assigning a driver.",
     "DRIVER_NOT_FOUND": "Driver not found.",
     "TRIP_NOT_FOUND": "Trip not found.",
-    "CONCURRENT_UPDATE": "Someone else just changed this booking. Reload the page."
+    "CONCURRENT_UPDATE": "Someone else just changed this booking. Reload the page.",
+    "CANNOT_MODIFY_OWN_ACCESS": "You cannot remove your own rights or disable your own account.",
+    "DRIVER_HAS_ACTIVE_TRIPS": "This driver still has assigned trips: reassign them first.",
+    "USER_NOT_FOUND": "User not found.",
+    "INVALID_RANGE": "Invalid period (366 days at most).",
+    "AREA_NOT_FOUND": "Governorate not found.",
+    "CURRENCY_NOT_FOUND": "Currency not found.",
+    "CURRENCY_ALREADY_EXISTS": "This currency already exists.",
+    "BASE_CURRENCY_LOCKED": "The base currency (TND) cannot be changed this way.",
+    "BASE_CURRENCY_NO_RATE": "The dinar is the base currency: it has no rate.",
+    "CURRENCY_CODE_MISMATCH": "The currency code does not match.",
+    "INVALID_CAPACITY": "Maximum passengers must be at least the minimum."
   },
   "status": {
     "PENDING": "Pending",
@@ -223,5 +235,95 @@
     "collect": "To collect:",
     "start": "Start the trip",
     "complete": "Complete the trip"
+  },
+  "admin": {
+    "title": "Administration",
+    "nav": {
+      "stats": "Statistics",
+      "users": "Users",
+      "tariffs": "Tariffs",
+      "catalog": "Catalog",
+      "currencies": "Currencies and rates"
+    },
+    "save": "Save",
+    "cancel": "Cancel",
+    "stats": {
+      "period": "From {{from}} to {{to}} (Tunis time)",
+      "total": "Bookings (trips in the period)",
+      "active": "Non-cancelled bookings",
+      "byStatus": "By status",
+      "revenue": "Revenue by currency",
+      "revenueHint": "Non-cancelled bookings, in the currency charged. Currencies are never added together.",
+      "none": "No bookings in this period.",
+      "currency": "Currency",
+      "bookings": "Bookings",
+      "charged": "Amount charged",
+      "baseTnd": "Base price (TND)",
+      "byAirport": "By airport"
+    },
+    "users": {
+      "title": "Users",
+      "new": "New account",
+      "edit": "Edit",
+      "searchHint": "Name, e-mail or phone",
+      "role": "Role",
+      "state": "State",
+      "enabled": "Active",
+      "disabled": "Disabled",
+      "password": "Initial password (8 characters minimum)",
+      "count": "{{count}} account(s)",
+      "since": "Created {{date}}",
+      "created": "Account created.",
+      "updated": "Account updated. A role or status change applies at the next sign-in."
+    },
+    "tariffs": {
+      "title": "Tariffs by zone and vehicle",
+      "hint": "Base price in TND (millimes allowed). “Demo” prices are placeholders: save the real price to replace them.",
+      "pickAirport": "Choose an airport",
+      "demo": "DEMO",
+      "missing": "No tariff: this trip cannot be booked",
+      "invalidPrice": "Invalid price: positive number, 3 decimals at most.",
+      "saved": "Tariffs saved."
+    },
+    "catalog": {
+      "title": "Catalog",
+      "new": "Add",
+      "airports": "Airports",
+      "zones": "Pricing zones",
+      "areas": "Governorates",
+      "vehicles": "Vehicles",
+      "iata": "IATA code",
+      "code": "Code",
+      "nameFr": "Name (French)",
+      "nameEn": "Name (English)",
+      "nameAr": "Name (Arabic)",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "order": "Display order",
+      "zone": "Pricing zone",
+      "minPassengers": "Minimum passengers",
+      "maxPassengers": "Maximum passengers",
+      "active": "Active (visible to customers)",
+      "inactive": "Inactive",
+      "saved": "Saved."
+    },
+    "currencies": {
+      "title": "Currencies and exchange rates",
+      "hint": "The dinar (TND) is the base currency. A rate = TND for 1 unit of the currency; the latest applies. Existing bookings never change.",
+      "decimals": "decimals",
+      "current": "Current rate",
+      "newRate": "New rate",
+      "new": "Add a currency",
+      "name": "Name",
+      "symbol": "Symbol",
+      "rateLabel": "TND for 1 {{currency}}",
+      "rateHint": "Up to 6 decimals. Example: 3.4125",
+      "history": "Rate history",
+      "tndPerUnit": "TND per 1 unit",
+      "date": "Date",
+      "saved": "Currency saved.",
+      "rateSaved": "Rate saved.",
+      "invalidRate": "Invalid rate: positive number, 6 decimals at most."
+    }
   }
 }

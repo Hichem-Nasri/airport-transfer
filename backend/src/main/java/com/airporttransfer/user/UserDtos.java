@@ -12,7 +12,8 @@ public final class UserDtos {
     private UserDtos() {
     }
 
-    public record UserDto(Long id, String email, String fullName, String phone, Role role, Instant createdAt) {
+    public record UserDto(Long id, String email, String fullName, String phone, Role role, boolean enabled,
+                          Instant createdAt) {
     }
 
     /** Minimal public identity of a person involved in a booking (customer, driver). */
@@ -34,5 +35,13 @@ public final class UserDtos {
         @NotBlank @Size(max = 120) String fullName,
         @Size(max = 30) @Pattern(regexp = "^[+0-9 ()-]*$") String phone,
         @NotNull Role role) {
+    }
+
+    /** Admin edit of an account. The e-mail is the login and is not editable here. */
+    public record AdminUpdateUserRequest(
+        @NotBlank @Size(max = 120) String fullName,
+        @Size(max = 30) @Pattern(regexp = "^[+0-9 ()-]*$") String phone,
+        @NotNull Role role,
+        @NotNull Boolean enabled) {
     }
 }

@@ -42,6 +42,11 @@ The owner (Hichem) is an experienced Java Spring / Angular developer and writes 
 
 - Step 6 done (branch `feat/staff-ui`, frontend only): `/staff/bookings` (filters, search, pagination), `/staff/bookings/:id` (detail, history, confirm, assign or reassign with the "assign anyway" prompt on a 2-hour conflict, start, complete, cancel with reason) for MODERATOR and ADMIN; `/driver` (upcoming and past trips, start, complete, call the customer) for DRIVER. `roleGuard(...roles)` in `core/auth.guard.ts` (the server enforces the same rules); after signing in each role lands on its own page (`homeFor`). The header shows "Gestion" or "Mes courses" by role. New shared `StatusBadgeComponent`. Staff booking creation on behalf of a customer (phone orders) is planned with step 8, once the password-reset flow exists.
 
+- Step 7 done (branch `feat/admin`): no migration, no new environment variable. Backend package `admin`.
+  - `GET /api/admin/users` (filters `q, role, enabled`; `page, size` max 100), `GET /api/admin/users/{id}`, `PUT /api/admin/users/{id}` (`fullName, phone, role, enabled`; the e-mail is not editable), `POST /api/admin/users` as before. `UserDto` now carries `enabled`. Rules: an admin cannot demote or disable their own account (409 `CANNOT_MODIFY_OWN_ACCESS`); a driver with an ASSIGNED or IN_PROGRESS trip cannot be disabled or moved to another role (409 `DRIVER_HAS_ACTIVE_TRIPS`). A disabled account cannot sign in; a token already issued stays valid until it expires (`JWT_EXPIRATION_MINUTES`), and a role change applies at the next sign-in.
+  - `GET /api/admin/stats?from&to` (UTC instants, pickup time in [from, to); default 30 days back to 30 days ahead; max 366 days, else 400 `INVALID_RANGE`): bookings per status, non-cancelled count, revenue per currency (charged amount and base TND, never mixed across currencies), bookings per airport.
+  - Frontend `/admin` (ADMIN only, lazy children): `stats`, `users`, `tariffs` (grid per airport: zone x vehicle, saving a demo tariff makes it real), `catalog` (airports, zones, governorates, vehicles; items are deactivated, never deleted from the UI), `currencies` (currencies and append-only rate history). Header link "Administration" for ADMIN.
+
 ## Product rules
 - **Coverage**: all of Tunisia. Airports: Tunis-Carthage (TUN), Monastir (MIR), Enfidha-Hammamet (NBE), Djerba-Zarzis (DJE), Sfax (SFA), Tozeur (TOE), Tabarka (TBJ), Gafsa (GAF). Airports are data, not code: admins can add more.
 - **Directions**: airport → address, address → airport, or round trip (two bookings linked by a shared group id).
@@ -65,7 +70,7 @@ The owner (Hichem) is an experienced Java Spring / Angular developer and writes 
 4. ~~Booking flow~~ done
 5. ~~Booking operations (backend)~~ done
 6. ~~Staff and driver web apps~~ done
-7. **Administration**: user management (list, search, create, disable, change role); screens for tariffs, zones and areas, airports, vehicle types, currencies and exchange rates (replacing the demo prices); statistics (bookings and revenue per currency).
+7. ~~Administration~~ done: user management (list, search, create, disable, change role); screens for tariffs, zones and areas, airports, vehicle types, currencies and exchange rates (replacing the demo prices); statistics (bookings and revenue per currency).
 8. **Customer experience**: home page as designed (floating booking card with live price preview, vehicle cards, airport chips, how it works, footer); booking detail; edit address, flight, notes, luggage and pickup time while PENDING or CONFIRMED (price never changes: to change the vehicle or destination, cancel and rebook); profile (name, phone, password); forgot-password e-mail flow; printable receipt.
 9. **Payment**: `PaymentGateway` abstraction, cash flow, payment status on bookings, Stripe card flow with webhook (when a Stripe account exists), refund on cancel, optional local TND gateway later.
 10. **Quality and deployment**: integration tests runnable with `mvn verify` (Failsafe), consistent API error format, translated validation messages, accessibility pass, Dockerfiles, production `docker-compose`, README deployment section.

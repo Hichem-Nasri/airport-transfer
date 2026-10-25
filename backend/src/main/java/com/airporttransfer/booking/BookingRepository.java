@@ -42,4 +42,24 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, JpaSpec
     /** Does the driver already have another active trip whose pickup is inside the window? */
     boolean existsByAssignedDriverIdAndIdNotAndStatusInAndPickupAtBetween(
         Long driverId, Long excludedBookingId, Collection<BookingStatus> statuses, Instant from, Instant to);
+
+    boolean existsByAssignedDriverIdAndStatusIn(Long driverId, Collection<BookingStatus> statuses);
+
+    // ---- statistics (pickup time inside [from, to))
+
+    @Query("select b.status, count(b) from Booking b where b.pickupAt >= :from and b.pickupAt < :to group by b.status")
+    List<Object[]> countByStatus(@Param("from") Instant from, @Param("to") Instant to);
+
+    /** Per currency: number of bookings, charged amount, base amount in TND. Cancelled bookings are excluded. */
+    @Query("select b.currency, count(b), sum(b.amount), sum(b.priceTnd) from Booking b "
+        + "where b.pickupAt >= :from and b.pickupAt < :to and b.status <> :excluded "
+        + "group by b.currency order by b.currency")
+    List<Object[]> revenueByCurrency(@Param("from") Instant from, @Param("to") Instant to,
+                                     @Param("excluded") BookingStatus excluded);
+
+    @Query("select b.airport.id, b.airport.iataCode, count(b) from Booking b "
+        + "where b.pickupAt >= :from and b.pickupAt < :to and b.status <> :excluded "
+        + "group by b.airport.id, b.airport.iataCode order by count(b) desc, b.airport.iataCode")
+    List<Object[]> countByAirport(@Param("from") Instant from, @Param("to") Instant to,
+                                  @Param("excluded") BookingStatus excluded);
 }

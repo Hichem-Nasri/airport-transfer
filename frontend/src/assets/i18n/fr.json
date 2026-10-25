@@ -9,7 +9,8 @@
     "book": "Réserver",
     "bookings": "Mes réservations",
     "staff": "Gestion",
-    "driver": "Mes courses"
+    "driver": "Mes courses",
+    "admin": "Administration"
   },
   "home": {
     "badge": "Toute la Tunisie, 7j/7",
@@ -91,7 +92,18 @@
     "BOOKING_NOT_ASSIGNABLE": "Confirmez d’abord la réservation avant d’affecter un chauffeur.",
     "DRIVER_NOT_FOUND": "Chauffeur introuvable.",
     "TRIP_NOT_FOUND": "Course introuvable.",
-    "CONCURRENT_UPDATE": "Quelqu’un d’autre vient de modifier cette réservation. Rechargez la page."
+    "CONCURRENT_UPDATE": "Quelqu’un d’autre vient de modifier cette réservation. Rechargez la page.",
+    "CANNOT_MODIFY_OWN_ACCESS": "Vous ne pouvez pas retirer vos propres droits ni désactiver votre compte.",
+    "DRIVER_HAS_ACTIVE_TRIPS": "Ce chauffeur a encore des courses attribuées : réaffectez-les d’abord.",
+    "USER_NOT_FOUND": "Utilisateur introuvable.",
+    "INVALID_RANGE": "Période invalide (366 jours maximum).",
+    "AREA_NOT_FOUND": "Gouvernorat introuvable.",
+    "CURRENCY_NOT_FOUND": "Devise introuvable.",
+    "CURRENCY_ALREADY_EXISTS": "Cette devise existe déjà.",
+    "BASE_CURRENCY_LOCKED": "La devise de base (TND) ne peut pas être modifiée ainsi.",
+    "BASE_CURRENCY_NO_RATE": "Le dinar est la devise de base : il n’a pas de taux.",
+    "CURRENCY_CODE_MISMATCH": "Le code de la devise ne correspond pas.",
+    "INVALID_CAPACITY": "Le maximum de passagers doit être au moins égal au minimum."
   },
   "status": {
     "PENDING": "En attente",
@@ -223,5 +235,95 @@
     "collect": "À encaisser :",
     "start": "Démarrer la course",
     "complete": "Terminer la course"
+  },
+  "admin": {
+    "title": "Administration",
+    "nav": {
+      "stats": "Statistiques",
+      "users": "Utilisateurs",
+      "tariffs": "Tarifs",
+      "catalog": "Catalogue",
+      "currencies": "Devises et taux"
+    },
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "stats": {
+      "period": "Du {{from}} au {{to}} (heure de Tunis)",
+      "total": "Réservations (courses dans la période)",
+      "active": "Réservations non annulées",
+      "byStatus": "Par statut",
+      "revenue": "Chiffre d’affaires par devise",
+      "revenueHint": "Réservations non annulées, dans la devise facturée. Les devises ne sont jamais additionnées entre elles.",
+      "none": "Aucune réservation sur cette période.",
+      "currency": "Devise",
+      "bookings": "Réservations",
+      "charged": "Montant facturé",
+      "baseTnd": "Prix de base (TND)",
+      "byAirport": "Par aéroport"
+    },
+    "users": {
+      "title": "Utilisateurs",
+      "new": "Nouveau compte",
+      "edit": "Modifier",
+      "searchHint": "Nom, e-mail ou téléphone",
+      "role": "Rôle",
+      "state": "État",
+      "enabled": "Actif",
+      "disabled": "Désactivé",
+      "password": "Mot de passe initial (8 caractères minimum)",
+      "count": "{{count}} compte(s)",
+      "since": "Créé le {{date}}",
+      "created": "Compte créé.",
+      "updated": "Compte mis à jour. Un changement de rôle ou de statut s’applique à la prochaine connexion."
+    },
+    "tariffs": {
+      "title": "Tarifs par zone et véhicule",
+      "hint": "Prix de base en TND (millimes acceptés). Les prix « démo » sont des valeurs provisoires : enregistrez le vrai prix pour les remplacer.",
+      "pickAirport": "Choisir un aéroport",
+      "demo": "DÉMO",
+      "missing": "Aucun tarif : ce trajet n’est pas réservable",
+      "invalidPrice": "Prix invalide : nombre positif, 3 décimales maximum.",
+      "saved": "Tarifs enregistrés."
+    },
+    "catalog": {
+      "title": "Catalogue",
+      "new": "Ajouter",
+      "airports": "Aéroports",
+      "zones": "Zones tarifaires",
+      "areas": "Gouvernorats",
+      "vehicles": "Véhicules",
+      "iata": "Code IATA",
+      "code": "Code",
+      "nameFr": "Nom (français)",
+      "nameEn": "Nom (anglais)",
+      "nameAr": "Nom (arabe)",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "order": "Ordre d’affichage",
+      "zone": "Zone tarifaire",
+      "minPassengers": "Passagers minimum",
+      "maxPassengers": "Passagers maximum",
+      "active": "Actif (visible pour les clients)",
+      "inactive": "Inactif",
+      "saved": "Enregistré."
+    },
+    "currencies": {
+      "title": "Devises et taux de change",
+      "hint": "Le dinar (TND) est la devise de base. Un taux = nombre de TND pour 1 unité de la devise ; le plus récent s’applique. Les réservations existantes ne changent jamais.",
+      "decimals": "décimales",
+      "current": "Taux actuel",
+      "newRate": "Nouveau taux",
+      "new": "Ajouter une devise",
+      "name": "Nom",
+      "symbol": "Symbole",
+      "rateLabel": "TND pour 1 {{currency}}",
+      "rateHint": "Jusqu’à 6 décimales. Exemple : 3,4125",
+      "history": "Historique des taux",
+      "tndPerUnit": "TND pour 1 unité",
+      "date": "Date",
+      "saved": "Devise enregistrée.",
+      "rateSaved": "Taux enregistré.",
+      "invalidRate": "Taux invalide : nombre positif, 6 décimales maximum."
+    }
   }
 }
