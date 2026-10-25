@@ -25,7 +25,8 @@ import { StatusBadgeComponent } from '../../shared/status-badge.component';
 
       @if (loading()) {
         <p class="mt-8 text-muted" role="status">{{ 'account.loading' | translate }}</p>
-      } @else if (booking(); as b) {
+      } @else {
+      @if (booking(); as b) {
         <article class="mt-4 rounded-2xl border border-brand-line bg-white p-5 print:border-0 print:p-0">
           <div class="hidden print:block">
             <p class="text-2xl font-extrabold text-brand">Marhba</p>
@@ -163,6 +164,7 @@ import { StatusBadgeComponent } from '../../shared/status-badge.component';
         @if (!b.editable && b.status === 'ASSIGNED') {
           <p class="mt-3 text-sm text-muted print:hidden">{{ 'booking.edit.locked' | translate }}</p>
         }
+      }
       }
     </section>
   `

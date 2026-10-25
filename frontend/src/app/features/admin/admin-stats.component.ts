@@ -36,7 +36,8 @@ const STATUSES: BookingStatus[] = ['PENDING', 'CONFIRMED', 'ASSIGNED', 'IN_PROGR
 
     @if (loading()) {
       <p class="mt-6 text-muted" role="status">{{ 'account.loading' | translate }}</p>
-    } @else if (stats(); as s) {
+    } @else {
+    @if (stats(); as s) {
       <p class="mt-4 text-sm text-muted" role="status">
         {{ 'admin.stats.period' | translate: { from: when(s.from), to: when(s.to) } }}
       </p>
@@ -106,6 +107,7 @@ const STATUSES: BookingStatus[] = ['PENDING', 'CONFIRMED', 'ASSIGNED', 'IN_PROGR
           </li>
         }
       </ul>
+    }
     }
   `
 })

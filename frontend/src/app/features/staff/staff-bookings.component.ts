@@ -87,7 +87,8 @@ const PAGE_SIZE = 20;
 
       @if (loading()) {
         <p class="mt-8 text-muted" role="status">{{ 'account.loading' | translate }}</p>
-      } @else if (page(); as p) {
+      } @else {
+      @if (page(); as p) {
         <p class="mt-6 text-sm font-semibold text-muted" role="status">
           {{ 'staff.count' | translate: { count: p.totalElements } }}
         </p>
@@ -128,6 +129,7 @@ const PAGE_SIZE = 20;
             <button type="button" class="btn-secondary" [disabled]="p.page + 1 >= p.totalPages" (click)="go(p.page + 1)">{{ 'staff.next' | translate }} ›</button>
           </nav>
         }
+      }
       }
     </section>
   `
