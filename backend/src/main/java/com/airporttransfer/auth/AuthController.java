@@ -3,6 +3,8 @@ package com.airporttransfer.auth;
 import com.airporttransfer.auth.AuthDtos.AuthResponse;
 import com.airporttransfer.auth.AuthDtos.LoginRequest;
 import com.airporttransfer.auth.JwtService.IssuedToken;
+import com.airporttransfer.common.ApiException;
+import com.airporttransfer.common.RateLimiter;
 import com.airporttransfer.user.PasswordResetService;
 import com.airporttransfer.user.User;
 import com.airporttransfer.user.UserDtos.ChangePasswordRequest;
@@ -13,7 +15,10 @@ import com.airporttransfer.user.UserDtos.RegisterRequest;
 import com.airporttransfer.user.UserDtos.UserDto;
 import com.airporttransfer.user.UserMapper;
 import com.airporttransfer.user.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.time.Duration;
+import java.util.Locale;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,8 +39,17 @@ public class AuthController {
     private final JwtService jwt;
     private final UserMapper mapper;
     private final PasswordResetService passwordReset;
+    private final RateLimiter limiter;
 
-    public AuthController(UserService users, JwtService jwt, UserMapper mapper, PasswordResetService passwordReset) {
+    static final int LOGIN_MAX_FAILURES = 10;
+    static final Duration LOGIN_WINDOW = Duration.ofMinutes(15);
+    static final int FORGOT_MAX_PER_EMAIL = 5;
+    static final int FORGOT_MAX_PER_IP = 30;
+    static final Duration FORGOT_WINDOW = Duration.ofHours(1);
+
+    public AuthController(UserService users, JwtService jwt, UserMapper mapper, PasswordResetService passwordReset,
+                          RateLimiter limiter) {
+        this.limiter = limiter;
         this.passwordReset = passwordReset;
         this.users = users;
         this.jwt = jwt;
@@ -51,7 +65,19 @@ public class AuthController {
 
     @PostMapping("/login")
     public AuthResponse login(@Valid @RequestBody LoginRequest request) {
-        return respond(users.authenticate(request.email(), request.password()));
+        // Failed attempts per e-mail are limited so a password cannot be guessed; a success clears the count.
+        String key = "login:" + request.email().trim().toLowerCase(Locale.ROOT);
+        limiter.assertAllowed(key, LOGIN_MAX_FAILURES, LOGIN_WINDOW);
+        try {
+            User user = users.authenticate(request.email(), request.password());
+            limiter.clear(key);
+            return respond(user);
+        } catch (ApiException e) {
+            if (e.getStatus() == HttpStatus.UNAUTHORIZED) {
+                limiter.record(key, LOGIN_WINDOW);
+            }
+            throw e;
+        }
     }
 
     @GetMapping("/me")
@@ -74,7 +100,14 @@ public class AuthController {
     /** Always 204, whether or not the e-mail has an account. */
     @PostMapping("/forgot-password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+    public void forgotPassword(@Valid @RequestBody ForgotPasswordRequest request, HttpServletRequest http) {
+        // Per e-mail (nobody can flood one inbox) and per client address (nobody can flood many inboxes).
+        String emailKey = "forgot:email:" + request.email().trim().toLowerCase(Locale.ROOT);
+        String ipKey = "forgot:ip:" + http.getRemoteAddr();
+        limiter.assertAllowed(emailKey, FORGOT_MAX_PER_EMAIL, FORGOT_WINDOW);
+        limiter.assertAllowed(ipKey, FORGOT_MAX_PER_IP, FORGOT_WINDOW);
+        limiter.record(emailKey, FORGOT_WINDOW);
+        limiter.record(ipKey, FORGOT_WINDOW);
         passwordReset.request(request.email(), LocaleContextHolder.getLocale());
     }
 

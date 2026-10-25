@@ -26,6 +26,10 @@ public class ApiException extends RuntimeException {
         return new ApiException(HttpStatus.CONFLICT, code, message);
     }
 
+    public static ApiException tooManyRequests(String message) {
+        return new ApiException(HttpStatus.TOO_MANY_REQUESTS, "TOO_MANY_REQUESTS", message);
+    }
+
     public HttpStatus getStatus() {
         return status;
     }

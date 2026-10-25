@@ -46,7 +46,8 @@ The tariffs and exchange rates seeded by `V6__seed_demo_pricing.sql` are **place
 Exchange rates are expressed as TND per 1 unit (EUR 3.4 means 1 EUR = 3.4 TND).
 
 ```bash
-cd backend && mvn test   # integration tests (*IT) need Docker for Testcontainers
+cd backend && mvn test     # unit tests
+cd backend && mvn verify   # + integration tests (*IT); needs Docker, or set TEST_DB_URL / TEST_DB_USER / TEST_DB_PASSWORD
 ```
 
 ## Bookings (step 4)
@@ -103,3 +104,22 @@ New environment variable: `PUBLIC_URL` (default `http://localhost:4200`). New mi
 - Every booking has a payment status: UNPAID, PAID or REFUNDED. Cash is recorded by the driver (or by staff) once the trip has started; the amount is always the price snapshot of the booking.
 - Card payments (Stripe) are not available yet: the `PaymentGateway` interface and the payment ledger are in place, see CLAUDE.md for what to add when a Stripe account exists.
 - Migration `V10__payments.sql`; no new environment variable.
+
+## Quality and deployment (step 10)
+
+- `mvn verify` runs unit tests and the `*IT` integration tests (Failsafe). Without Docker, point `TEST_DB_URL` at an empty disposable PostgreSQL.
+- API errors are translated (fr, en, ar via `Accept-Language`); the `code` field is stable.
+- Rate limits (in memory, per instance): login is locked for 15 minutes after 10 failures for an e-mail; forgot-password allows 5 per e-mail and 30 per IP per hour.
+
+### Deploying with Docker
+
+```bash
+cp .env.example .env        # fill in DB_PASSWORD, JWT_SECRET (32+ chars), PUBLIC_URL, MAIL_*
+docker compose -f docker-compose.prod.yml --env-file .env up -d --build
+```
+
+- The `web` service (nginx) serves the Angular app on `WEB_PORT` (default 80) and proxies `/api` to the backend. Put a TLS-terminating proxy in front of it (set `X-Forwarded-Proto`).
+- The backend runs with the `prod` profile: Swagger is disabled, and it refuses to start with the dev `JWT_SECRET`.
+- To create the first admin, set `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD` for the first start, then remove them.
+- **Before going live**, replace the demo tariffs and exchange rates in `/admin` (the backend logs a WARN while demo data remains).
+- Back up the `pgdata` volume. Flyway migrates the schema on startup.

@@ -3,6 +3,8 @@ package com.airporttransfer.common;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +19,20 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private final MessageSource messages;
+
+    public GlobalExceptionHandler(MessageSource messages) {
+        this.messages = messages;
+    }
+
+    /** The message in the caller's language (Accept-Language); the English text is the fallback. */
+    private String text(String code, String fallback) {
+        return messages.getMessage("error." + code, null, fallback, LocaleContextHolder.getLocale());
+    }
+
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ApiError> api(ApiException ex) {
-        return ResponseEntity.status(ex.getStatus()).body(ApiError.of(ex.getCode(), ex.getMessage()));
+        return ResponseEntity.status(ex.getStatus()).body(ApiError.of(ex.getCode(), text(ex.getCode(), ex.getMessage())));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -28,27 +41,27 @@ public class GlobalExceptionHandler {
         ex.getBindingResult().getFieldErrors()
             .forEach(e -> fields.putIfAbsent(e.getField(), e.getCode() == null ? "Invalid" : e.getCode()));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(new ApiError("VALIDATION_FAILED", "Some fields are invalid", fields));
+            .body(new ApiError("VALIDATION_FAILED", text("VALIDATION_FAILED", "Some fields are invalid"), fields));
     }
 
     @ExceptionHandler({HttpMessageNotReadableException.class, MissingServletRequestParameterException.class,
         MethodArgumentTypeMismatchException.class})
     public ResponseEntity<ApiError> badRequest(Exception ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(ApiError.of("BAD_REQUEST", "The request is malformed or a parameter is missing or invalid"));
+            .body(ApiError.of("BAD_REQUEST", text("BAD_REQUEST", "The request is malformed or a parameter is missing or invalid")));
     }
 
     /** Unique / foreign-key violations: duplicate code, or deleting something still in use. */
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiError> conflict(DataIntegrityViolationException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
-            .body(ApiError.of("CONFLICT", "The operation conflicts with existing data (duplicate or still in use)"));
+            .body(ApiError.of("CONFLICT", text("CONFLICT", "The operation conflicts with existing data (duplicate or still in use)")));
     }
 
     /** Two people changed the same record at once (for example two staff members on one booking). */
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
     public ResponseEntity<ApiError> concurrentUpdate(ObjectOptimisticLockingFailureException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
-            .body(ApiError.of("CONCURRENT_UPDATE", "The record was changed by someone else, reload and try again"));
+            .body(ApiError.of("CONCURRENT_UPDATE", text("CONCURRENT_UPDATE", "The record was changed by someone else, reload and try again")));
     }
 }

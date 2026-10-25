@@ -174,7 +174,9 @@
     "RESET_TOKEN_INVALID": "This link is invalid or has expired.",
     "PAYMENT_NOT_COLLECTABLE": "Cash can only be collected once the trip has started.",
     "ALREADY_PAID": "This booking is already paid.",
-    "PAYMENT_METHOD_MISMATCH": "This booking is not paid in cash."
+    "PAYMENT_METHOD_MISMATCH": "This booking is not paid in cash.",
+    "TOO_MANY_REQUESTS": "Too many attempts. Please try again later.",
+    "CONFLICT": "This operation conflicts with existing data (duplicate or still in use)."
   },
   "status": {
     "PENDING": "Pending",
@@ -423,5 +425,11 @@
       "PAID": "Paid",
       "REFUNDED": "Refunded"
     }
+  },
+  "a11y": {
+    "skip": "Skip to content",
+    "mainNav": "Main navigation",
+    "currency": "Currency",
+    "language": "Language"
   }
 }

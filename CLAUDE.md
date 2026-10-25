@@ -59,6 +59,8 @@ The owner (Hichem) is an experienced Java Spring / Angular developer and writes 
   - **Card payments are not done**: `BookingService.ENABLED_PAYMENT_METHODS` still allows only CASH. To add Stripe once an account exists: add `stripe-java`, implement a `StripeGateway` (EUR and USD) that creates a PaymentIntent, add a webhook endpoint (public path, signature verified) that calls `Booking.markPaid` through `PaymentService`, then enable CARD. New variables then: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`.
   - Frontend: payment status on the customer detail and receipt, staff detail, driver trips; "Espèces encaissées" button for the driver and for staff; "Encaissé" column in the admin stats.
 
+- Step 10 done (branch `chore/quality-deploy`): no migration. `mvn verify` runs the `*IT` classes through Failsafe (`AbstractIT`: Testcontainers, or `TEST_DB_URL`). API error messages are translated (fr default, en, ar from `Accept-Language`) through `error.<CODE>` keys in `messages*.properties`, including 401/403 and validation errors; the `code` stays stable. Rate limiting (in memory, per instance, `common/RateLimiter`): login locks an e-mail for 15 minutes after 10 failed attempts (429 `TOO_MANY_REQUESTS`; this can be used to lock someone out for 15 minutes, accepted trade-off), forgot-password is limited to 5 per e-mail and 30 per IP per hour. Accessibility: skip link, `<main id="main">` focused after each navigation, translated aria-labels (`a11y.*`). Deployment: `backend/Dockerfile`, `frontend/Dockerfile` + `nginx.conf` (serves the SPA, proxies `/api` to `backend`), `docker-compose.prod.yml`, `.env.example`, `application-prod.yml` (Swagger off, forwarded headers). New environment variables: `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_SMTP_AUTH`, `MAIL_STARTTLS`, `WEB_PORT`, `DB_NAME` (compose only).
+
 ## Product rules
 - **Coverage**: all of Tunisia. Airports: Tunis-Carthage (TUN), Monastir (MIR), Enfidha-Hammamet (NBE), Djerba-Zarzis (DJE), Sfax (SFA), Tozeur (TOE), Tabarka (TBJ), Gafsa (GAF). Airports are data, not code: admins can add more.
 - **Directions**: airport → address, address → airport, or round trip (two bookings linked by a shared group id).
@@ -85,7 +87,7 @@ The owner (Hichem) is an experienced Java Spring / Angular developer and writes 
 7. ~~Administration~~ done: user management (list, search, create, disable, change role); screens for tariffs, zones and areas, airports, vehicle types, currencies and exchange rates (replacing the demo prices); statistics (bookings and revenue per currency).
 8. ~~Customer experience~~ done:  home page as designed (floating booking card with live price preview, vehicle cards, airport chips, how it works, footer); booking detail; edit address, flight, notes, luggage and pickup time while PENDING or CONFIRMED (price never changes: to change the vehicle or destination, cancel and rebook); profile (name, phone, password); forgot-password e-mail flow; printable receipt.
 9. ~~Payment (cash)~~ done, Stripe pending:  `PaymentGateway` abstraction, cash flow, payment status on bookings, Stripe card flow with webhook (when a Stripe account exists), refund on cancel, optional local TND gateway later.
-10. **Quality and deployment**: integration tests runnable with `mvn verify` (Failsafe), consistent API error format, translated validation messages, accessibility pass, Dockerfiles, production `docker-compose`, README deployment section.
+10. ~~Quality and deployment~~ done (branch `chore/quality-deploy`): integration tests runnable with `mvn verify` (Failsafe), consistent API error format, translated validation messages, accessibility pass, Dockerfiles, production `docker-compose`, README deployment section.
 
 Later, not planned: promo codes, driver ratings, WhatsApp, real distance pricing.
 
@@ -115,7 +117,8 @@ Modern, clean, trustworthy, Tunisian. **White and Tunisian red.** It must not lo
 ```bash
 docker compose up -d
 cd backend && mvn spring-boot:run          # http://localhost:8080, Swagger at /swagger-ui.html
-cd backend && mvn test                     # needs Docker for Testcontainers
+cd backend && mvn test                     # unit tests only (fast, no Docker)
+cd backend && mvn verify                   # unit tests + *IT integration tests (Failsafe); needs Docker, or TEST_DB_URL / TEST_DB_USER / TEST_DB_PASSWORD pointing at an empty disposable PostgreSQL
 cd frontend && npm install && npm start    # http://localhost:4200
 cd frontend && npm run build
 ```

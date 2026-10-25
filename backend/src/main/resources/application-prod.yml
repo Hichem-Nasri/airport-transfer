@@ -1,0 +1,17 @@
+# Production profile (SPRING_PROFILES_ACTIVE=prod). Secrets still come from environment variables only.
+server:
+  # Behind nginx: trust X-Forwarded-* so the client address (rate limiting) and scheme are the real ones.
+  forward-headers-strategy: framework
+  shutdown: graceful
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true

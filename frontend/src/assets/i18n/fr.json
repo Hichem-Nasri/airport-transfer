@@ -174,7 +174,9 @@
     "RESET_TOKEN_INVALID": "Ce lien est invalide ou a expiré.",
     "PAYMENT_NOT_COLLECTABLE": "Les espèces ne peuvent être encaissées qu’une fois la course commencée.",
     "ALREADY_PAID": "Cette réservation est déjà payée.",
-    "PAYMENT_METHOD_MISMATCH": "Cette réservation ne se paie pas en espèces."
+    "PAYMENT_METHOD_MISMATCH": "Cette réservation ne se paie pas en espèces.",
+    "TOO_MANY_REQUESTS": "Trop de tentatives. Réessayez plus tard.",
+    "CONFLICT": "Cette opération entre en conflit avec des données existantes (doublon ou élément encore utilisé)."
   },
   "status": {
     "PENDING": "En attente",
@@ -423,5 +425,11 @@
       "PAID": "Payé",
       "REFUNDED": "Remboursé"
     }
+  },
+  "a11y": {
+    "skip": "Aller au contenu",
+    "mainNav": "Navigation principale",
+    "currency": "Devise",
+    "language": "Langue"
   }
 }
