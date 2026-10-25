@@ -27,3 +27,10 @@ management:
 app:
   cors:
     allowed-origins: ${CORS_ORIGINS:http://localhost:4200}
+  jwt:
+    # Dev-only default. Outside dev, always set JWT_SECRET (32+ characters); the prod profile refuses the default.
+    secret: ${JWT_SECRET:dev-only-secret-change-me-before-production-0123456789}
+    expiration-minutes: ${JWT_EXPIRATION_MINUTES:120}
+  seed-admin:
+    email: ${SEED_ADMIN_EMAIL:}
+    password: ${SEED_ADMIN_PASSWORD:}

@@ -1,3 +1,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .field-label {
+    @apply block text-sm font-semibold text-ink;
+  }
+  .field-input {
+    @apply mt-1 block min-h-11 w-full rounded-xl border border-brand-line bg-white px-3 text-ink
+      focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1;
+  }
+  .field-input[aria-invalid='true'] {
+    @apply border-brand;
+  }
+  .field-error {
+    @apply mt-1 text-sm font-semibold text-brand-dark;
+  }
+  .btn-primary {
+    @apply inline-flex min-h-11 items-center justify-center rounded-xl bg-brand px-5 text-center font-semibold
+      text-white hover:bg-brand-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-brand
+      focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .btn-secondary {
+    @apply inline-flex min-h-11 items-center justify-center rounded-xl border border-brand-line bg-white px-5
+      text-center font-semibold text-ink hover:border-brand hover:text-brand focus:outline-none
+      focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2;
+  }
+}

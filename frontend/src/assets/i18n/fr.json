@@ -1,9 +1,69 @@
 {
-  "nav": { "destinations": "Destinations", "vehicles": "Véhicules", "how": "Comment ça marche" },
+  "nav": {
+    "destinations": "Destinations",
+    "vehicles": "Véhicules",
+    "how": "Comment ça marche",
+    "login": "Connexion",
+    "account": "Mon compte",
+    "logout": "Se déconnecter"
+  },
   "home": {
     "badge": "Toute la Tunisie, 7j/7",
     "title": "Du terminal à votre porte, partout en Tunisie.",
     "subtitle": "Réservez un chauffeur privé en quelques clics. Prix fixé à l’avance, accueil à l’arrivée, paiement dans la devise de votre choix."
   },
-  "api": { "checking": "Connexion à l’API…", "up": "API connectée", "down": "API indisponible" }
+  "api": {
+    "checking": "Connexion à l’API…",
+    "up": "API connectée",
+    "down": "API indisponible"
+  },
+  "auth": {
+    "fields": {
+      "email": "Adresse e-mail",
+      "password": "Mot de passe",
+      "fullName": "Nom complet",
+      "phone": "Téléphone (facultatif)"
+    },
+    "passwordHint": "Au moins {{min}} caractères.",
+    "login": {
+      "title": "Connexion",
+      "subtitle": "Accédez à vos réservations.",
+      "submit": "Se connecter",
+      "noAccount": "Pas encore de compte ?",
+      "register": "Créer un compte"
+    },
+    "register": {
+      "title": "Créer un compte",
+      "subtitle": "Réservez votre transfert en quelques minutes.",
+      "submit": "Créer mon compte",
+      "haveAccount": "Déjà un compte ?",
+      "login": "Se connecter"
+    }
+  },
+  "account": {
+    "title": "Mon compte",
+    "role": "Profil",
+    "loading": "Chargement…"
+  },
+  "roles": {
+    "CUSTOMER": "Client",
+    "DRIVER": "Chauffeur",
+    "ADMIN": "Administrateur"
+  },
+  "validation": {
+    "required": "Ce champ est obligatoire.",
+    "email": "Saisissez une adresse e-mail valide.",
+    "minlength": "Au moins {{min}} caractères.",
+    "phone": "Numéro de téléphone invalide."
+  },
+  "errors": {
+    "INVALID_CREDENTIALS": "E-mail ou mot de passe incorrect.",
+    "EMAIL_ALREADY_USED": "Un compte existe déjà avec cet e-mail.",
+    "VALIDATION_FAILED": "Certains champs sont invalides.",
+    "UNAUTHORIZED": "Veuillez vous connecter.",
+    "FORBIDDEN": "Vous n’avez pas le droit d’effectuer cette action.",
+    "BAD_REQUEST": "Requête invalide.",
+    "NETWORK": "Impossible de joindre le serveur. Réessayez.",
+    "UNKNOWN": "Une erreur est survenue. Réessayez."
+  }
 }

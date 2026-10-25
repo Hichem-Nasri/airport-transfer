@@ -1,9 +1,69 @@
 {
-  "nav": { "destinations": "Destinations", "vehicles": "Vehicles", "how": "How it works" },
+  "nav": {
+    "destinations": "Destinations",
+    "vehicles": "Vehicles",
+    "how": "How it works",
+    "login": "Log in",
+    "account": "My account",
+    "logout": "Log out"
+  },
   "home": {
     "badge": "All over Tunisia, 7 days a week",
     "title": "From the terminal to your door, anywhere in Tunisia.",
     "subtitle": "Book a private driver in a few clicks. Fixed price in advance, meet and greet on arrival, pay in the currency of your choice."
   },
-  "api": { "checking": "Connecting to the API…", "up": "API connected", "down": "API unavailable" }
+  "api": {
+    "checking": "Connecting to the API…",
+    "up": "API connected",
+    "down": "API unavailable"
+  },
+  "auth": {
+    "fields": {
+      "email": "E-mail address",
+      "password": "Password",
+      "fullName": "Full name",
+      "phone": "Phone (optional)"
+    },
+    "passwordHint": "At least {{min}} characters.",
+    "login": {
+      "title": "Log in",
+      "subtitle": "Access your bookings.",
+      "submit": "Log in",
+      "noAccount": "No account yet?",
+      "register": "Create an account"
+    },
+    "register": {
+      "title": "Create an account",
+      "subtitle": "Book your transfer in a few minutes.",
+      "submit": "Create my account",
+      "haveAccount": "Already have an account?",
+      "login": "Log in"
+    }
+  },
+  "account": {
+    "title": "My account",
+    "role": "Role",
+    "loading": "Loading…"
+  },
+  "roles": {
+    "CUSTOMER": "Customer",
+    "DRIVER": "Driver",
+    "ADMIN": "Administrator"
+  },
+  "validation": {
+    "required": "This field is required.",
+    "email": "Enter a valid e-mail address.",
+    "minlength": "At least {{min}} characters.",
+    "phone": "Invalid phone number."
+  },
+  "errors": {
+    "INVALID_CREDENTIALS": "Incorrect e-mail or password.",
+    "EMAIL_ALREADY_USED": "An account already exists with this e-mail.",
+    "VALIDATION_FAILED": "Some fields are invalid.",
+    "UNAUTHORIZED": "Please log in.",
+    "FORBIDDEN": "You are not allowed to do this.",
+    "BAD_REQUEST": "Invalid request.",
+    "NETWORK": "Cannot reach the server. Please try again.",
+    "UNKNOWN": "Something went wrong. Please try again."
+  }
 }

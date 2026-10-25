@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { AuthService } from './core/auth.service';
 import { CurrencyService } from './core/currency.service';
 import { Lang, LanguageService } from './core/language.service';
 import { LogoComponent } from './shared/logo.component';
@@ -38,6 +39,11 @@ import { LogoComponent } from './shared/logo.component';
             <option [value]="l" [selected]="lang.current() === l">{{ l.toUpperCase() }}</option>
           }
         </select>
+        @if (auth.isLoggedIn()) {
+          <a routerLink="/account" class="btn-secondary">{{ 'nav.account' | translate }}</a>
+        } @else {
+          <a routerLink="/login" class="btn-primary">{{ 'nav.login' | translate }}</a>
+        }
       </div>
     </header>
     <router-outlet />
@@ -46,6 +52,7 @@ import { LogoComponent } from './shared/logo.component';
 export class AppComponent {
   readonly currency = inject(CurrencyService);
   readonly lang = inject(LanguageService);
+  readonly auth = inject(AuthService);
 
   onLang(value: string): void {
     this.lang.use(value as Lang);

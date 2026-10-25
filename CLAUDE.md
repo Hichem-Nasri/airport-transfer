@@ -21,7 +21,7 @@ The owner (Hichem) is an experienced Java Spring / Angular developer and writes 
 ## Current state
 - Step 1 done: monorepo skeleton, `GET /api/public/ping`, CORS, Swagger.
 - Step 2 done: JWT auth (`/api/auth/register|login|me`), roles CUSTOMER / DRIVER / ADMIN, `users` table (`V2__users.sql`), admin seeding via `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD`, Angular login / register / account pages, auth interceptor and guard.
-- Public sign-up only creates CUSTOMER. DRIVER and ADMIN accounts are created by an admin.
+- Public sign-up only creates CUSTOMER. DRIVER and ADMIN accounts are created by an admin. Admins create them with `POST /api/admin/users`. Token lifetime: `JWT_EXPIRATION_MINUTES` (default 120). `/api/driver/**` requires DRIVER.
 
 ## Product rules
 - **Coverage**: all of Tunisia. Airports: Tunis-Carthage (TUN), Monastir (MIR), Enfidha-Hammamet (NBE), Djerba-Zarzis (DJE), Sfax (SFA), Tozeur (TOE), Tabarka (TBJ), Gafsa (GAF). Airports are data, not code: admins can add more.
