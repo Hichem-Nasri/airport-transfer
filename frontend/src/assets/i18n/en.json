@@ -7,7 +7,9 @@
     "account": "My account",
     "logout": "Log out",
     "book": "Book",
-    "bookings": "My bookings"
+    "bookings": "My bookings",
+    "staff": "Management",
+    "driver": "My trips"
   },
   "home": {
     "badge": "All over Tunisia, 7 days a week",
@@ -51,7 +53,8 @@
   "roles": {
     "CUSTOMER": "Customer",
     "DRIVER": "Driver",
-    "ADMIN": "Administrator"
+    "ADMIN": "Administrator",
+    "MODERATOR": "Moderator"
   },
   "validation": {
     "required": "This field is required.",
@@ -83,7 +86,12 @@
     "TARIFF_NOT_FOUND": "No tariff for this trip.",
     "EXCHANGE_RATE_NOT_FOUND": "Exchange rate unavailable.",
     "BOOKING_NOT_FOUND": "Booking not found.",
-    "INVALID_STATUS_TRANSITION": "This booking can no longer be cancelled."
+    "INVALID_STATUS_TRANSITION": "This booking can no longer be cancelled.",
+    "DRIVER_UNAVAILABLE": "This driver already has a trip within 2 hours of this pickup.",
+    "BOOKING_NOT_ASSIGNABLE": "Confirm the booking before assigning a driver.",
+    "DRIVER_NOT_FOUND": "Driver not found.",
+    "TRIP_NOT_FOUND": "Trip not found.",
+    "CONCURRENT_UPDATE": "Someone else just changed this booking. Reload the page."
   },
   "status": {
     "PENDING": "Pending",
@@ -165,5 +173,55 @@
       "viewAll": "View my bookings",
       "another": "New booking"
     }
+  },
+  "staff": {
+    "title": "Booking management",
+    "filters": {
+      "search": "Search",
+      "searchHint": "Reference, name, e-mail or phone",
+      "status": "Status",
+      "all": "All",
+      "from": "From",
+      "to": "To",
+      "order": "Sort",
+      "soonest": "Nearest pickup first",
+      "latest": "Latest pickup first",
+      "unassigned": "Without a driver only",
+      "reset": "Reset",
+      "apply": "Filter"
+    },
+    "driver": "Driver",
+    "customer": "Customer",
+    "noDriver": "No driver",
+    "count": "{{count}} booking(s)",
+    "empty": "No booking matches.",
+    "pagination": "Pagination",
+    "previous": "Previous",
+    "next": "Next",
+    "backToList": "Back to the list",
+    "trip": "Trip",
+    "pickup": "Pickup (Tunis time)",
+    "price": "Price",
+    "actions": "Actions",
+    "noActions": "This booking is finished: no action possible.",
+    "confirm": "Confirm",
+    "start": "Start the trip",
+    "complete": "Complete the trip",
+    "assign": "Assign a driver",
+    "reassign": "Change driver",
+    "assignAction": "Assign",
+    "assignAnyway": "Assign anyway",
+    "cancelReason": "Cancellation reason (sent to the customer)",
+    "history": "History"
+  },
+  "driver": {
+    "title": "My trips",
+    "refresh": "Refresh",
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "empty": "No trips.",
+    "collect": "To collect:",
+    "start": "Start the trip",
+    "complete": "Complete the trip"
   }
 }

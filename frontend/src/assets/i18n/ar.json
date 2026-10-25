@@ -7,7 +7,9 @@
     "account": "حسابي",
     "logout": "تسجيل الخروج",
     "book": "احجز",
-    "bookings": "حجوزاتي"
+    "bookings": "حجوزاتي",
+    "staff": "الإدارة",
+    "driver": "رحلاتي"
   },
   "home": {
     "badge": "في كامل تونس، 7 أيام في الأسبوع",
@@ -51,7 +53,8 @@
   "roles": {
     "CUSTOMER": "عميل",
     "DRIVER": "سائق",
-    "ADMIN": "مسؤول"
+    "ADMIN": "مسؤول",
+    "MODERATOR": "مشرف"
   },
   "validation": {
     "required": "هذا الحقل مطلوب.",
@@ -83,7 +86,12 @@
     "TARIFF_NOT_FOUND": "لا توجد تعرفة لهذه الرحلة.",
     "EXCHANGE_RATE_NOT_FOUND": "سعر الصرف غير متوفر.",
     "BOOKING_NOT_FOUND": "الحجز غير موجود.",
-    "INVALID_STATUS_TRANSITION": "لم يعد بالإمكان إلغاء هذا الحجز."
+    "INVALID_STATUS_TRANSITION": "لم يعد بالإمكان إلغاء هذا الحجز.",
+    "DRIVER_UNAVAILABLE": "لدى هذا السائق رحلة أخرى خلال ساعتين من موعد الاستلام.",
+    "BOOKING_NOT_ASSIGNABLE": "أكّد الحجز أولا قبل تعيين سائق.",
+    "DRIVER_NOT_FOUND": "السائق غير موجود.",
+    "TRIP_NOT_FOUND": "الرحلة غير موجودة.",
+    "CONCURRENT_UPDATE": "قام شخص آخر بتعديل هذا الحجز للتو. أعد تحميل الصفحة."
   },
   "status": {
     "PENDING": "قيد الانتظار",
@@ -165,5 +173,55 @@
       "viewAll": "عرض حجوزاتي",
       "another": "حجز جديد"
     }
+  },
+  "staff": {
+    "title": "إدارة الحجوزات",
+    "filters": {
+      "search": "بحث",
+      "searchHint": "المرجع أو الاسم أو البريد أو الهاتف",
+      "status": "الحالة",
+      "all": "الكل",
+      "from": "من",
+      "to": "إلى",
+      "order": "الترتيب",
+      "soonest": "الأقرب موعدا أولا",
+      "latest": "الأبعد موعدا أولا",
+      "unassigned": "بدون سائق فقط",
+      "reset": "إعادة ضبط",
+      "apply": "تصفية"
+    },
+    "driver": "السائق",
+    "customer": "العميل",
+    "noDriver": "لا يوجد سائق",
+    "count": "{{count}} حجز",
+    "empty": "لا يوجد حجز مطابق.",
+    "pagination": "التنقل بين الصفحات",
+    "previous": "السابق",
+    "next": "التالي",
+    "backToList": "العودة إلى القائمة",
+    "trip": "الرحلة",
+    "pickup": "وقت الاستلام (بتوقيت تونس)",
+    "price": "السعر",
+    "actions": "الإجراءات",
+    "noActions": "هذا الحجز منتهٍ: لا يوجد إجراء ممكن.",
+    "confirm": "تأكيد",
+    "start": "بدء الرحلة",
+    "complete": "إنهاء الرحلة",
+    "assign": "تعيين سائق",
+    "reassign": "تغيير السائق",
+    "assignAction": "تعيين",
+    "assignAnyway": "تعيين رغم ذلك",
+    "cancelReason": "سبب الإلغاء (يُرسل إلى العميل)",
+    "history": "السجل"
+  },
+  "driver": {
+    "title": "رحلاتي",
+    "refresh": "تحديث",
+    "upcoming": "القادمة",
+    "past": "السابقة",
+    "empty": "لا توجد رحلات.",
+    "collect": "المبلغ المطلوب:",
+    "start": "بدء الرحلة",
+    "complete": "إنهاء الرحلة"
   }
 }

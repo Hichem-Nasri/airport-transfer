@@ -40,6 +40,8 @@ The owner (Hichem) is an experienced Java Spring / Angular developer and writes 
   - Every status change goes through `BookingWorkflowService` (rules in `BookingStatusService`, then history row, then event). E-mails after commit: customer on CONFIRMED, COMPLETED, driver assigned, and cancellation by staff (in the booking's `customer_language`); driver (in French) on assignment and cancellation. Two people acting on the same booking at once: the second gets 409 `CONCURRENT_UPDATE`.
   - Roles: MODERATOR manages bookings and drivers' assignments only; `/api/admin/**` stays ADMIN-only. Accounts are still created by an admin (`POST /api/admin/users`, role MODERATOR now accepted).
 
+- Step 6 done (branch `feat/staff-ui`, frontend only): `/staff/bookings` (filters, search, pagination), `/staff/bookings/:id` (detail, history, confirm, assign or reassign with the "assign anyway" prompt on a 2-hour conflict, start, complete, cancel with reason) for MODERATOR and ADMIN; `/driver` (upcoming and past trips, start, complete, call the customer) for DRIVER. `roleGuard(...roles)` in `core/auth.guard.ts` (the server enforces the same rules); after signing in each role lands on its own page (`homeFor`). The header shows "Gestion" or "Mes courses" by role. New shared `StatusBadgeComponent`. Staff booking creation on behalf of a customer (phone orders) is planned with step 8, once the password-reset flow exists.
+
 ## Product rules
 - **Coverage**: all of Tunisia. Airports: Tunis-Carthage (TUN), Monastir (MIR), Enfidha-Hammamet (NBE), Djerba-Zarzis (DJE), Sfax (SFA), Tozeur (TOE), Tabarka (TBJ), Gafsa (GAF). Airports are data, not code: admins can add more.
 - **Directions**: airport → address, address → airport, or round trip (two bookings linked by a shared group id).
@@ -62,7 +64,7 @@ The owner (Hichem) is an experienced Java Spring / Angular developer and writes 
 3. ~~Data model~~ done
 4. ~~Booking flow~~ done
 5. ~~Booking operations (backend)~~ done
-6. **Staff and driver web apps**: role-aware navigation and guards; moderator/admin dashboard (bookings table with filters, detail, confirm, assign driver, cancel); driver page (my trips, start, complete).
+6. ~~Staff and driver web apps~~ done
 7. **Administration**: user management (list, search, create, disable, change role); screens for tariffs, zones and areas, airports, vehicle types, currencies and exchange rates (replacing the demo prices); statistics (bookings and revenue per currency).
 8. **Customer experience**: home page as designed (floating booking card with live price preview, vehicle cards, airport chips, how it works, footer); booking detail; edit address, flight, notes, luggage and pickup time while PENDING or CONFIRMED (price never changes: to change the vehicle or destination, cancel and rebook); profile (name, phone, password); forgot-password e-mail flow; printable receipt.
 9. **Payment**: `PaymentGateway` abstraction, cash flow, payment status on bookings, Stripe card flow with webhook (when a Stripe account exists), refund on cancel, optional local TND gateway later.

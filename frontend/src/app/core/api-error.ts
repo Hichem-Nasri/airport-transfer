@@ -14,7 +14,12 @@ export function errorKey(error: unknown): string {
   return 'errors.UNKNOWN';
 }
 
+/** The stable error code of an API error, or null. */
+export function errorCode(error: unknown): string | null {
+  return error instanceof HttpErrorResponse ? ((error.error as { code?: string } | null)?.code ?? null) : null;
+}
+
 /** Only accepts in-app paths, so a crafted `returnUrl` cannot redirect to another site. */
-export function safeReturnUrl(value: string | null): string {
-  return value && value.startsWith('/') && !value.startsWith('//') ? value : '/account';
+export function safeReturnUrl(value: string | null, fallback = '/account'): string {
+  return value && value.startsWith('/') && !value.startsWith('//') ? value : fallback;
 }

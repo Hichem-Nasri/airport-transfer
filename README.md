@@ -72,3 +72,9 @@ Staff (MODERATOR or ADMIN) manage every booking under `/api/staff`; drivers work
 Typical flow: a customer books (PENDING) → staff confirm (CONFIRMED, customer e-mailed) → staff assign a driver (ASSIGNED, customer and driver e-mailed) → the driver starts (IN_PROGRESS) and completes (COMPLETED) the trip. Staff can cancel with a reason until the trip starts; every change is kept in the booking's history.
 
 Try it: start the backend with `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD`, sign in as that admin in Swagger (`/api/auth/login`, then "Authorize"), create a moderator and a driver with `POST /api/admin/users` (roles `MODERATOR`, `DRIVER`). The web screens for staff and drivers come in step 6.
+
+## Staff and driver screens (step 6)
+
+- Moderator or admin: `/staff/bookings` (also reached from "Gestion" in the header). Click a booking for its detail: confirm, assign a driver, start, complete, cancel with a reason, and the full history.
+- Driver: `/driver` ("Mes courses"): upcoming trips with the customer's phone and the amount to collect, buttons to start and complete.
+- Each role is sent to its own page after signing in. Create moderator and driver accounts with `POST /api/admin/users` until the user-management screen of step 7.

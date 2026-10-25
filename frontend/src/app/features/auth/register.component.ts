@@ -3,7 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { errorKey, safeReturnUrl } from '../../core/api-error';
-import { AuthService } from '../../core/auth.service';
+import { AuthService, homeFor } from '../../core/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -104,7 +104,8 @@ export class RegisterComponent {
     this.loading.set(true);
     this.error.set(null);
     this.auth.register(this.form.getRawValue()).subscribe({
-      next: () => void this.router.navigateByUrl(safeReturnUrl(this.returnUrl)),
+      next: (response) =>
+        void this.router.navigateByUrl(safeReturnUrl(this.returnUrl, homeFor(response.user.role))),
       error: (e: unknown) => {
         this.error.set(errorKey(e));
         this.loading.set(false);

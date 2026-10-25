@@ -7,7 +7,9 @@
     "account": "Mon compte",
     "logout": "Se déconnecter",
     "book": "Réserver",
-    "bookings": "Mes réservations"
+    "bookings": "Mes réservations",
+    "staff": "Gestion",
+    "driver": "Mes courses"
   },
   "home": {
     "badge": "Toute la Tunisie, 7j/7",
@@ -51,7 +53,8 @@
   "roles": {
     "CUSTOMER": "Client",
     "DRIVER": "Chauffeur",
-    "ADMIN": "Administrateur"
+    "ADMIN": "Administrateur",
+    "MODERATOR": "Modérateur"
   },
   "validation": {
     "required": "Ce champ est obligatoire.",
@@ -83,7 +86,12 @@
     "TARIFF_NOT_FOUND": "Aucun tarif pour ce trajet.",
     "EXCHANGE_RATE_NOT_FOUND": "Taux de change indisponible.",
     "BOOKING_NOT_FOUND": "Réservation introuvable.",
-    "INVALID_STATUS_TRANSITION": "Cette réservation ne peut plus être annulée."
+    "INVALID_STATUS_TRANSITION": "Cette réservation ne peut plus être annulée.",
+    "DRIVER_UNAVAILABLE": "Ce chauffeur a déjà une course à moins de 2 heures de cette prise en charge.",
+    "BOOKING_NOT_ASSIGNABLE": "Confirmez d’abord la réservation avant d’affecter un chauffeur.",
+    "DRIVER_NOT_FOUND": "Chauffeur introuvable.",
+    "TRIP_NOT_FOUND": "Course introuvable.",
+    "CONCURRENT_UPDATE": "Quelqu’un d’autre vient de modifier cette réservation. Rechargez la page."
   },
   "status": {
     "PENDING": "En attente",
@@ -165,5 +173,55 @@
       "viewAll": "Voir mes réservations",
       "another": "Nouvelle réservation"
     }
+  },
+  "staff": {
+    "title": "Gestion des réservations",
+    "filters": {
+      "search": "Recherche",
+      "searchHint": "Référence, nom, e-mail ou téléphone",
+      "status": "Statut",
+      "all": "Tous",
+      "from": "Du",
+      "to": "Au",
+      "order": "Tri",
+      "soonest": "Prise en charge la plus proche",
+      "latest": "Prise en charge la plus lointaine",
+      "unassigned": "Sans chauffeur seulement",
+      "reset": "Réinitialiser",
+      "apply": "Filtrer"
+    },
+    "driver": "Chauffeur",
+    "customer": "Client",
+    "noDriver": "Aucun chauffeur",
+    "count": "{{count}} réservation(s)",
+    "empty": "Aucune réservation ne correspond.",
+    "pagination": "Pagination",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "backToList": "Retour à la liste",
+    "trip": "Trajet",
+    "pickup": "Prise en charge (heure de Tunis)",
+    "price": "Prix",
+    "actions": "Actions",
+    "noActions": "Cette réservation est terminée : aucune action possible.",
+    "confirm": "Confirmer",
+    "start": "Démarrer la course",
+    "complete": "Terminer la course",
+    "assign": "Affecter un chauffeur",
+    "reassign": "Changer de chauffeur",
+    "assignAction": "Affecter",
+    "assignAnyway": "Affecter quand même",
+    "cancelReason": "Motif de l’annulation (envoyé au client)",
+    "history": "Historique"
+  },
+  "driver": {
+    "title": "Mes courses",
+    "refresh": "Actualiser",
+    "upcoming": "À venir",
+    "past": "Passées",
+    "empty": "Aucune course.",
+    "collect": "À encaisser :",
+    "start": "Démarrer la course",
+    "complete": "Terminer la course"
   }
 }

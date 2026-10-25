@@ -18,6 +18,12 @@ import { LogoComponent } from './shared/logo.component';
         @if (auth.isLoggedIn()) {
           <a routerLink="/bookings" class="hover:text-brand">{{ 'nav.bookings' | translate }}</a>
         }
+        @if (auth.hasRole('MODERATOR', 'ADMIN')) {
+          <a routerLink="/staff/bookings" class="hover:text-brand">{{ 'nav.staff' | translate }}</a>
+        }
+        @if (auth.hasRole('DRIVER')) {
+          <a routerLink="/driver" class="hover:text-brand">{{ 'nav.driver' | translate }}</a>
+        }
         <a href="#" class="hover:text-brand">{{ 'nav.destinations' | translate }}</a>
         <a href="#" class="hover:text-brand">{{ 'nav.vehicles' | translate }}</a>
         <a href="#" class="hover:text-brand">{{ 'nav.how' | translate }}</a>

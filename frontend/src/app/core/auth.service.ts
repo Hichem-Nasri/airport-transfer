@@ -1,9 +1,22 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, tap } from 'rxjs';
+import { Observable, catchError, of, shareReplay, tap } from 'rxjs';
 
-export type Role = 'CUSTOMER' | 'DRIVER' | 'ADMIN';
+export type Role = 'CUSTOMER' | 'DRIVER' | 'MODERATOR' | 'ADMIN';
+
+/** Where each role lands after signing in. */
+export function homeFor(role: Role): string {
+  switch (role) {
+    case 'ADMIN':
+    case 'MODERATOR':
+      return '/staff/bookings';
+    case 'DRIVER':
+      return '/driver';
+    default:
+      return '/bookings';
+  }
+}
 
 export interface User {
   id: number;
@@ -50,16 +63,34 @@ export class AuthService {
   readonly isLoggedIn = computed(() => this.tokenSignal() !== null);
   readonly isAdmin = computed(() => this.user()?.role === 'ADMIN');
 
+  /** Emits once the user of a restored session is known (null when the session is not valid). */
+  private readonly restored$: Observable<User | null>;
+
   constructor() {
     const stored = this.readStorage();
     if (stored) {
       this.tokenSignal.set(stored.token);
-      this.http.get<User>('/api/auth/me').subscribe({
-        next: (user) => this.user.set(user),
+      this.restored$ = this.http.get<User>('/api/auth/me').pipe(
+        tap((user) => this.user.set(user)),
         // A 401 is handled by the interceptor (logout); other errors keep the session.
-        error: () => undefined
-      });
+        catchError(() => of(null)),
+        shareReplay(1)
+      );
+      this.restored$.subscribe();
+    } else {
+      this.restored$ = of(null);
     }
+  }
+
+  /** The signed-in user, waiting for a restored session to finish loading. */
+  whenUserKnown(): Observable<User | null> {
+    const user = this.user();
+    return user ? of(user) : this.restored$;
+  }
+
+  hasRole(...roles: Role[]): boolean {
+    const role = this.user()?.role;
+    return role !== undefined && roles.includes(role);
   }
 
   login(credentials: Credentials): Observable<AuthResponse> {

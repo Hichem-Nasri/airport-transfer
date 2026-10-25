@@ -29,3 +29,13 @@ export function formatTunis(iso: string, lang: Lang): string {
     timeStyle: 'short'
   }).format(new Date(iso));
 }
+
+/** The UTC instant at which a Tunis calendar day (yyyy-MM-dd) starts. */
+export function tunisDayStartIso(date: string): string {
+  return tunisLocalToIso(date, '00:00');
+}
+
+/** The UTC instant at which the next Tunis calendar day starts (an exclusive end for a day filter). */
+export function tunisDayEndIso(date: string): string {
+  return new Date(Date.parse(tunisDayStartIso(date)) + 24 * 60 * 60 * 1000).toISOString();
+}

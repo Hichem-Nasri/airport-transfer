@@ -2,25 +2,17 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { errorKey } from '../../core/api-error';
-import { Booking, BookingService, BookingStatus } from '../../core/booking.service';
+import { Booking, BookingService } from '../../core/booking.service';
 import { LanguageService } from '../../core/language.service';
 import { localName } from '../../core/localized';
 import { formatMoney } from '../../core/money';
 import { formatTunis } from '../../core/tunis-time';
-
-const BADGES: Record<BookingStatus, string> = {
-  PENDING: 'bg-brand-soft text-brand-dark',
-  CONFIRMED: 'bg-ink text-white',
-  ASSIGNED: 'bg-ink text-white',
-  IN_PROGRESS: 'bg-ink text-white',
-  COMPLETED: 'bg-green-100 text-green-800',
-  CANCELLED: 'bg-gray-200 text-muted'
-};
+import { StatusBadgeComponent } from '../../shared/status-badge.component';
 
 @Component({
   selector: 'app-bookings',
   standalone: true,
-  imports: [RouterLink, TranslateModule],
+  imports: [RouterLink, TranslateModule, StatusBadgeComponent],
   template: `
     <section class="mx-auto w-full max-w-2xl px-4 py-8 sm:px-6">
       <div class="flex items-center justify-between gap-4">
@@ -45,9 +37,7 @@ const BADGES: Record<BookingStatus, string> = {
             <li class="rounded-2xl border border-brand-line bg-white p-4">
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <p class="text-lg font-extrabold tracking-wide" dir="ltr">{{ b.reference }}</p>
-                <span class="rounded-full px-3 py-1 text-sm font-semibold" [class]="badge(b.status)">
-                  {{ 'status.' + b.status | translate }}
-                </span>
+                <app-status-badge [status]="b.status" />
               </div>
               @if (b.groupId) {
                 <p class="mt-1 text-sm font-semibold text-brand">{{ 'bookings.roundTrip' | translate }}</p>
@@ -119,10 +109,6 @@ export class BookingsComponent {
         this.loading.set(false);
       }
     });
-  }
-
-  badge(status: BookingStatus): string {
-    return BADGES[status];
   }
 
   from(b: Booking): string {
