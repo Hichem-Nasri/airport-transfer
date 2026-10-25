@@ -27,6 +27,12 @@ The owner (Hichem) is an experienced Java Spring / Angular developer and writes 
   - Exchange rates are stored as **TND per 1 unit** of the currency, as an append-only history; the latest row applies. Quote = TND price / rate, rounded HALF_UP to the currency's decimals.
   - **Seeded tariffs and exchange rates are DEMO data** (`is_demo = true`, flagged in `V6`, `"demo": true` in quotes, WARN at startup in the `prod` profile). Replace them with the real price grid before going live; tariffs saved through the admin API are real (`is_demo = false`).
   - Endpoints: public `GET /api/public/{airports,zones,vehicle-types,currencies}` and `GET /api/public/quote?airportId&zoneId&vehicleTypeId&currency`; admin (ROLE_ADMIN, enforced in `SecurityConfig`) under `/api/admin/{airports,zones,areas,vehicle-types,tariffs,currencies,exchange-rates}`.
+- Step 4 done (branch `feat/bookings`): migration `V7__bookings.sql`; package `booking` (entity, repository, `BookingService`, `BookingPricingService`, `BookingStatusService`, `ReferenceGenerator`, confirmation mail). New dependency: `spring-boot-starter-mail`; texts in `messages*.properties` (fr default, en, ar chosen from `Accept-Language`); new env variable `MAIL_FROM` (default `noreply@marhba.tn`).
+  - Endpoints: `POST /api/bookings` (one way, or round trip when `returnPickupAt` is set: two bookings, opposite directions, shared `groupId`), `GET /api/bookings` (mine, latest pickup first), `GET /api/bookings/{id}`, `POST /api/bookings/{id}/cancel`; public `GET /api/public/booking-quote?airportId&zoneId&vehicleTypeId&currency&roundTrip` (per-leg price and total, same calculation as the booking, so preview = charge).
+  - Price snapshot per booking: `price_tnd`, `currency`, `exchange_rate` (null for TND), `amount`, `price_is_demo`. A customer sees only their own bookings (someone else's id answers 404 `BOOKING_NOT_FOUND`).
+  - Rules: pickup must be in the future (`PICKUP_IN_PAST`); return after the first trip (`RETURN_BEFORE_OUTBOUND`); passengers up to the vehicle's maximum (a bigger vehicle may carry fewer people, `VEHICLE_CAPACITY_EXCEEDED`); only CASH is accepted until step 5 (`PAYMENT_METHOD_NOT_AVAILABLE`, see `BookingService.ENABLED_PAYMENT_METHODS`). Status transitions live only in `BookingStatusService`; new bookings start PENDING.
+  - Frontend: `/book` (guarded; 3 steps in `features/booking`, state in `BookingDraftService`) and `/bookings` (guarded). The customer picks a governorate (area); its zone is derived. Dates are entered in Tunis time and sent as UTC (Tunisia is UTC+1 all year). Prices are fetched from the API in the chosen currency; the browser only formats them. Unit tests: `ng test` (Karma/Jasmine added in `package.json`, run `npm install` to refresh the lockfile).
+  - Not in V1 step 4 (left for later steps): card payment (5), admin/driver status changes (6), the home page booking card (the home page only has a "Réserver" button for now).
 
 ## Product rules
 - **Coverage**: all of Tunisia. Airports: Tunis-Carthage (TUN), Monastir (MIR), Enfidha-Hammamet (NBE), Djerba-Zarzis (DJE), Sfax (SFA), Tozeur (TOE), Tabarka (TBJ), Gafsa (GAF). Airports are data, not code: admins can add more.
@@ -47,7 +53,7 @@ The owner (Hichem) is an experienced Java Spring / Angular developer and writes 
 1. ~~Monorepo skeleton~~ done
 2. ~~Authentication (JWT, roles)~~ done
 3. ~~Data model~~ done
-4. **Booking flow**: bookings API (create, list mine, cancel) with the price snapshot rule above; Angular 3-step booking form (trip → vehicle and price → details and confirmation) that matches the design below; "My bookings" page.
+4. ~~Booking flow~~ done
 5. **Payment**: `PaymentGateway` abstraction, cash flow, Stripe card flow with webhook, payment status on bookings.
 6. **Driver and admin areas**: admin dashboard (bookings list and filters, assign driver, manage tariffs, zones and exchange rates, create driver accounts); driver page (my assigned trips, change status).
 7. **Quality and deployment**: error handling and consistent API error format, validation messages translated, accessibility pass, Dockerfiles for both apps, production `docker-compose`, README deployment section.

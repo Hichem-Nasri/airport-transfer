@@ -48,3 +48,19 @@ Exchange rates are expressed as TND per 1 unit (EUR 3.4 means 1 EUR = 3.4 TND).
 ```bash
 cd backend && mvn test   # integration tests (*IT) need Docker for Testcontainers
 ```
+
+## Bookings (step 4)
+
+| Endpoint | Access | Purpose |
+|---|---|---|
+| `GET /api/public/booking-quote` | public | Price preview: `leg`, `legs`, `totalAmount` (`roundTrip=true` means two legs) |
+| `POST /api/bookings` | signed-in | Create a booking, or two linked bookings when `returnPickupAt` is sent |
+| `GET /api/bookings` | signed-in | My bookings, latest pickup first |
+| `GET /api/bookings/{id}` | owner | One booking (404 for anyone else) |
+| `POST /api/bookings/{id}/cancel` | owner | Cancel (only before IN_PROGRESS; otherwise 409 `INVALID_STATUS_TRANSITION`) |
+
+Each booking stores its own price snapshot (TND price, currency, exchange rate, charged amount); later tariff or rate changes never alter it. Pickup times are stored in UTC and shown in Africa/Tunis. A confirmation e-mail is sent after the booking is committed (MailHog UI: http://localhost:8025); a mail failure never fails the booking.
+
+Environment variable: `MAIL_FROM` (default `noreply@marhba.tn`), next to `MAIL_HOST` / `MAIL_PORT`.
+
+Frontend tests: `cd frontend && npm install && npm test` (Karma + Jasmine, needs Chrome).

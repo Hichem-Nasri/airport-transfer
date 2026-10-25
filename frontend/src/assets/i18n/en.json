@@ -5,12 +5,15 @@
     "how": "How it works",
     "login": "Log in",
     "account": "My account",
-    "logout": "Log out"
+    "logout": "Log out",
+    "book": "Book",
+    "bookings": "My bookings"
   },
   "home": {
     "badge": "All over Tunisia, 7 days a week",
     "title": "From the terminal to your door, anywhere in Tunisia.",
-    "subtitle": "Book a private driver in a few clicks. Fixed price in advance, meet and greet on arrival, pay in the currency of your choice."
+    "subtitle": "Book a private driver in a few clicks. Fixed price in advance, meet and greet on arrival, pay in the currency of your choice.",
+    "cta": "Book a transfer"
   },
   "api": {
     "checking": "Connecting to the API…",
@@ -54,7 +57,11 @@
     "required": "This field is required.",
     "email": "Enter a valid e-mail address.",
     "minlength": "At least {{min}} characters.",
-    "phone": "Invalid phone number."
+    "phone": "Invalid phone number.",
+    "future": "The pickup time must be in the future.",
+    "returnAfter": "The return must be after the first trip.",
+    "flight": "Invalid flight number (2 to 10 letters or digits).",
+    "range": "Between {{min}} and {{max}}."
   },
   "errors": {
     "INVALID_CREDENTIALS": "Incorrect e-mail or password.",
@@ -64,6 +71,99 @@
     "FORBIDDEN": "You are not allowed to do this.",
     "BAD_REQUEST": "Invalid request.",
     "NETWORK": "Cannot reach the server. Please try again.",
-    "UNKNOWN": "Something went wrong. Please try again."
+    "UNKNOWN": "Something went wrong. Please try again.",
+    "PICKUP_IN_PAST": "The pickup time must be in the future.",
+    "RETURN_BEFORE_OUTBOUND": "The return must be after the first trip.",
+    "VEHICLE_CAPACITY_EXCEEDED": "This vehicle cannot carry that many passengers.",
+    "PAYMENT_METHOD_NOT_AVAILABLE": "This payment method is not available yet.",
+    "AIRPORT_NOT_FOUND": "Airport not found.",
+    "ZONE_NOT_FOUND": "Destination not found.",
+    "VEHICLE_TYPE_NOT_FOUND": "Vehicle not found.",
+    "CURRENCY_NOT_SUPPORTED": "Unsupported currency.",
+    "TARIFF_NOT_FOUND": "No tariff for this trip.",
+    "EXCHANGE_RATE_NOT_FOUND": "Exchange rate unavailable.",
+    "BOOKING_NOT_FOUND": "Booking not found.",
+    "INVALID_STATUS_TRANSITION": "This booking can no longer be cancelled."
+  },
+  "status": {
+    "PENDING": "Pending",
+    "CONFIRMED": "Confirmed",
+    "ASSIGNED": "Driver assigned",
+    "IN_PROGRESS": "In progress",
+    "COMPLETED": "Completed",
+    "CANCELLED": "Cancelled"
+  },
+  "bookings": {
+    "title": "My bookings",
+    "empty": "You have no bookings yet.",
+    "emptyCta": "Book a transfer",
+    "roundTrip": "Round trip",
+    "cancel": "Cancel this booking",
+    "cancelConfirm": "Cancel this booking for good?",
+    "cancelYes": "Yes, cancel",
+    "cancelNo": "No, keep it"
+  },
+  "booking": {
+    "title": "Booking",
+    "steps": {
+      "trip": "Trip",
+      "vehicle": "Vehicle and price",
+      "details": "Details and confirmation"
+    },
+    "directionLabel": "Trip direction",
+    "direction": {
+      "AIRPORT_TO_ADDRESS": "Airport → address",
+      "ADDRESS_TO_AIRPORT": "Address → airport"
+    },
+    "roundTrip": "Round trip",
+    "choose": "Choose…",
+    "fields": {
+      "airport": "Airport",
+      "destination": "Destination or pickup governorate",
+      "date": "Date",
+      "time": "Time (Tunis)",
+      "returnDate": "Return date",
+      "returnTime": "Return time",
+      "passengers": "Passengers",
+      "address": "Full address",
+      "flightNumber": "Flight no. (optional)",
+      "returnFlightNumber": "Return flight no. (optional)",
+      "luggage": "Luggage",
+      "notes": "Notes for the driver (optional)",
+      "paymentMethod": "Payment method"
+    },
+    "hints": {
+      "address": "Hotel, street, number, city: the driver meets you there."
+    },
+    "fewer": "One passenger fewer",
+    "more": "One passenger more",
+    "passengersCount": "{{count}} passenger(s)",
+    "returnOn": "Return:",
+    "continue": "Continue",
+    "back": "Back",
+    "confirm": "Confirm booking",
+    "total": "Total",
+    "perLeg": "{{price}} each way",
+    "vehicle": {
+      "capacity": "{{min}} to {{max}} passengers",
+      "tooSmall": "Too small for {{n}} passengers",
+      "unavailable": "Unavailable",
+      "loading": "Calculating price…"
+    },
+    "demoNotice": "Demo prices: the real tariffs will be published soon.",
+    "payment": {
+      "CASH": "Cash to the driver",
+      "CARD": "Bank card",
+      "soon": "coming soon"
+    },
+    "summary": {
+      "title": "Trip summary"
+    },
+    "done": {
+      "title": "Booking saved",
+      "text": "A confirmation e-mail has been sent. Pay the driver in cash.",
+      "viewAll": "View my bookings",
+      "another": "New booking"
+    }
   }
 }

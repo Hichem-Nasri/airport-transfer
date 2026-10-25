@@ -14,6 +14,10 @@ import { LogoComponent } from './shared/logo.component';
     <header class="flex flex-wrap items-center justify-between gap-4 px-6 py-5 md:px-12">
       <a routerLink="/" aria-label="Marhba"><app-logo /></a>
       <nav class="flex flex-wrap gap-7 text-[15px] font-semibold">
+        <a routerLink="/book" class="hover:text-brand">{{ 'nav.book' | translate }}</a>
+        @if (auth.isLoggedIn()) {
+          <a routerLink="/bookings" class="hover:text-brand">{{ 'nav.bookings' | translate }}</a>
+        }
         <a href="#" class="hover:text-brand">{{ 'nav.destinations' | translate }}</a>
         <a href="#" class="hover:text-brand">{{ 'nav.vehicles' | translate }}</a>
         <a href="#" class="hover:text-brand">{{ 'nav.how' | translate }}</a>

@@ -5,12 +5,15 @@
     "how": "Comment ça marche",
     "login": "Connexion",
     "account": "Mon compte",
-    "logout": "Se déconnecter"
+    "logout": "Se déconnecter",
+    "book": "Réserver",
+    "bookings": "Mes réservations"
   },
   "home": {
     "badge": "Toute la Tunisie, 7j/7",
     "title": "Du terminal à votre porte, partout en Tunisie.",
-    "subtitle": "Réservez un chauffeur privé en quelques clics. Prix fixé à l’avance, accueil à l’arrivée, paiement dans la devise de votre choix."
+    "subtitle": "Réservez un chauffeur privé en quelques clics. Prix fixé à l’avance, accueil à l’arrivée, paiement dans la devise de votre choix.",
+    "cta": "Réserver un transfert"
   },
   "api": {
     "checking": "Connexion à l’API…",
@@ -54,7 +57,11 @@
     "required": "Ce champ est obligatoire.",
     "email": "Saisissez une adresse e-mail valide.",
     "minlength": "Au moins {{min}} caractères.",
-    "phone": "Numéro de téléphone invalide."
+    "phone": "Numéro de téléphone invalide.",
+    "future": "L’heure de prise en charge doit être dans le futur.",
+    "returnAfter": "Le retour doit être après le premier trajet.",
+    "flight": "Numéro de vol invalide (2 à 10 lettres ou chiffres).",
+    "range": "Entre {{min}} et {{max}}."
   },
   "errors": {
     "INVALID_CREDENTIALS": "E-mail ou mot de passe incorrect.",
@@ -64,6 +71,99 @@
     "FORBIDDEN": "Vous n’avez pas le droit d’effectuer cette action.",
     "BAD_REQUEST": "Requête invalide.",
     "NETWORK": "Impossible de joindre le serveur. Réessayez.",
-    "UNKNOWN": "Une erreur est survenue. Réessayez."
+    "UNKNOWN": "Une erreur est survenue. Réessayez.",
+    "PICKUP_IN_PAST": "L’heure de prise en charge doit être dans le futur.",
+    "RETURN_BEFORE_OUTBOUND": "Le retour doit être après le premier trajet.",
+    "VEHICLE_CAPACITY_EXCEEDED": "Ce véhicule ne peut pas transporter autant de passagers.",
+    "PAYMENT_METHOD_NOT_AVAILABLE": "Ce mode de paiement n’est pas encore disponible.",
+    "AIRPORT_NOT_FOUND": "Aéroport introuvable.",
+    "ZONE_NOT_FOUND": "Destination introuvable.",
+    "VEHICLE_TYPE_NOT_FOUND": "Véhicule introuvable.",
+    "CURRENCY_NOT_SUPPORTED": "Devise non prise en charge.",
+    "TARIFF_NOT_FOUND": "Aucun tarif pour ce trajet.",
+    "EXCHANGE_RATE_NOT_FOUND": "Taux de change indisponible.",
+    "BOOKING_NOT_FOUND": "Réservation introuvable.",
+    "INVALID_STATUS_TRANSITION": "Cette réservation ne peut plus être annulée."
+  },
+  "status": {
+    "PENDING": "En attente",
+    "CONFIRMED": "Confirmée",
+    "ASSIGNED": "Chauffeur assigné",
+    "IN_PROGRESS": "En cours",
+    "COMPLETED": "Terminée",
+    "CANCELLED": "Annulée"
+  },
+  "bookings": {
+    "title": "Mes réservations",
+    "empty": "Vous n’avez pas encore de réservation.",
+    "emptyCta": "Réserver un transfert",
+    "roundTrip": "Aller-retour",
+    "cancel": "Annuler cette réservation",
+    "cancelConfirm": "Annuler définitivement cette réservation ?",
+    "cancelYes": "Oui, annuler",
+    "cancelNo": "Non, la garder"
+  },
+  "booking": {
+    "title": "Réservation",
+    "steps": {
+      "trip": "Trajet",
+      "vehicle": "Véhicule et prix",
+      "details": "Détails et confirmation"
+    },
+    "directionLabel": "Sens du trajet",
+    "direction": {
+      "AIRPORT_TO_ADDRESS": "Aéroport → adresse",
+      "ADDRESS_TO_AIRPORT": "Adresse → aéroport"
+    },
+    "roundTrip": "Aller-retour",
+    "choose": "Choisir…",
+    "fields": {
+      "airport": "Aéroport",
+      "destination": "Gouvernorat de destination ou de départ",
+      "date": "Date",
+      "time": "Heure (Tunis)",
+      "returnDate": "Date du retour",
+      "returnTime": "Heure du retour",
+      "passengers": "Passagers",
+      "address": "Adresse complète",
+      "flightNumber": "N° de vol (facultatif)",
+      "returnFlightNumber": "N° de vol du retour (facultatif)",
+      "luggage": "Bagages",
+      "notes": "Remarques pour le chauffeur (facultatif)",
+      "paymentMethod": "Mode de paiement"
+    },
+    "hints": {
+      "address": "Hôtel, rue, numéro, ville : le chauffeur vous y retrouve."
+    },
+    "fewer": "Un passager de moins",
+    "more": "Un passager de plus",
+    "passengersCount": "{{count}} passager(s)",
+    "returnOn": "Retour :",
+    "continue": "Continuer",
+    "back": "Retour",
+    "confirm": "Confirmer la réservation",
+    "total": "Total",
+    "perLeg": "{{price}} par trajet",
+    "vehicle": {
+      "capacity": "{{min}} à {{max}} passagers",
+      "tooSmall": "Trop petit pour {{n}} passagers",
+      "unavailable": "Indisponible",
+      "loading": "Calcul du prix…"
+    },
+    "demoNotice": "Prix de démonstration : les tarifs réels seront publiés prochainement.",
+    "payment": {
+      "CASH": "Espèces au chauffeur",
+      "CARD": "Carte bancaire",
+      "soon": "bientôt disponible"
+    },
+    "summary": {
+      "title": "Récapitulatif du trajet"
+    },
+    "done": {
+      "title": "Réservation enregistrée",
+      "text": "Un e-mail de confirmation vous a été envoyé. Paiement en espèces au chauffeur.",
+      "viewAll": "Voir mes réservations",
+      "another": "Nouvelle réservation"
+    }
   }
 }

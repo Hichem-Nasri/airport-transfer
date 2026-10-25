@@ -14,6 +14,16 @@ spring:
   mail:
     host: ${MAIL_HOST:localhost}
     port: ${MAIL_PORT:1025}
+    properties:
+      mail.smtp.connectiontimeout: 3000
+      mail.smtp.timeout: 5000
+      mail.smtp.writetimeout: 5000
+  messages:
+    basename: messages
+    # French is the default language: do not fall back to the server's own locale.
+    fallback-to-system-locale: false
+  web:
+    locale: fr
 
 server:
   port: 8080
@@ -34,3 +44,5 @@ app:
   seed-admin:
     email: ${SEED_ADMIN_EMAIL:}
     password: ${SEED_ADMIN_PASSWORD:}
+  mail:
+    from: ${MAIL_FROM:noreply@marhba.tn}
