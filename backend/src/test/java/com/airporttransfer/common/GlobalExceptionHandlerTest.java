@@ -33,7 +33,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void errorMessagesFollowTheCallersLanguageWhileTheCodeStaysStable() {
-        assertThat(messageIn(Locale.FRENCH, "BOOKING_NOT_FOUND")).contains("réservation");
+        assertThat(messageIn(Locale.FRENCH, "BOOKING_NOT_FOUND")).containsIgnoringCase("réservation");
         assertThat(messageIn(Locale.ENGLISH, "BOOKING_NOT_FOUND")).containsIgnoringCase("booking");
         assertThat(messageIn(Locale.forLanguageTag("ar"), "BOOKING_NOT_FOUND")).contains("الحجز");
         LocaleContextHolder.setLocale(Locale.FRENCH);

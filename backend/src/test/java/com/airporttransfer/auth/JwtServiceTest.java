@@ -6,9 +6,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.airporttransfer.user.Role;
 import com.airporttransfer.user.User;
 import java.lang.reflect.Field;
+import java.time.Duration;
+import java.time.Instant;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.env.MockEnvironment;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwsHeader;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtException;
@@ -53,8 +59,18 @@ class JwtServiceTest {
 
     @Test
     void expiredTokenIsRejected() throws Exception {
-        // Well past the decoder's default 60 s clock skew.
-        String token = service(SECRET, -10).issue(user(1L, Role.CUSTOMER)).token();
+        // Issued 10 minutes ago, expired 5 minutes ago: well past the decoder's default 60 s clock skew.
+        // Built by hand because JwtService never issues a token that expires before it is issued.
+        Instant now = Instant.now();
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+            .issuer("marhba").subject("1")
+            .issuedAt(now.minus(Duration.ofMinutes(10)))
+            .expiresAt(now.minus(Duration.ofMinutes(5)))
+            .claim(JwtService.ROLE_CLAIM, Role.CUSTOMER.name())
+            .build();
+        SecretKey key = config.jwtSecretKey(new JwtProperties(SECRET, 5), new MockEnvironment());
+        String token = config.jwtEncoder(key).encode(
+            JwtEncoderParameters.from(JwsHeader.with(MacAlgorithm.HS256).build(), claims)).getTokenValue();
 
         assertThatThrownBy(() -> decoder(SECRET).decode(token)).isInstanceOf(JwtException.class);
     }
