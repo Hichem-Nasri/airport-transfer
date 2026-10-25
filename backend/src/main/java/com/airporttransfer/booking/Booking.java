@@ -95,6 +95,13 @@ public class Booking {
     @Column(name = "payment_method", nullable = false)
     private PaymentMethod paymentMethod;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_status", nullable = false)
+    private PaymentStatus paymentStatus = PaymentStatus.UNPAID;
+
+    @Column(name = "paid_at")
+    private Instant paidAt;
+
     @Column(name = "assigned_driver_id")
     private Long assignedDriverId;
 
@@ -145,6 +152,22 @@ public class Booking {
     void changeStatus(BookingStatus status) {
         this.status = status;
         this.updatedAt = Instant.now();
+    }
+
+    /** Only PaymentService calls these: payment is independent from the trip lifecycle. */
+    public void markPaid(Instant at) {
+        this.paymentStatus = PaymentStatus.PAID;
+        this.paidAt = at;
+        this.updatedAt = Instant.now();
+    }
+
+    public void markRefunded() {
+        this.paymentStatus = PaymentStatus.REFUNDED;
+        this.updatedAt = Instant.now();
+    }
+
+    public PaymentStatus getPaymentStatus() {
+        return paymentStatus;
     }
 
     void assignDriver(Long driverId) {

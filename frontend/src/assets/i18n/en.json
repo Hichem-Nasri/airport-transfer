@@ -171,7 +171,10 @@
     "INVALID_CAPACITY": "Maximum passengers must be at least the minimum.",
     "BOOKING_NOT_EDITABLE": "This booking can no longer be edited.",
     "CURRENT_PASSWORD_INVALID": "The current password is incorrect.",
-    "RESET_TOKEN_INVALID": "This link is invalid or has expired."
+    "RESET_TOKEN_INVALID": "This link is invalid or has expired.",
+    "PAYMENT_NOT_COLLECTABLE": "Cash can only be collected once the trip has started.",
+    "ALREADY_PAID": "This booking is already paid.",
+    "PAYMENT_METHOD_MISMATCH": "This booking is not paid in cash."
   },
   "status": {
     "PENDING": "Pending",
@@ -310,7 +313,8 @@
     "empty": "No trips.",
     "collect": "To collect:",
     "start": "Start the trip",
-    "complete": "Complete the trip"
+    "complete": "Complete the trip",
+    "cashCollected": "Cash collected"
   },
   "admin": {
     "title": "Administration",
@@ -335,7 +339,8 @@
       "bookings": "Bookings",
       "charged": "Amount charged",
       "baseTnd": "Base price (TND)",
-      "byAirport": "By airport"
+      "byAirport": "By airport",
+      "collected": "Collected"
     },
     "users": {
       "title": "Users",
@@ -410,5 +415,13 @@
     "cashNote": "To be paid in cash to the driver.",
     "demo": "Demonstration price, not binding.",
     "print": "Print the receipt"
+  },
+  "payment": {
+    "label": "Payment",
+    "status": {
+      "UNPAID": "To be paid",
+      "PAID": "Paid",
+      "REFUNDED": "Refunded"
+    }
   }
 }

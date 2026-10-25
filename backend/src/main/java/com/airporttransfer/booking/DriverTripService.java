@@ -2,6 +2,8 @@ package com.airporttransfer.booking;
 
 import com.airporttransfer.booking.StaffDtos.DriverTripDto;
 import com.airporttransfer.common.ApiException;
+import com.airporttransfer.payment.Payment;
+import com.airporttransfer.payment.PaymentService;
 import java.util.List;
 import java.util.Set;
 import org.springframework.data.domain.Sort;
@@ -19,9 +21,11 @@ public class DriverTripService {
     private final BookingWorkflowService workflow;
     private final BookingMapper mapper;
     private final BookingViews views;
+    private final PaymentService payments;
 
     public DriverTripService(BookingRepository bookings, BookingWorkflowService workflow, BookingMapper mapper,
-                             BookingViews views) {
+                             BookingViews views, PaymentService payments) {
+        this.payments = payments;
         this.bookings = bookings;
         this.workflow = workflow;
         this.mapper = mapper;
@@ -52,6 +56,16 @@ public class DriverTripService {
     public DriverTripDto complete(Long driverId, Long id) {
         Booking booking = find(driverId, id);
         workflow.changeStatus(booking, BookingStatus.COMPLETED, new Actor(driverId, com.airporttransfer.user.Role.DRIVER), null);
+        return view(booking);
+    }
+
+    /** The driver confirms the customer paid in cash. Only allowed once the trip has started. */
+    @Transactional
+    public DriverTripDto cashCollected(Long driverId, Long id) {
+        Booking booking = find(driverId, id);
+        Payment payment = payments.collectCash(booking, driverId);
+        workflow.recordEdited(booking, new Actor(driverId, com.airporttransfer.user.Role.DRIVER),
+            "Cash collected: " + payment.getAmount().toPlainString() + " " + payment.getCurrency());
         return view(booking);
     }
 

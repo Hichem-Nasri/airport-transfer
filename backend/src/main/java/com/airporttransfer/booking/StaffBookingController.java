@@ -73,6 +73,11 @@ public class StaffBookingController {
         return service.start(id, Actor.from(jwt));
     }
 
+    @PostMapping("/bookings/{id}/cash-collected")
+    public StaffBookingDto cashCollected(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id) {
+        return service.cashCollected(id, Actor.from(jwt));
+    }
+
     @PostMapping("/bookings/{id}/complete")
     public StaffBookingDto complete(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id) {
         return service.complete(id, Actor.from(jwt));

@@ -79,6 +79,7 @@ const STATUSES: BookingStatus[] = ['PENDING', 'CONFIRMED', 'ASSIGNED', 'IN_PROGR
                 <th scope="col" class="p-3 text-start">{{ 'admin.stats.currency' | translate }}</th>
                 <th scope="col" class="p-3 text-start">{{ 'admin.stats.bookings' | translate }}</th>
                 <th scope="col" class="p-3 text-start">{{ 'admin.stats.charged' | translate }}</th>
+                <th scope="col" class="p-3 text-start">{{ 'admin.stats.collected' | translate }}</th>
                 <th scope="col" class="p-3 text-start">{{ 'admin.stats.baseTnd' | translate }}</th>
               </tr>
             </thead>
@@ -88,6 +89,7 @@ const STATUSES: BookingStatus[] = ['PENDING', 'CONFIRMED', 'ASSIGNED', 'IN_PROGR
                   <th scope="row" class="p-3 text-start font-extrabold">{{ r.currency }}</th>
                   <td class="p-3">{{ r.bookings }}</td>
                   <td class="p-3 font-extrabold">{{ money(r.amount, r.currency) }}</td>
+                  <td class="p-3">{{ money(r.collected, r.currency) }}</td>
                   <td class="p-3">{{ money(r.amountTnd, 'TND') }}</td>
                 </tr>
               }

@@ -60,7 +60,10 @@ import { StatusBadgeComponent } from '../../shared/status-badge.component';
             }
             <h2 class="mt-5 font-extrabold">{{ 'staff.price' | translate }}</h2>
             <p class="mt-2 text-xl font-extrabold">{{ money(d) }}</p>
-            <p class="text-sm text-muted">{{ 'booking.payment.' + d.booking.paymentMethod | translate }}</p>
+            <p class="text-sm text-muted">
+              {{ 'booking.payment.' + d.booking.paymentMethod | translate }} ·
+              <span class="font-semibold" [class.text-brand-dark]="d.booking.paymentStatus === 'UNPAID'">{{ 'payment.status.' + d.booking.paymentStatus | translate }}</span>
+            </p>
             @if (d.booking.priceDemo) { <p class="mt-1 text-sm text-muted">{{ 'booking.demoNotice' | translate }}</p> }
             <h2 class="mt-5 font-extrabold">{{ 'staff.driver' | translate }}</h2>
             @if (d.driver; as dr) {
@@ -91,6 +94,9 @@ import { StatusBadgeComponent } from '../../shared/status-badge.component';
               }
               @if (d.booking.status === 'IN_PROGRESS') {
                 <button type="button" class="btn-primary" [disabled]="busy()" (click)="run(service.complete(d.booking.id))">{{ 'staff.complete' | translate }}</button>
+              }
+              @if (d.booking.paymentMethod === 'CASH' && d.booking.paymentStatus === 'UNPAID' && (d.booking.status === 'IN_PROGRESS' || d.booking.status === 'COMPLETED')) {
+                <button type="button" class="btn-secondary" [disabled]="busy()" (click)="run(service.cashCollected(d.booking.id))">{{ 'driver.cashCollected' | translate }}</button>
               }
               @if (d.booking.cancellable) {
                 <button type="button" class="btn-secondary" (click)="cancelling.set(!cancelling())">{{ 'bookings.cancel' | translate }}</button>

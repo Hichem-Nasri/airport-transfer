@@ -4,6 +4,7 @@ import com.airporttransfer.booking.BookingDtos.BookingDto;
 import com.airporttransfer.booking.BookingEvents.DriverAssigned;
 import com.airporttransfer.booking.BookingEvents.StatusChanged;
 import com.airporttransfer.common.ApiException;
+import com.airporttransfer.payment.PaymentService;
 import com.airporttransfer.user.User;
 import com.airporttransfer.user.UserMapper;
 import com.airporttransfer.user.UserRepository;
@@ -29,10 +30,12 @@ public class BookingWorkflowService {
     private final UserRepository users;
     private final UserMapper userMapper;
     private final ApplicationEventPublisher events;
+    private final PaymentService payments;
 
     public BookingWorkflowService(BookingStatusService statuses, BookingStatusHistoryRepository history,
                                   BookingRepository bookings, BookingMapper mapper, UserRepository users,
-                                  UserMapper userMapper, ApplicationEventPublisher events) {
+                                  UserMapper userMapper, ApplicationEventPublisher events,
+                                  PaymentService payments) {
         this.statuses = statuses;
         this.history = history;
         this.bookings = bookings;
@@ -40,6 +43,7 @@ public class BookingWorkflowService {
         this.users = users;
         this.userMapper = userMapper;
         this.events = events;
+        this.payments = payments;
     }
 
     public void recordCreated(Booking booking, Actor actor) {
@@ -56,6 +60,9 @@ public class BookingWorkflowService {
     public void changeStatus(Booking booking, BookingStatus to, Actor actor, String note) {
         BookingStatus from = booking.getStatus();
         statuses.transition(booking, to);
+        if (to == BookingStatus.CANCELLED) {
+            payments.refundIfPaid(booking);
+        }
         history.save(new BookingStatusHistory(booking.getId(), from, to, actor, note));
         bookings.saveAndFlush(booking);
         if (NOTIFIED.contains(to)) {

@@ -97,3 +97,9 @@ No new environment variable and no migration.
 - Receipt: open a booking (`/bookings/:id`) and use "Imprimer le reçu".
 
 New environment variable: `PUBLIC_URL` (default `http://localhost:4200`). New migration: `V9__password_reset.sql`.
+
+## Payment (step 9, cash)
+
+- Every booking has a payment status: UNPAID, PAID or REFUNDED. Cash is recorded by the driver (or by staff) once the trip has started; the amount is always the price snapshot of the booking.
+- Card payments (Stripe) are not available yet: the `PaymentGateway` interface and the payment ledger are in place, see CLAUDE.md for what to add when a Stripe account exists.
+- Migration `V10__payments.sql`; no new environment variable.

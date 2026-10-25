@@ -45,7 +45,7 @@ class BookingMailListenerTest {
             // 10:30 UTC is 11:30 in Tunis (UTC+1, no daylight saving time).
             Instant.parse("2026-12-01T10:30:00Z"), 2, 1,
             new VehicleTypeSummary(1L, "SEDAN", "Berline", "Sedan", "سيارة", 3), null, new BigDecimal("50.000"),
-            "TND", null, new BigDecimal("50.000"), true, PaymentMethod.CASH, true, true, Instant.now());
+            "TND", null, new BigDecimal("50.000"), true, PaymentMethod.CASH, PaymentStatus.UNPAID, true, true, Instant.now());
         return new BookingsCreatedEvent("client@example.tn", "Ali Ben Salah", locale, List.of(dto));
     }
 

@@ -59,6 +59,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, JpaSpec
     List<Object[]> revenueByCurrency(@Param("from") Instant from, @Param("to") Instant to,
                                      @Param("excluded") BookingStatus excluded);
 
+    /** Per currency: the charged amount of the bookings that have actually been paid (not refunded). */
+    @Query("select b.currency, sum(b.amount) from Booking b "
+        + "where b.pickupAt >= :from and b.pickupAt < :to and b.paymentStatus = :paid group by b.currency")
+    List<Object[]> collectedByCurrency(@Param("from") Instant from, @Param("to") Instant to,
+                                       @Param("paid") PaymentStatus paid);
+
     @Query("select b.airport.id, b.airport.iataCode, count(b) from Booking b "
         + "where b.pickupAt >= :from and b.pickupAt < :to and b.status <> :excluded "
         + "group by b.airport.id, b.airport.iataCode order by count(b) desc, b.airport.iataCode")

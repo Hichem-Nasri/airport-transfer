@@ -101,6 +101,10 @@ export class StaffService {
     return this.http.post<StaffBooking>(`/api/staff/bookings/${id}/start`, {});
   }
 
+  cashCollected(id: number): Observable<StaffBooking> {
+    return this.http.post<StaffBooking>(`/api/staff/bookings/${id}/cash-collected`, {});
+  }
+
   complete(id: number): Observable<StaffBooking> {
     return this.http.post<StaffBooking>(`/api/staff/bookings/${id}/complete`, {});
   }

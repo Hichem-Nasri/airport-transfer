@@ -67,7 +67,15 @@ import { StatusBadgeComponent } from '../../shared/status-badge.component';
               <p class="mt-3 text-lg font-extrabold">
                 {{ 'driver.collect' | translate }} {{ money(t) }}
               </p>
-              <p class="text-sm text-muted">{{ 'booking.payment.' + t.booking.paymentMethod | translate }}</p>
+              <p class="text-sm text-muted">
+                {{ 'booking.payment.' + t.booking.paymentMethod | translate }} ·
+                <span class="font-semibold" [class.text-brand-dark]="t.booking.paymentStatus === 'UNPAID'">{{ 'payment.status.' + t.booking.paymentStatus | translate }}</span>
+              </p>
+              @if (canCollect(t)) {
+                <button type="button" class="btn-secondary mt-3 w-full" [disabled]="busy() === t.booking.id" (click)="run(t, service.cashCollected(t.booking.id))">
+                  {{ 'driver.cashCollected' | translate }}
+                </button>
+              }
 
               @if (t.booking.status === 'ASSIGNED') {
                 <button type="button" class="btn-primary mt-3 w-full" [disabled]="busy() === t.booking.id" (click)="run(t, service.start(t.booking.id))">
@@ -127,6 +135,12 @@ export class DriverTripsComponent {
 
   when(iso: string): string {
     return formatTunis(iso, this.lang.current());
+  }
+
+  /** Cash can be recorded once the trip has started, until it is recorded. */
+  canCollect(t: DriverTrip): boolean {
+    const b = t.booking;
+    return b.paymentMethod === 'CASH' && b.paymentStatus === 'UNPAID' && (b.status === 'IN_PROGRESS' || b.status === 'COMPLETED');
   }
 
   money(t: DriverTrip): string {

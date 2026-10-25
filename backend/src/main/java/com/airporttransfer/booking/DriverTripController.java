@@ -38,6 +38,11 @@ public class DriverTripController {
         return service.start(Actor.from(jwt).userId(), id);
     }
 
+    @PostMapping("/{id}/cash-collected")
+    public DriverTripDto cashCollected(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id) {
+        return service.cashCollected(Actor.from(jwt).userId(), id);
+    }
+
     @PostMapping("/{id}/complete")
     public DriverTripDto complete(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id) {
         return service.complete(Actor.from(jwt).userId(), id);

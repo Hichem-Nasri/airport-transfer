@@ -3,6 +3,8 @@ package com.airporttransfer.booking;
 import com.airporttransfer.booking.StaffDtos.BookingFilter;
 import com.airporttransfer.booking.StaffDtos.StaffBookingDto;
 import com.airporttransfer.common.ApiException;
+import com.airporttransfer.payment.Payment;
+import com.airporttransfer.payment.PaymentService;
 import com.airporttransfer.common.PageDto;
 import com.airporttransfer.user.Role;
 import com.airporttransfer.user.User;
@@ -31,9 +33,11 @@ public class StaffBookingService {
     private final UserMapper userMapper;
     private final BookingWorkflowService workflow;
     private final BookingViews views;
+    private final PaymentService payments;
 
     public StaffBookingService(BookingRepository bookings, UserRepository users, UserMapper userMapper,
-                               BookingWorkflowService workflow, BookingViews views) {
+                               BookingWorkflowService workflow, BookingViews views, PaymentService payments) {
+        this.payments = payments;
         this.bookings = bookings;
         this.users = users;
         this.userMapper = userMapper;
@@ -90,6 +94,15 @@ public class StaffBookingService {
     @Transactional
     public StaffBookingDto complete(Long id, Actor actor) {
         return act(id, b -> workflow.changeStatus(b, BookingStatus.COMPLETED, actor, null));
+    }
+
+    /** Staff records the cash the driver handed over (for example when the driver forgot to do it). */
+    @Transactional
+    public StaffBookingDto cashCollected(Long id, Actor actor) {
+        return act(id, b -> {
+            Payment payment = payments.collectCash(b, actor.userId());
+            workflow.recordEdited(b, actor, "Cash collected: " + payment.getAmount().toPlainString() + " " + payment.getCurrency());
+        });
     }
 
     @Transactional

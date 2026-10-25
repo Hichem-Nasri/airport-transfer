@@ -6,6 +6,7 @@ import { Localized } from './localized';
 export type Direction = 'AIRPORT_TO_ADDRESS' | 'ADDRESS_TO_AIRPORT';
 export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'ASSIGNED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
 export type PaymentMethod = 'CASH' | 'CARD';
+export type PaymentStatus = 'UNPAID' | 'PAID' | 'REFUNDED';
 
 export interface Quote {
   airportId: number;
@@ -71,6 +72,7 @@ export interface Booking {
   amount: number;
   priceDemo: boolean;
   paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
   cancellable: boolean;
   editable: boolean;
   createdAt: string;

@@ -26,6 +26,7 @@ class StatsServiceTest {
         when(bookings.countByStatus(any(), any())).thenReturn(List.of(
             new Object[] {BookingStatus.COMPLETED, 3L}, new Object[] {BookingStatus.CANCELLED, 2L},
             new Object[] {BookingStatus.PENDING, 1L}));
+        when(bookings.collectedByCurrency(any(), any(), any())).thenReturn(List.<Object[]>of(new Object[] {"EUR", new BigDecimal("45.00")}));
         when(bookings.revenueByCurrency(any(), any(), any())).thenReturn(List.of(
             new Object[] {"EUR", 2L, new BigDecimal("90.00"), new BigDecimal("300.000")},
             new Object[] {"TND", 2L, new BigDecimal("150.000"), new BigDecimal("150.000")}));
@@ -40,6 +41,8 @@ class StatsServiceTest {
         assertThat(s.revenue()).hasSize(2);
         assertThat(s.revenue().get(0).currency()).isEqualTo("EUR");
         assertThat(s.revenue().get(0).amount()).isEqualByComparingTo("90.00");
+        assertThat(s.revenue().get(0).collected()).isEqualByComparingTo("45.00");
+        assertThat(s.revenue().get(1).collected()).isEqualByComparingTo("0");
         assertThat(s.byAirport().get(0).iataCode()).isEqualTo("TUN");
         assertThat(s.from()).isEqualTo(now.minus(StatsService.DEFAULT_PAST));
         assertThat(s.to()).isEqualTo(now.plus(StatsService.DEFAULT_FUTURE));

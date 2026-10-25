@@ -22,6 +22,11 @@ export class DriverService {
     return this.http.post<DriverTrip>(`/api/driver/trips/${id}/start`, {});
   }
 
+  /** The driver confirms the customer paid in cash (the server checks the trip has started and is not paid yet). */
+  cashCollected(id: number): Observable<DriverTrip> {
+    return this.http.post<DriverTrip>(`/api/driver/trips/${id}/cash-collected`, {});
+  }
+
   complete(id: number): Observable<DriverTrip> {
     return this.http.post<DriverTrip>(`/api/driver/trips/${id}/complete`, {});
   }

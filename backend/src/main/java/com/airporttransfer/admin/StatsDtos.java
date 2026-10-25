@@ -11,8 +11,12 @@ public final class StatsDtos {
     private StatsDtos() {
     }
 
-    /** Charged amount of the non-cancelled bookings in one currency, plus their base price in TND. */
-    public record CurrencyRevenue(String currency, long bookings, BigDecimal amount, BigDecimal amountTnd) {
+    /**
+     * Charged amount of the non-cancelled bookings in one currency, their base price in TND, and how much of the
+     * charged amount has actually been collected.
+     */
+    public record CurrencyRevenue(String currency, long bookings, BigDecimal amount, BigDecimal amountTnd,
+                                  BigDecimal collected) {
     }
 
     public record AirportCount(Long airportId, String iataCode, long bookings) {

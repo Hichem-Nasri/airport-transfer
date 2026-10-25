@@ -171,7 +171,10 @@
     "INVALID_CAPACITY": "Le maximum de passagers doit être au moins égal au minimum.",
     "BOOKING_NOT_EDITABLE": "Cette réservation ne peut plus être modifiée.",
     "CURRENT_PASSWORD_INVALID": "Le mot de passe actuel est incorrect.",
-    "RESET_TOKEN_INVALID": "Ce lien est invalide ou a expiré."
+    "RESET_TOKEN_INVALID": "Ce lien est invalide ou a expiré.",
+    "PAYMENT_NOT_COLLECTABLE": "Les espèces ne peuvent être encaissées qu’une fois la course commencée.",
+    "ALREADY_PAID": "Cette réservation est déjà payée.",
+    "PAYMENT_METHOD_MISMATCH": "Cette réservation ne se paie pas en espèces."
   },
   "status": {
     "PENDING": "En attente",
@@ -310,7 +313,8 @@
     "empty": "Aucune course.",
     "collect": "À encaisser :",
     "start": "Démarrer la course",
-    "complete": "Terminer la course"
+    "complete": "Terminer la course",
+    "cashCollected": "Espèces encaissées"
   },
   "admin": {
     "title": "Administration",
@@ -335,7 +339,8 @@
       "bookings": "Réservations",
       "charged": "Montant facturé",
       "baseTnd": "Prix de base (TND)",
-      "byAirport": "Par aéroport"
+      "byAirport": "Par aéroport",
+      "collected": "Encaissé"
     },
     "users": {
       "title": "Utilisateurs",
@@ -410,5 +415,13 @@
     "cashNote": "À régler en espèces au chauffeur.",
     "demo": "Prix de démonstration, non contractuel.",
     "print": "Imprimer le reçu"
+  },
+  "payment": {
+    "label": "Paiement",
+    "status": {
+      "UNPAID": "À régler",
+      "PAID": "Payé",
+      "REFUNDED": "Remboursé"
+    }
   }
 }

@@ -109,6 +109,8 @@ export interface CurrencyRevenue {
   bookings: number;
   amount: number;
   amountTnd: number;
+  /** The part of `amount` that has actually been paid. */
+  collected: number;
 }
 
 export interface AirportCount {

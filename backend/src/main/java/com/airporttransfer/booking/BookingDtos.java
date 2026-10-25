@@ -54,7 +54,8 @@ public final class BookingDtos {
         AirportSummary airport, ZoneSummary zone, String address, String flightNumber,
         Instant pickupAt, int passengers, int luggageCount, VehicleTypeSummary vehicleType, String notes,
         BigDecimal priceTnd, String currency, BigDecimal exchangeRate, BigDecimal amount, boolean priceDemo,
-        PaymentMethod paymentMethod, boolean cancellable, boolean editable, Instant createdAt) {
+        PaymentMethod paymentMethod, PaymentStatus paymentStatus, boolean cancellable, boolean editable,
+        Instant createdAt) {
     }
 
     /**

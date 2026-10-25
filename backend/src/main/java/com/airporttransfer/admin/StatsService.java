@@ -5,6 +5,7 @@ import com.airporttransfer.admin.StatsDtos.CurrencyRevenue;
 import com.airporttransfer.admin.StatsDtos.StatsDto;
 import com.airporttransfer.booking.BookingRepository;
 import com.airporttransfer.booking.BookingStatus;
+import com.airporttransfer.booking.PaymentStatus;
 import com.airporttransfer.common.ApiException;
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -47,8 +48,13 @@ public class StatsService {
             total += count;
         }
         long active = total - byStatus.get(BookingStatus.CANCELLED);
+        Map<String, BigDecimal> collected = new java.util.HashMap<>();
+        for (Object[] row : bookings.collectedByCurrency(start, end, PaymentStatus.PAID)) {
+            collected.put((String) row[0], (BigDecimal) row[1]);
+        }
         List<CurrencyRevenue> revenue = bookings.revenueByCurrency(start, end, BookingStatus.CANCELLED).stream()
-            .map(r -> new CurrencyRevenue((String) r[0], (Long) r[1], (BigDecimal) r[2], (BigDecimal) r[3]))
+            .map(r -> new CurrencyRevenue((String) r[0], (Long) r[1], (BigDecimal) r[2], (BigDecimal) r[3],
+                collected.getOrDefault((String) r[0], BigDecimal.ZERO)))
             .toList();
         List<AirportCount> airports = bookings.countByAirport(start, end, BookingStatus.CANCELLED).stream()
             .map(r -> new AirportCount((Long) r[0], (String) r[1], (Long) r[2]))

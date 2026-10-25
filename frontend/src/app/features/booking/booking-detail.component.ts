@@ -65,6 +65,8 @@ import { StatusBadgeComponent } from '../../shared/status-badge.component';
             }
             <dt class="text-muted">{{ 'booking.fields.paymentMethod' | translate }}</dt>
             <dd class="font-semibold">{{ 'booking.payment.' + b.paymentMethod | translate }}</dd>
+            <dt class="text-muted">{{ 'payment.label' | translate }}</dt>
+            <dd class="font-semibold">{{ 'payment.status.' + b.paymentStatus | translate }}</dd>
           </dl>
 
           <div class="mt-5 rounded-xl bg-brand-soft p-4">
@@ -73,7 +75,7 @@ import { StatusBadgeComponent } from '../../shared/status-badge.component';
             @if (b.currency !== 'TND') {
               <p class="mt-1 text-sm text-muted">{{ 'receipt.baseTnd' | translate: { amount: tnd(b) } }}</p>
             }
-            @if (b.paymentMethod === 'CASH') {
+            @if (b.paymentMethod === 'CASH' && b.paymentStatus === 'UNPAID') {
               <p class="mt-2 text-sm font-semibold">{{ 'receipt.cashNote' | translate }}</p>
             }
             @if (b.priceDemo) {
