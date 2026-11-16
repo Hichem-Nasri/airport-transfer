@@ -1,10 +1,13 @@
 package com.airporttransfer.booking;
 
 import com.airporttransfer.booking.BookingDtos.BookingQuoteDto;
+import com.airporttransfer.booking.BookingDtos.PackQuoteDto;
+import com.airporttransfer.booking.BookingDtos.PackQuoteLegRequest;
 import com.airporttransfer.common.ApiException;
 import com.airporttransfer.pricing.PricingDtos.QuoteDto;
 import com.airporttransfer.pricing.QuoteService;
 import java.math.BigDecimal;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,6 +22,16 @@ public class BookingPricingService {
 
     public BookingPricingService(QuoteService quotes) {
         this.quotes = quotes;
+    }
+
+    /** Prices every leg of a pack in one currency; the total is the sum of the (already rounded) leg amounts. */
+    public PackQuoteDto quotePack(List<PackQuoteLegRequest> legs, String currency) {
+        List<QuoteDto> quoted = legs.stream()
+            .map(l -> quotes.quote(l.airportId(), l.zoneId(), l.vehicleTypeId(), currency))
+            .toList();
+        BigDecimal total = quoted.stream().map(QuoteDto::amount).reduce(BigDecimal.ZERO, BigDecimal::add);
+        String code = quoted.isEmpty() ? currency : quoted.get(0).currency();
+        return new PackQuoteDto(code, quoted, total, quoted.stream().anyMatch(QuoteDto::demo));
     }
 
     public BookingQuoteDto quote(Long airportId, Long zoneId, Long vehicleTypeId, String currency, int legs) {

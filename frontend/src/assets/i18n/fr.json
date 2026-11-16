@@ -143,6 +143,7 @@
     "UNKNOWN": "Une erreur est survenue. Réessayez.",
     "PICKUP_IN_PAST": "L’heure de prise en charge doit être dans le futur.",
     "RETURN_BEFORE_OUTBOUND": "Le retour doit être après le premier trajet.",
+    "LEGS_OUT_OF_ORDER": "Les trajets du pack doivent se suivre dans le temps.",
     "VEHICLE_CAPACITY_EXCEEDED": "Ce véhicule ne peut pas transporter autant de passagers.",
     "PAYMENT_METHOD_NOT_AVAILABLE": "Ce mode de paiement n’est pas encore disponible.",
     "AIRPORT_NOT_FOUND": "Aéroport introuvable.",
@@ -436,5 +437,19 @@
     "mainNav": "Navigation principale",
     "currency": "Devise",
     "language": "Langue"
+  },
+  "pack": {
+    "nav": "Pack voyage",
+    "title": "Pack voyage France – Tunisie",
+    "subtitle": "Réservez vos transferts liés en une fois : départ de chez vous en France, accueil à l’arrivée en Tunisie, et le retour. Un prix par trajet, un total clair.",
+    "leg": "Trajet {{n}}",
+    "addLeg": "Ajouter un trajet",
+    "removeLeg": "Retirer ce trajet",
+    "vehicle": "Véhicule",
+    "total": "Total du pack",
+    "confirm": "Réserver le pack",
+    "incomplete": "Complétez tous les champs de chaque trajet.",
+    "done": "Pack réservé. Références :",
+    "cta": "Pack voyage France – Tunisie"
   }
 }

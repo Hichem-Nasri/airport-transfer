@@ -19,6 +19,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/booking/booking-flow.component').then((m) => m.BookingFlowComponent)
   },
   {
+    path: 'pack',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/pack/pack.component').then((m) => m.PackComponent)
+  },
+  {
     path: 'bookings',
     canActivate: [authGuard],
     loadComponent: () => import('./features/booking/bookings.component').then((m) => m.BookingsComponent)

@@ -3,6 +3,7 @@ package com.airporttransfer.booking;
 import com.airporttransfer.booking.BookingDtos.BookingDto;
 import com.airporttransfer.booking.BookingDtos.BookingsCreatedDto;
 import com.airporttransfer.booking.BookingDtos.CreateBookingRequest;
+import com.airporttransfer.booking.BookingDtos.CreatePackRequest;
 import com.airporttransfer.booking.BookingDtos.UpdateBookingRequest;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -33,6 +34,12 @@ public class BookingController {
     @ResponseStatus(HttpStatus.CREATED)
     public BookingsCreatedDto create(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody CreateBookingRequest request) {
         return service.create(userId(jwt), request);
+    }
+
+    @PostMapping("/pack")
+    @ResponseStatus(HttpStatus.CREATED)
+    public BookingsCreatedDto createPack(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody CreatePackRequest request) {
+        return service.createPack(userId(jwt), request);
     }
 
     @GetMapping

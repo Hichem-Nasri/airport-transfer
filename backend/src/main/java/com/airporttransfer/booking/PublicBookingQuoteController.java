@@ -1,7 +1,12 @@
 package com.airporttransfer.booking;
 
 import com.airporttransfer.booking.BookingDtos.BookingQuoteDto;
+import com.airporttransfer.booking.BookingDtos.PackQuoteDto;
+import com.airporttransfer.booking.BookingDtos.PackQuoteRequest;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +19,12 @@ public class PublicBookingQuoteController {
 
     public PublicBookingQuoteController(BookingPricingService pricing) {
         this.pricing = pricing;
+    }
+
+    /** Price preview of a pack of linked trips: every leg and the total, in one currency. */
+    @PostMapping("/pack-quote")
+    public PackQuoteDto packQuote(@Valid @RequestBody PackQuoteRequest request) {
+        return pricing.quotePack(request.legs(), request.currency());
     }
 
     /** Price preview of a booking: per leg and total, already converted. {@code roundTrip=true} means two legs. */

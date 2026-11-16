@@ -1,6 +1,7 @@
 package com.airporttransfer.booking;
 
 import com.airporttransfer.pricing.PricingDtos.QuoteDto;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -36,6 +37,42 @@ public final class BookingDtos {
         @NotNull PaymentMethod paymentMethod,
         Instant returnPickupAt,
         @Pattern(regexp = "^$|^[A-Za-z0-9 ]{2,10}$") String returnFlightNumber) {
+    }
+
+    /** One trip of a pack: a one-way transfer, with its own airport, vehicle and pickup time. */
+    public record PackLegRequest(
+        @NotNull Long airportId,
+        @NotNull TripDirection direction,
+        @NotNull Long zoneId,
+        @NotBlank @Size(max = 500) String address,
+        @Pattern(regexp = "^$|^[A-Za-z0-9 ]{2,10}$") String flightNumber,
+        @NotNull Instant pickupAt,
+        @NotNull @Min(1) @Max(100) Integer passengers,
+        @Min(0) @Max(100) Integer luggageCount,
+        @NotNull Long vehicleTypeId,
+        @Size(max = 1000) String notes) {
+    }
+
+    /**
+     * A pack books several linked trips at once (for instance Paris to the airport, then the Tunisian airport to the
+     * hotel, and back). The legs must be in chronological order; they share a group id and one currency.
+     */
+    public record CreatePackRequest(
+        @NotNull @Size(min = 2, max = 6) List<@Valid PackLegRequest> legs,
+        @NotBlank @Pattern(regexp = "[A-Za-z]{3}") String currency,
+        @NotNull PaymentMethod paymentMethod) {
+    }
+
+    public record PackQuoteLegRequest(@NotNull Long airportId, @NotNull Long zoneId, @NotNull Long vehicleTypeId) {
+    }
+
+    public record PackQuoteRequest(
+        @NotBlank @Pattern(regexp = "[A-Za-z]{3}") String currency,
+        @NotNull @Size(min = 1, max = 6) List<@Valid PackQuoteLegRequest> legs) {
+    }
+
+    /** Price of every leg and their total in {@code currency}; the total is exactly the sum of the leg amounts. */
+    public record PackQuoteDto(String currency, List<QuoteDto> legs, BigDecimal totalAmount, boolean demo) {
     }
 
     public record AirportSummary(Long id, String iataCode, String nameFr, String nameEn, String nameAr,

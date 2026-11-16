@@ -103,6 +103,7 @@ type Preview =
           </div>
 
           <button type="submit" class="btn-primary mt-5 w-full">{{ 'home.cta' | translate }}</button>
+          <a routerLink="/pack" class="mt-3 flex min-h-11 items-center justify-center text-sm font-semibold text-brand hover:underline">{{ 'pack.cta' | translate }}</a>
         </form>
       </div>
     </section>

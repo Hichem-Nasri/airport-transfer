@@ -4,6 +4,8 @@ import com.airporttransfer.booking.BookingDtos.BookingDto;
 import com.airporttransfer.booking.BookingDtos.BookingQuoteDto;
 import com.airporttransfer.booking.BookingDtos.BookingsCreatedDto;
 import com.airporttransfer.booking.BookingDtos.CreateBookingRequest;
+import com.airporttransfer.booking.BookingDtos.CreatePackRequest;
+import com.airporttransfer.booking.BookingDtos.PackLegRequest;
 import com.airporttransfer.booking.BookingDtos.UpdateBookingRequest;
 import com.airporttransfer.catalog.Airport;
 import com.airporttransfer.catalog.AirportRepository;
@@ -17,6 +19,7 @@ import com.airporttransfer.user.Role;
 import com.airporttransfer.user.User;
 import com.airporttransfer.user.UserService;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -103,16 +106,66 @@ public class BookingService {
         List<Booking> legs = roundTrip
             ? List.of(
                 build(groupId, customerId, airport, request.direction(), zone, address,
-                    request.flightNumber(), request.pickupAt(), request, luggage, vehicle, notes, leg),
+                    request.flightNumber(), request.pickupAt(), request.passengers(), request.paymentMethod(),
+                    luggage, vehicle, notes, leg),
                 build(groupId, customerId, airport, request.direction().opposite(), zone, address,
-                    request.returnFlightNumber(), request.returnPickupAt(), request, luggage, vehicle, notes, leg))
+                    request.returnFlightNumber(), request.returnPickupAt(), request.passengers(),
+                    request.paymentMethod(), luggage, vehicle, notes, leg))
             : List.of(build(groupId, customerId, airport, request.direction(), zone, address,
-                request.flightNumber(), request.pickupAt(), request, luggage, vehicle, notes, leg));
+                request.flightNumber(), request.pickupAt(), request.passengers(), request.paymentMethod(),
+                luggage, vehicle, notes, leg));
 
+        return saveAll(customer, groupId, legs);
+    }
+
+    /**
+     * Books a pack: several one-way trips (any airports, any vehicles) in chronological order, linked by one group id
+     * and charged in one currency. Every leg is priced like a normal booking, so the total is the sum of the legs.
+     */
+    @Transactional
+    public BookingsCreatedDto createPack(Long customerId, CreatePackRequest request) {
+        if (!ENABLED_PAYMENT_METHODS.contains(request.paymentMethod())) {
+            throw ApiException.badRequest("PAYMENT_METHOD_NOT_AVAILABLE", "This payment method is not available yet");
+        }
+        Instant previous = Instant.now();
+        boolean first = true;
+        for (PackLegRequest leg : request.legs()) {
+            if (!leg.pickupAt().isAfter(previous)) {
+                throw first
+                    ? ApiException.badRequest("PICKUP_IN_PAST", "The pickup time must be in the future")
+                    : ApiException.badRequest("LEGS_OUT_OF_ORDER", "The trips of a pack must follow each other in time");
+            }
+            previous = leg.pickupAt();
+            first = false;
+        }
+
+        User customer = users.getActive(customerId);
+        UUID groupId = UUID.randomUUID();
+        List<Booking> legs = new ArrayList<>();
+        for (PackLegRequest l : request.legs()) {
+            Airport airport = airports.findByIdAndActiveTrue(l.airportId())
+                .orElseThrow(() -> ApiException.notFound("AIRPORT_NOT_FOUND", "Unknown or inactive airport"));
+            Zone zone = zones.findByIdAndActiveTrue(l.zoneId())
+                .orElseThrow(() -> ApiException.notFound("ZONE_NOT_FOUND", "Unknown or inactive zone"));
+            VehicleType vehicle = vehicleTypes.findByIdAndActiveTrue(l.vehicleTypeId())
+                .orElseThrow(() -> ApiException.notFound("VEHICLE_TYPE_NOT_FOUND", "Unknown or inactive vehicle type"));
+            if (l.passengers() > vehicle.getMaxPassengers()) {
+                throw ApiException.badRequest("VEHICLE_CAPACITY_EXCEEDED",
+                    "This vehicle carries at most " + vehicle.getMaxPassengers() + " passengers");
+            }
+            QuoteDto leg = pricing.quote(airport.getId(), zone.getId(), vehicle.getId(), request.currency(), 1).leg();
+            legs.add(build(groupId, customerId, airport, l.direction(), zone, l.address().trim(), l.flightNumber(),
+                l.pickupAt(), l.passengers(), request.paymentMethod(), l.luggageCount() == null ? 0 : l.luggageCount(),
+                vehicle, blankToNull(l.notes()), leg));
+        }
+        return saveAll(customer, groupId, legs);
+    }
+
+    private BookingsCreatedDto saveAll(User customer, UUID groupId, List<Booking> legs) {
         String language = language(LocaleContextHolder.getLocale());
         legs.forEach(l -> l.setCustomerLanguage(language));
         List<Booking> saved = bookings.saveAllAndFlush(legs);
-        Actor actor = new Actor(customerId, Role.CUSTOMER);
+        Actor actor = new Actor(customer.getId(), Role.CUSTOMER);
         saved.forEach(b -> workflow.recordCreated(b, actor));
         List<BookingDto> created = saved.stream().map(mapper::toDto).toList();
         events.publishEvent(new BookingsCreatedEvent(customer.getEmail(), customer.getFullName(),
@@ -175,13 +228,14 @@ public class BookingService {
     }
 
     private Booking build(UUID groupId, Long customerId, Airport airport, TripDirection direction, Zone zone,
-                          String address, String flightNumber, Instant pickupAt, CreateBookingRequest request,
-                          int luggage, VehicleType vehicle, String notes, QuoteDto leg) {
+                          String address, String flightNumber, Instant pickupAt, int passengers,
+                          PaymentMethod paymentMethod, int luggage, VehicleType vehicle, String notes,
+                          QuoteDto leg) {
         String reference = references.nextFree(bookings::existsByReference);
         return new Booking(reference, groupId, customerId, airport, direction, zone, address,
-            normalizeFlight(flightNumber), pickupAt, request.passengers(), luggage, vehicle, notes,
+            normalizeFlight(flightNumber), pickupAt, passengers, luggage, vehicle, notes,
             leg.priceTnd(), leg.currency(), leg.exchangeRate(), leg.amount(), leg.demo(),
-            request.paymentMethod());
+            paymentMethod);
     }
 
     /** Only fr, en and ar have mail texts; anything else (including a missing header) means French. */

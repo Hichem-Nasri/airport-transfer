@@ -127,3 +127,7 @@ docker compose -f docker-compose.prod.yml --env-file .env up -d --build
 ## France (step 11b)
 
 Paris airports (ORY, CDG) are sold with flat EUR prices per trip: EUR 150 Eco, EUR 160 Eco Plus (migration `V13__seed_france.sql`). Tariffs are stored in their own currency, pickup times use the airport's time zone. Apply the migrations by starting the backend.
+
+
+## Pack voyage (step 11c)
+`POST /api/bookings/pack` books several linked trips (France and Tunisia) at once; `POST /api/public/pack-quote` previews the total. UI: `/pack`.

@@ -143,6 +143,7 @@
     "UNKNOWN": "Something went wrong. Please try again.",
     "PICKUP_IN_PAST": "The pickup time must be in the future.",
     "RETURN_BEFORE_OUTBOUND": "The return must be after the first trip.",
+    "LEGS_OUT_OF_ORDER": "The trips of a pack must follow each other in time.",
     "VEHICLE_CAPACITY_EXCEEDED": "This vehicle cannot carry that many passengers.",
     "PAYMENT_METHOD_NOT_AVAILABLE": "This payment method is not available yet.",
     "AIRPORT_NOT_FOUND": "Airport not found.",
@@ -436,5 +437,19 @@
     "mainNav": "Main navigation",
     "currency": "Currency",
     "language": "Language"
+  },
+  "pack": {
+    "nav": "Travel pack",
+    "title": "France – Tunisia travel pack",
+    "subtitle": "Book your linked transfers in one go: pick-up at home in France, meet and greet on arrival in Tunisia, and the way back. One price per trip, one clear total.",
+    "leg": "Trip {{n}}",
+    "addLeg": "Add a trip",
+    "removeLeg": "Remove this trip",
+    "vehicle": "Vehicle",
+    "total": "Pack total",
+    "confirm": "Book the pack",
+    "incomplete": "Fill in every field of each trip.",
+    "done": "Pack booked. References:",
+    "cta": "France – Tunisia travel pack"
   }
 }

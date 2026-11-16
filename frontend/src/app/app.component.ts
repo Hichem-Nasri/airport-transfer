@@ -18,6 +18,7 @@ import { LogoComponent } from './shared/logo.component';
       <a routerLink="/" aria-label="HMS Transport"><app-logo /></a>
       <nav class="flex flex-wrap gap-7 text-[15px] font-semibold" [attr.aria-label]="'a11y.mainNav' | translate">
         <a routerLink="/book" class="hover:text-brand">{{ 'nav.book' | translate }}</a>
+        <a routerLink="/pack" class="hover:text-brand">{{ 'pack.nav' | translate }}</a>
         @if (auth.isLoggedIn()) {
           <a routerLink="/bookings" class="hover:text-brand">{{ 'nav.bookings' | translate }}</a>
         }
