@@ -47,6 +47,18 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, JpaSpec
 
     boolean existsByAssignedDriverIdAndStatusIn(Long driverId, Collection<BookingStatus> statuses);
 
+    @EntityGraph(attributePaths = {"airport"})
+    @Query("select b from Booking b where b.status in :statuses and b.reminder24hSentAt is null "
+        + "and b.pickupAt > :from and b.pickupAt <= :to order by b.pickupAt")
+    List<Booking> findDueFirstReminder(@Param("statuses") Collection<BookingStatus> statuses,
+                                       @Param("from") Instant from, @Param("to") Instant to);
+
+    @EntityGraph(attributePaths = {"airport"})
+    @Query("select b from Booking b where b.status in :statuses and b.reminder1hSentAt is null "
+        + "and b.pickupAt > :from and b.pickupAt <= :to order by b.pickupAt")
+    List<Booking> findDueSecondReminder(@Param("statuses") Collection<BookingStatus> statuses,
+                                        @Param("from") Instant from, @Param("to") Instant to);
+
     // ---- statistics (pickup time inside [from, to))
 
     @Query("select b.status, count(b) from Booking b where b.pickupAt >= :from and b.pickupAt < :to group by b.status")

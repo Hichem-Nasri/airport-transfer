@@ -50,5 +50,11 @@ app:
   seed-admin:
     email: ${SEED_ADMIN_EMAIL:}
     password: ${SEED_ADMIN_PASSWORD:}
+  sms:
+    # Reminders 24 h and 1 h before pickup. Off by default; without a real SmsGateway bean they are only logged.
+    enabled: ${SMS_ENABLED:false}
+    # "log" only logs the messages; set another value once a real SmsGateway bean exists.
+    provider: ${SMS_PROVIDER:log}
+    poll-interval-ms: ${SMS_POLL_INTERVAL_MS:60000}
   mail:
     from: ${MAIL_FROM:noreply@hms-transport.example}

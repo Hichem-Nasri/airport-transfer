@@ -131,3 +131,7 @@ Paris airports (ORY, CDG) are sold with flat EUR prices per trip: EUR 150 Eco, E
 
 ## Pack voyage (step 11c)
 `POST /api/bookings/pack` books several linked trips (France and Tunisia) at once; `POST /api/public/pack-quote` previews the total. UI: `/pack`.
+
+
+## SMS reminders (step 11d)
+Off by default. `SMS_ENABLED=true` starts the job that texts customers 24 h and 1 h before pickup. Until a provider adapter exists (`SMS_PROVIDER`), messages are only logged.

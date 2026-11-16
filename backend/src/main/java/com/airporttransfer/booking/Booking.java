@@ -109,6 +109,12 @@ public class Booking {
     @Column(name = "customer_language", nullable = false)
     private String customerLanguage = "fr";
 
+    @Column(name = "reminder_24h_sent_at")
+    private Instant reminder24hSentAt;
+
+    @Column(name = "reminder_1h_sent_at")
+    private Instant reminder1hSentAt;
+
     /** Optimistic lock: two staff members acting on the same booking at once cannot both win. */
     @jakarta.persistence.Version
     private Long version;
@@ -183,6 +189,22 @@ public class Booking {
         this.luggageCount = luggageCount;
         this.notes = notes;
         this.updatedAt = Instant.now();
+    }
+
+    public void markFirstReminderSent(Instant at) {
+        this.reminder24hSentAt = at;
+    }
+
+    public void markSecondReminderSent(Instant at) {
+        this.reminder1hSentAt = at;
+    }
+
+    public Instant getReminder24hSentAt() {
+        return reminder24hSentAt;
+    }
+
+    public Instant getReminder1hSentAt() {
+        return reminder1hSentAt;
     }
 
     void setCustomerLanguage(String language) {
