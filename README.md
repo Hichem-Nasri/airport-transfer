@@ -118,11 +118,12 @@ cp .env.example .env        # fill in DB_PASSWORD, JWT_SECRET (32+ chars), PUBLI
 docker compose -f docker-compose.prod.yml --env-file .env up -d --build
 ```
 
-- The `web` service (nginx) serves the Angular app on `WEB_PORT` (default 80) and proxies `/api` to the backend. Put a TLS-terminating proxy in front of it (set `X-Forwarded-Proto`).
+- `caddy` terminates HTTPS (automatic Let's Encrypt certificate for `DOMAIN`; the DNS record must already point to the server and ports 80 and 443 must be open). Behind it, `web` (nginx) serves the Angular app and proxies `/api` to the backend. `WEB_PORT` is no longer used.
 - The backend runs with the `prod` profile: Swagger is disabled, and it refuses to start with the dev `JWT_SECRET`.
 - To create the first admin, set `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD` for the first start, then remove them.
 - **Before going live**, replace the demo tariffs and exchange rates in `/admin` (the backend logs a WARN while demo data remains).
-- Back up the `pgdata` volume. Flyway migrates the schema on startup.
+- Back up the database with `./scripts/backup.sh` (daily cron, see the script). Flyway migrates the schema on startup.
+- Update: `git pull && docker compose -f docker-compose.prod.yml --env-file .env up -d --build`.
 
 ## France (step 11b)
 
