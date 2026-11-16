@@ -1,6 +1,7 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AuthService } from '../../core/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Airport, CatalogService, VehicleType, ZoneWithAreas } from '../../core/catalog.service';
@@ -12,6 +13,8 @@ import { LanguageService } from '../../core/language.service';
 import { Localized, localName } from '../../core/localized';
 import { localToIso, todayIn } from '../../core/zoned-time';
 import { formatMoney } from '../../core/money';
+
+const DRAFT_KEY = 'hms.pack.draft';
 
 type LegGroup = FormGroup<{
   airportId: FormControl<number | null>;
@@ -166,6 +169,7 @@ export class PackComponent {
   private readonly lang = inject(LanguageService);
   private readonly currency = inject(CurrencyService);
   private readonly router = inject(Router);
+  private readonly auth = inject(AuthService);
 
   readonly directions: Direction[] = ['AIRPORT_TO_ADDRESS', 'ADDRESS_TO_AIRPORT'];
   readonly today = todayIn('Europe/Paris');
@@ -198,6 +202,7 @@ export class PackComponent {
   });
 
   constructor() {
+    this.restoreDraft();
     this.form.valueChanges.subscribe(() => this.tick.update((n) => n + 1));
     effect(
       () => {
@@ -258,6 +263,11 @@ export class PackComponent {
 
   submit(): void {
     this.error.set(null);
+    if (!this.auth.isLoggedIn()) {
+      this.saveDraft();
+      void this.router.navigate(['/login'], { queryParams: { returnUrl: '/pack' } });
+      return;
+    }
     const requests = [];
     for (const leg of this.legs.controls) {
       const v = leg.getRawValue();
@@ -291,6 +301,35 @@ export class PackComponent {
         this.error.set(errorKey(e));
       }
     });
+  }
+
+  /** An anonymous visitor fills the pack, then signs in: the form is kept for the round trip to the login page. */
+  private saveDraft(): void {
+    try {
+      sessionStorage.setItem(DRAFT_KEY, JSON.stringify(this.legs.getRawValue()));
+    } catch {
+      // storage unavailable: the visitor simply fills the form again
+    }
+  }
+
+  private restoreDraft(): void {
+    try {
+      const raw = sessionStorage.getItem(DRAFT_KEY);
+      if (!raw) {
+        return;
+      }
+      sessionStorage.removeItem(DRAFT_KEY);
+      const saved = JSON.parse(raw) as ReturnType<LegGroup['getRawValue']>[];
+      if (!Array.isArray(saved) || saved.length < 2 || saved.length > 4) {
+        return;
+      }
+      while (this.legs.length < saved.length) {
+        this.addLeg();
+      }
+      this.legs.patchValue(saved);
+    } catch {
+      // unreadable draft: ignore it
+    }
   }
 
   private zoneIdOf(areaId: number | null): number | null {

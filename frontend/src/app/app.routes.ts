@@ -20,7 +20,6 @@ export const routes: Routes = [
   },
   {
     path: 'pack',
-    canActivate: [authGuard],
     loadComponent: () => import('./features/pack/pack.component').then((m) => m.PackComponent)
   },
   {
