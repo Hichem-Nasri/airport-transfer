@@ -64,7 +64,7 @@ class StaffBookingIT extends OperationsTestSupport {
         assertThat(first.get("customer").get("email").asText()).startsWith("customer-");
         assertThat(first.get("driver").isNull()).isTrue();
         assertThat(first.get("history").isNull()).isTrue();
-        assertThat(first.get("booking").get("reference").asText()).startsWith("MH-");
+        assertThat(first.get("booking").get("reference").asText()).startsWith("HMS-");
     }
 
     @Test

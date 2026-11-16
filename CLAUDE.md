@@ -1,6 +1,6 @@
-# Marhba — Airport transfer booking across Tunisia
+# HMS Transport — Airport transfer booking in France and Tunisia
 
-Working name: **Marhba** (provisional, easy to rename). Web app to book a private transfer from or to any Tunisian airport, in TND, EUR or USD.
+Brand: **HMS Transport** (renamed from the working name "Marhba" in step 11a; internal identifiers such as the JWT issuer and the `marhba.auth` storage key keep the old name on purpose). Web app to book a private transfer from or to a Tunisian airport (and, from step 11b, Paris airports), in TND, EUR or USD.
 
 The owner (Hichem) is an experienced Java Spring / Angular developer and writes in French. **Talk to him in French. Write code, comments, identifiers and commit messages in English.**
 
@@ -61,6 +61,8 @@ The owner (Hichem) is an experienced Java Spring / Angular developer and writes 
 
 - Step 10 done (branch `chore/quality-deploy`): no migration. `mvn verify` runs the `*IT` classes through Failsafe (`AbstractIT`: Testcontainers, or `TEST_DB_URL`). API error messages are translated (fr default, en, ar from `Accept-Language`) through `error.<CODE>` keys in `messages*.properties`, including 401/403 and validation errors; the `code` stays stable. Rate limiting (in memory, per instance, `common/RateLimiter`): login locks an e-mail for 15 minutes after 10 failed attempts (429 `TOO_MANY_REQUESTS`; this can be used to lock someone out for 15 minutes, accepted trade-off), forgot-password is limited to 5 per e-mail and 30 per IP per hour. Accessibility: skip link, `<main id="main">` focused after each navigation, translated aria-labels (`a11y.*`). Deployment: `backend/Dockerfile`, `frontend/Dockerfile` + `nginx.conf` (serves the SPA, proxies `/api` to `backend`), `docker-compose.prod.yml`, `.env.example`, `application-prod.yml` (Swagger off, forwarded headers). New environment variables: `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_SMTP_AUTH`, `MAIL_STARTTLS`, `WEB_PORT`, `DB_NAME` (compose only).
 
+- Step 11a done (branch `feat/rebrand`): application renamed HMS Transport (UI, e-mails in fr/en/ar, page title, inline SVG favicon), new logo, booking references now start with `HMS-` (existing `MH-` references stay valid). Default `MAIL_FROM` is now `noreply@hms-transport.example`: set the real address in production.
+
 ## Product rules
 - **Coverage**: all of Tunisia. Airports: Tunis-Carthage (TUN), Monastir (MIR), Enfidha-Hammamet (NBE), Djerba-Zarzis (DJE), Sfax (SFA), Tozeur (TOE), Tabarka (TBJ), Gafsa (GAF). Airports are data, not code: admins can add more.
 - **Directions**: airport → address, address → airport, or round trip (two bookings linked by a shared group id).
@@ -109,7 +111,7 @@ Later, not planned: promo codes, driver ratings, WhatsApp, real distance pricing
 Modern, clean, trustworthy, Tunisian. **White and Tunisian red.** It must not look like a cheap or generic local app.
 - Colors (Tailwind tokens already in `tailwind.config.js`): `brand` #D2001A, `brand-dark` #A10015, `brand-soft` #FFF6F6, `brand-line` #EBCFD2, `ink` #0B1B33, `muted` #4A5B73. White header. **No red banner or stripe at the top of pages.**
 - Font: Plus Jakarta Sans (400 / 600 / 800).
-- Logo: red horseshoe arch (like a Tunisian door) with a white eight-pointed star, wordmark "Marhba" and tagline "TRANSFERT AÉROPORT". Component: `shared/logo.component.ts`.
+- Logo: red rounded square with a white curved flight path ending in an arrow, wordmark "HMS Transport" and tagline "FRANCE · TUNISIE". Component: `shared/logo.component.ts`.
 - Home page: hero with headline and a floating booking card (direction tabs, airport, destination, date and time, passengers, price preview), vehicle cards, airport chips band, "how it works" in 3 steps, footer. Header: logo, nav, currency switch (TND / EUR / USD), language switch (FR / AR / EN), login.
 - Booking flow on mobile: step indicator, route summary card, selectable vehicle cards, sticky bottom bar with the total and a primary "Continuer" button.
 

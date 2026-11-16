@@ -4,11 +4,11 @@ import java.security.SecureRandom;
 import java.util.function.Predicate;
 import org.springframework.stereotype.Component;
 
-/** Human-readable booking references such as {@code MH-7K4Q9XTR}: no 0/O/1/I to avoid phone-call mix-ups. */
+/** Human-readable booking references such as {@code HMS-7K4Q9XTR}: no 0/O/1/I to avoid phone-call mix-ups. */
 @Component
 public class ReferenceGenerator {
 
-    static final String PREFIX = "MH-";
+    static final String PREFIX = "HMS-";
     private static final String ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     private static final int LENGTH = 8;
     private static final int MAX_ATTEMPTS = 10;

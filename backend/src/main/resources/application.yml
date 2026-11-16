@@ -51,4 +51,4 @@ app:
     email: ${SEED_ADMIN_EMAIL:}
     password: ${SEED_ADMIN_PASSWORD:}
   mail:
-    from: ${MAIL_FROM:noreply@marhba.tn}
+    from: ${MAIL_FROM:noreply@hms-transport.example}

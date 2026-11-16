@@ -16,7 +16,7 @@ class ReferenceGeneratorTest {
         Set<String> seen = new HashSet<>();
         for (int i = 0; i < 2000; i++) {
             String ref = generator.next();
-            assertThat(ref).matches("MH-[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{8}");
+            assertThat(ref).matches("HMS-[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{8}");
             seen.add(ref);
         }
         assertThat(seen).hasSize(2000);
@@ -27,7 +27,7 @@ class ReferenceGeneratorTest {
         int[] calls = {0};
         String ref = generator.nextFree(candidate -> ++calls[0] < 3);
 
-        assertThat(ref).startsWith("MH-");
+        assertThat(ref).startsWith("HMS-");
         assertThat(calls[0]).isEqualTo(3);
     }
 

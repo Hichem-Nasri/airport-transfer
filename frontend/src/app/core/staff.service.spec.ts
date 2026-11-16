@@ -31,14 +31,14 @@ describe('StaffService', () => {
   it('sends status, search, unassigned and the date range', () => {
     service
       .list({
-        page: 0, size: 20, order: 'desc', status: 'CONFIRMED', q: ' MH-AB ', unassigned: true, driverId: 4,
+        page: 0, size: 20, order: 'desc', status: 'CONFIRMED', q: ' HMS-AB ', unassigned: true, driverId: 4,
         from: '2026-12-01T23:00:00.000Z', to: '2026-12-02T23:00:00.000Z'
       })
       .subscribe();
 
     const req = http.expectOne((r) => r.url === '/api/staff/bookings');
     expect(req.request.params.get('status')).toBe('CONFIRMED');
-    expect(req.request.params.get('q')).toBe('MH-AB');
+    expect(req.request.params.get('q')).toBe('HMS-AB');
     expect(req.request.params.get('unassigned')).toBe('true');
     expect(req.request.params.get('driverId')).toBe('4');
     expect(req.request.params.get('from')).toBe('2026-12-01T23:00:00.000Z');

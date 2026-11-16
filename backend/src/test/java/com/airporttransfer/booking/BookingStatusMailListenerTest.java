@@ -44,7 +44,7 @@ class BookingStatusMailListenerTest {
     }
 
     private BookingDto booking(BookingStatus status) {
-        return new BookingDto(1L, "MH-ABCD2345", null, TripDirection.AIRPORT_TO_ADDRESS, status,
+        return new BookingDto(1L, "HMS-ABCD2345", null, TripDirection.AIRPORT_TO_ADDRESS, status,
             new AirportSummary(1L, "TUN", "Tunis-Carthage", "Tunis-Carthage Airport", "مطار تونس قرطاج"),
             new ZoneSummary(1L, "Z01", "Grand Tunis", "Greater Tunis", "تونس الكبرى"), "12 Rue de Marseille", null,
             Instant.parse("2026-12-01T10:30:00Z"), 2, 1,
@@ -69,7 +69,7 @@ class BookingStatusMailListenerTest {
 
         SimpleMailMessage mail = sent(1).get(0);
         assertThat(mail.getTo()).containsExactly("client@example.tn");
-        assertThat(mail.getSubject()).isEqualTo("Marhba - Booking MH-ABCD2345 confirmed");
+        assertThat(mail.getSubject()).isEqualTo("HMS Transport - Booking HMS-ABCD2345 confirmed");
         assertThat(mail.getText()).contains("Hello Ali Ben Salah", "01/12/2026 11:30", "Tunis-Carthage Airport");
     }
 
@@ -81,7 +81,7 @@ class BookingStatusMailListenerTest {
         List<SimpleMailMessage> mails = sent(2);
         SimpleMailMessage toCustomer = mails.get(0);
         assertThat(toCustomer.getTo()).containsExactly("client@example.tn");
-        assertThat(toCustomer.getText()).contains("Karim Driver", "+216 98 111 222", "MH-ABCD2345");
+        assertThat(toCustomer.getText()).contains("Karim Driver", "+216 98 111 222", "HMS-ABCD2345");
         SimpleMailMessage toDriver = mails.get(1);
         assertThat(toDriver.getTo()).containsExactly("driver@example.tn");
         assertThat(toDriver.getSubject()).contains("Nouvelle course");

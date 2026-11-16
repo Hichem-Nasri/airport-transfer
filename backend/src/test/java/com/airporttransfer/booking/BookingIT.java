@@ -114,7 +114,7 @@ class BookingIT extends AbstractIT {
         assertThat(created.get("groupId").isNull()).isTrue();
         assertThat(created.get("bookings")).hasSize(1);
         JsonNode b = created.get("bookings").get(0);
-        assertThat(b.get("reference").asText()).matches("MH-[A-Z2-9]{8}");
+        assertThat(b.get("reference").asText()).matches("HMS-[A-Z2-9]{8}");
         assertThat(b.get("status").asText()).isEqualTo("PENDING");
         assertThat(b.get("direction").asText()).isEqualTo("AIRPORT_TO_ADDRESS");
         assertThat(b.get("flightNumber").asText()).isEqualTo("TU714");

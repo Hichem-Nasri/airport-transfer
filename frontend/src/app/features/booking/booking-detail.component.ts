@@ -29,7 +29,7 @@ import { StatusBadgeComponent } from '../../shared/status-badge.component';
       @if (booking(); as b) {
         <article class="mt-4 rounded-2xl border border-brand-line bg-white p-5 print:border-0 print:p-0">
           <div class="hidden print:block">
-            <p class="text-2xl font-extrabold text-brand">Marhba</p>
+            <p class="text-2xl font-extrabold text-brand">HMS Transport</p>
             <p class="text-sm font-semibold">{{ 'receipt.title' | translate }}</p>
             <p class="text-sm text-muted">{{ 'receipt.issued' | translate: { date: issued() } }}</p>
           </div>

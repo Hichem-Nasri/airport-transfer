@@ -29,7 +29,7 @@ class BookingStatusServiceTest {
         CANCELLED, Set.of());
 
     private static Booking booking(BookingStatus status) {
-        Booking b = new Booking("MH-TEST0001", null, 1L, null, TripDirection.AIRPORT_TO_ADDRESS, null, "addr", null,
+        Booking b = new Booking("HMS-TEST0001", null, 1L, null, TripDirection.AIRPORT_TO_ADDRESS, null, "addr", null,
             Instant.now(), 1, 0, null, null, new BigDecimal("50.000"), "TND", null, new BigDecimal("50.000"), false,
             PaymentMethod.CASH);
         b.changeStatus(status);

@@ -38,7 +38,7 @@ class BookingMailListenerTest {
     }
 
     private BookingsCreatedEvent event(Locale locale) {
-        BookingDto dto = new BookingDto(1L, "MH-ABCD2345", null, TripDirection.AIRPORT_TO_ADDRESS,
+        BookingDto dto = new BookingDto(1L, "HMS-ABCD2345", null, TripDirection.AIRPORT_TO_ADDRESS,
             BookingStatus.PENDING, new AirportSummary(1L, "TUN", "Tunis-Carthage", "Tunis-Carthage Airport", "مطار تونس قرطاج"),
             new ZoneSummary(1L, "Z01", "Grand Tunis", "Greater Tunis", "تونس الكبرى"), "12 Rue de Marseille",
             "TU714",
@@ -57,7 +57,7 @@ class BookingMailListenerTest {
     void frenchIsTheDefaultLanguageAndPickupIsShownInTunisTime() {
         String body = listener().body(event(Locale.FRENCH));
 
-        assertThat(body).contains("Bonjour Ali Ben Salah", "MH-ABCD2345", "Tunis-Carthage", "12 Rue de Marseille",
+        assertThat(body).contains("Bonjour Ali Ben Salah", "HMS-ABCD2345", "Tunis-Carthage", "12 Rue de Marseille",
             "01/12/2026 11:30", "50.000 TND", "De l'aéroport vers l'adresse");
     }
 
@@ -81,7 +81,7 @@ class BookingMailListenerTest {
         ArgumentCaptor<SimpleMailMessage> captor = ArgumentCaptor.forClass(SimpleMailMessage.class);
         verify(sender).send(captor.capture());
         assertThat(captor.getValue().getTo()).containsExactly("client@example.tn");
-        assertThat(captor.getValue().getSubject()).contains("MH-ABCD2345");
+        assertThat(captor.getValue().getSubject()).contains("HMS-ABCD2345");
         assertThat(captor.getValue().getFrom()).isEqualTo("noreply@marhba.tn");
     }
 
