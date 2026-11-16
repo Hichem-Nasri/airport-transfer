@@ -31,10 +31,22 @@ public class VehicleType {
     @Column(name = "display_order", nullable = false)
     private int displayOrder;
 
+    /** Example models, the same in every language (for instance "Seat Ibiza, Toyota Yaris"). Optional. */
+    @Column(length = 200)
+    private String models;
+
     @Column(nullable = false)
     private boolean active;
 
     public VehicleType() {
+    }
+
+    public String getModels() {
+        return models;
+    }
+
+    public void setModels(String models) {
+        this.models = models;
     }
 
     public Long getId() {

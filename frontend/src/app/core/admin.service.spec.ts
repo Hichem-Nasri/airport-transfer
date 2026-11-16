@@ -40,10 +40,10 @@ describe('AdminService', () => {
   });
 
   it('creates a tariff when none exists and posts exchange rates as TND per unit', () => {
-    service.createTariff({ airportId: 1, zoneId: 2, vehicleTypeId: 3, priceTnd: 45.5, active: true }).subscribe();
+    service.createTariff({ airportId: 1, zoneId: 2, vehicleTypeId: 3, price: 45.5, currency: 'TND', active: true }).subscribe();
     const t = http.expectOne('/api/admin/tariffs');
     expect(t.request.method).toBe('POST');
-    expect((t.request.body as { priceTnd: number }).priceTnd).toBe(45.5);
+    expect((t.request.body as { price: number }).price).toBe(45.5);
     t.flush({});
 
     service.addRate('EUR', 3.4125).subscribe();

@@ -17,6 +17,7 @@ public final class CatalogDtos {
 
     // ---- airports
     public record AirportDto(Long id, String iataCode, String nameFr, String nameEn, String nameAr,
+                             String country, String timeZone,
                              BigDecimal latitude, BigDecimal longitude, boolean active) {
     }
 
@@ -25,13 +26,15 @@ public final class CatalogDtos {
         @NotBlank @Size(max = 150) String nameFr,
         @NotBlank @Size(max = 150) String nameEn,
         @NotBlank @Size(max = 150) String nameAr,
+        @NotBlank @Pattern(regexp = "[A-Z]{2}") String country,
+        @NotBlank @Size(max = 40) String timeZone,
         @DecimalMin("-90") @DecimalMax("90") BigDecimal latitude,
         @DecimalMin("-180") @DecimalMax("180") BigDecimal longitude,
         @NotNull Boolean active) {
     }
 
     // ---- zones and areas
-    public record ZoneDto(Long id, String code, String nameFr, String nameEn, String nameAr,
+    public record ZoneDto(Long id, String code, String nameFr, String nameEn, String nameAr, String country,
                           int displayOrder, boolean active) {
     }
 
@@ -40,6 +43,7 @@ public final class CatalogDtos {
         @NotBlank @Size(max = 100) String nameFr,
         @NotBlank @Size(max = 100) String nameEn,
         @NotBlank @Size(max = 100) String nameAr,
+        @NotBlank @Pattern(regexp = "[A-Z]{2}") String country,
         @NotNull @Min(0) Integer displayOrder,
         @NotNull Boolean active) {
     }
@@ -59,12 +63,13 @@ public final class CatalogDtos {
 
     /** Public view: a pricing zone with the active areas a customer can pick in it. */
     public record ZoneWithAreasDto(Long id, String code, String nameFr, String nameEn, String nameAr,
-                                   List<AreaDto> areas) {
+                                   String country, List<AreaDto> areas) {
     }
 
     // ---- vehicle types
     public record VehicleTypeDto(Long id, String code, String nameFr, String nameEn, String nameAr,
-                                 int minPassengers, int maxPassengers, int displayOrder, boolean active) {
+                                 String models, int minPassengers, int maxPassengers, int displayOrder,
+                                 boolean active) {
     }
 
     public record VehicleTypeRequest(
@@ -72,6 +77,7 @@ public final class CatalogDtos {
         @NotBlank @Size(max = 100) String nameFr,
         @NotBlank @Size(max = 100) String nameEn,
         @NotBlank @Size(max = 100) String nameAr,
+        @Size(max = 200) String models,
         @NotNull @Min(1) Integer minPassengers,
         @NotNull @Min(1) Integer maxPassengers,
         @NotNull @Min(0) Integer displayOrder,

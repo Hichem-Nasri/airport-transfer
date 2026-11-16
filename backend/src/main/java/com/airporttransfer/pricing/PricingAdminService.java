@@ -158,7 +158,11 @@ public class PricingAdminService {
         tariff.setAirport(airport);
         tariff.setZone(zone);
         tariff.setVehicleType(vehicleType);
-        tariff.setPriceTnd(request.priceTnd().setScale(3, RoundingMode.HALF_UP));
+        if (!currencies.existsById(request.currency())) {
+            throw ApiException.notFound("CURRENCY_NOT_FOUND", "Unknown currency: " + request.currency());
+        }
+        tariff.setPrice(request.price().setScale(3, RoundingMode.HALF_UP));
+        tariff.setCurrency(request.currency());
         tariff.setDemo(false);
     }
 }

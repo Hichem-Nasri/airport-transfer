@@ -29,6 +29,14 @@ public class Airport {
     @Column(precision = 9, scale = 6)
     private BigDecimal longitude;
 
+    /** ISO 3166-1 alpha-2 country of the airport (TN, FR). Decides which destinations a customer can pick. */
+    @Column(nullable = false, length = 2)
+    private String country = "TN";
+
+    /** IANA time zone of the airport: pickup times are entered and shown in it. */
+    @Column(name = "time_zone", nullable = false, length = 40)
+    private String timeZone = "Africa/Tunis";
+
     @Column(nullable = false)
     private boolean active;
 
@@ -85,6 +93,22 @@ public class Airport {
 
     public void setLongitude(BigDecimal longitude) {
         this.longitude = longitude;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(String timeZone) {
+        this.timeZone = timeZone;
     }
 
     public boolean isActive() {

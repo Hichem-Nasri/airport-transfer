@@ -6,7 +6,7 @@ import { Booking, BookingService } from '../../core/booking.service';
 import { LanguageService } from '../../core/language.service';
 import { localName } from '../../core/localized';
 import { formatMoney } from '../../core/money';
-import { formatTunis } from '../../core/tunis-time';
+import { formatInZone } from '../../core/zoned-time';
 import { StatusBadgeComponent } from '../../shared/status-badge.component';
 
 @Component({
@@ -47,7 +47,7 @@ import { StatusBadgeComponent } from '../../shared/status-badge.component';
                 <span aria-hidden="true" class="text-brand rtl:rotate-180">→</span>
                 <span>{{ to(b) }}</span>
               </p>
-              <p class="mt-1 text-sm text-muted">{{ when(b.pickupAt) }}</p>
+              <p class="mt-1 text-sm text-muted">{{ when(b.pickupAt, b.airport.timeZone) }}</p>
               <dl class="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
                 <dt class="text-muted">{{ 'booking.fields.address' | translate }}</dt>
                 <dd class="font-semibold">{{ b.address }}</dd>
@@ -124,8 +124,8 @@ export class BookingsComponent {
     return localName(b.vehicleType, this.lang.current());
   }
 
-  when(iso: string): string {
-    return formatTunis(iso, this.lang.current());
+  when(iso: string, timeZone: string): string {
+    return formatInZone(iso, this.lang.current(), timeZone);
   }
 
   /** The amount and currency stored in the booking when it was made. */

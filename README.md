@@ -123,3 +123,7 @@ docker compose -f docker-compose.prod.yml --env-file .env up -d --build
 - To create the first admin, set `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD` for the first start, then remove them.
 - **Before going live**, replace the demo tariffs and exchange rates in `/admin` (the backend logs a WARN while demo data remains).
 - Back up the `pgdata` volume. Flyway migrates the schema on startup.
+
+## France (step 11b)
+
+Paris airports (ORY, CDG) are sold with flat EUR prices per trip: EUR 150 Eco, EUR 160 Eco Plus (migration `V13__seed_france.sql`). Tariffs are stored in their own currency, pickup times use the airport's time zone. Apply the migrations by starting the backend.

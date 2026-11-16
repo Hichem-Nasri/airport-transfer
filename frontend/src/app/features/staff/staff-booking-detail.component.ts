@@ -9,7 +9,7 @@ import { LanguageService } from '../../core/language.service';
 import { localName } from '../../core/localized';
 import { formatMoney } from '../../core/money';
 import { Person, StaffBooking, StaffService } from '../../core/staff.service';
-import { formatTunis } from '../../core/tunis-time';
+import { formatInZone } from '../../core/zoned-time';
 import { StatusBadgeComponent } from '../../shared/status-badge.component';
 
 @Component({
@@ -40,7 +40,7 @@ import { StatusBadgeComponent } from '../../shared/status-badge.component';
               <div><dt class="text-muted">{{ 'booking.fields.airport' | translate }}</dt><dd class="font-semibold">{{ d.booking.airport.iataCode }} · {{ name(d.booking.airport) }}</dd></div>
               <div><dt class="text-muted">{{ 'booking.direction.' + d.booking.direction | translate }}</dt><dd class="font-semibold">{{ name(d.booking.zone) }}</dd></div>
               <div><dt class="text-muted">{{ 'booking.fields.address' | translate }}</dt><dd class="font-semibold">{{ d.booking.address }}</dd></div>
-              <div><dt class="text-muted">{{ 'staff.pickup' | translate }}</dt><dd class="font-semibold">{{ when(d.booking.pickupAt) }}</dd></div>
+              <div><dt class="text-muted">{{ 'staff.pickup' | translate }}</dt><dd class="font-semibold">{{ when(d.booking.pickupAt, d.booking.airport.timeZone) }}</dd></div>
               @if (d.booking.flightNumber) {
                 <div><dt class="text-muted">{{ 'booking.fields.flightNumber' | translate }}</dt><dd class="font-semibold" dir="ltr">{{ d.booking.flightNumber }}</dd></div>
               }
@@ -144,7 +144,7 @@ import { StatusBadgeComponent } from '../../shared/status-badge.component';
                 <li>
                   <p class="font-semibold">{{ 'status.' + h.toStatus | translate }}</p>
                   <p class="text-sm text-muted">
-                    {{ when(h.createdAt) }} · {{ h.actorName }}
+                    {{ when(h.createdAt, d.booking.airport.timeZone) }} · {{ h.actorName }}
                     @if (h.actorRole) { ({{ 'roles.' + h.actorRole | translate }}) }
                   </p>
                   @if (h.note) { <p class="text-sm">{{ h.note }}</p> }
@@ -188,8 +188,8 @@ export class StaffBookingDetailComponent {
     return localName(item, this.lang.current());
   }
 
-  when(iso: string): string {
-    return formatTunis(iso, this.lang.current());
+  when(iso: string, timeZone: string): string {
+    return formatInZone(iso, this.lang.current(), timeZone);
   }
 
   money(d: StaffBooking): string {

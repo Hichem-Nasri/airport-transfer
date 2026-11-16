@@ -1,5 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { startWith } from 'rxjs';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -7,12 +8,14 @@ import { Airport, CatalogService, VehicleType, ZoneWithAreas } from '../../core/
 import { Direction } from '../../core/booking.service';
 import { LanguageService } from '../../core/language.service';
 import { localName } from '../../core/localized';
-import { todayInTunis, tunisLocalToIso } from '../../core/tunis-time';
+import { todayInTunis } from '../../core/tunis-time';
+import { TUNIS_ZONE, localToIso } from '../../core/zoned-time';
 import { StickyBarComponent } from '../../shared/sticky-bar.component';
 import { BookingDraftService } from './booking-draft.service';
 import { TripPrefill, parsePrefill } from './prefill';
 
 interface TripFormValue {
+  airportId: number | null;
   roundTrip: boolean;
   date: string;
   time: string;
@@ -20,25 +23,28 @@ interface TripFormValue {
   returnTime: string;
 }
 
-function isoOf(date: string, time: string): number | null {
-  return date && time ? Date.parse(tunisLocalToIso(date, time)) : null;
+function isoOf(date: string, time: string, zone: string): number | null {
+  return date && time ? Date.parse(localToIso(date, time, zone)) : null;
 }
 
-/** Cross-field rules: pickup in the future, and the return after the first trip. */
-function tripTimes(group: AbstractControl): ValidationErrors | null {
-  const v = group.value as TripFormValue;
-  const errors: ValidationErrors = {};
-  const out = isoOf(v.date, v.time);
-  if (out !== null && out <= Date.now()) {
-    errors['pickupPast'] = true;
-  }
-  if (v.roundTrip) {
-    const back = isoOf(v.returnDate, v.returnTime);
-    if (out !== null && back !== null && back <= out) {
-      errors['returnBeforeOutbound'] = true;
+/** Cross-field rules: pickup in the future, and the return after the first trip (times are in the airport's zone). */
+function tripTimes(zoneOf: (airportId: number | null) => string) {
+  return (group: AbstractControl): ValidationErrors | null => {
+    const v = group.value as TripFormValue;
+    const zone = zoneOf(v.airportId);
+    const errors: ValidationErrors = {};
+    const out = isoOf(v.date, v.time, zone);
+    if (out !== null && out <= Date.now()) {
+      errors['pickupPast'] = true;
     }
-  }
-  return Object.keys(errors).length ? errors : null;
+    if (v.roundTrip) {
+      const back = isoOf(v.returnDate, v.returnTime, zone);
+      if (out !== null && back !== null && back <= out) {
+        errors['returnBeforeOutbound'] = true;
+      }
+    }
+    return Object.keys(errors).length ? errors : null;
+  };
 }
 
 @Component({
@@ -165,13 +171,6 @@ export class TripStepComponent {
   private readonly zones = toSignal(this.catalog.zones(), { initialValue: [] as ZoneWithAreas[] });
   private readonly vehicleTypes = toSignal(this.catalog.vehicleTypes(), { initialValue: [] as VehicleType[] });
 
-  /** The customer picks a governorate; its pricing zone is derived from it. */
-  readonly areas = computed(() =>
-    this.zones()
-      .flatMap((z) => z.areas.map((a) => ({ id: a.id, zoneId: z.id, label: localName(a, this.lang.current()) })))
-      .sort((a, b) => a.label.localeCompare(b.label, this.lang.current()))
-  );
-
   /** A bigger vehicle can always carry fewer people: the limit is the largest vehicle. */
   readonly maxPassengers = computed(() => Math.max(1, ...this.vehicleTypes().map((v) => v.maxPassengers)));
 
@@ -198,10 +197,31 @@ export class TripStepComponent {
         ]
       ]
     },
-    { validators: tripTimes }
+    { validators: tripTimes((id) => this.zoneOf(id)) }
   );
 
+  private readonly airportId = toSignal(
+    this.form.controls.airportId.valueChanges.pipe(startWith(this.form.controls.airportId.value)),
+    { initialValue: this.form.controls.airportId.value }
+  );
+
+  /** The customer picks a destination in the airport's country; its pricing zone is derived from it. */
+  readonly areas = computed(() => {
+    const country = this.airports().find((a) => a.id === this.airportId())?.country;
+    return this.zones()
+      .filter((z) => !country || z.country === country)
+      .flatMap((z) => z.areas.map((a) => ({ id: a.id, zoneId: z.id, label: localName(a, this.lang.current()) })))
+      .sort((a, b) => a.label.localeCompare(b.label, this.lang.current()));
+  });
+
   constructor() {
+    // Another airport may be in another country: a destination that no longer applies is dropped.
+    this.form.controls.airportId.valueChanges.subscribe(() => {
+      const areaId = this.form.controls.areaId.value;
+      if (areaId !== null && !this.areas().some((a) => a.id === areaId)) {
+        this.form.controls.areaId.setValue(null);
+      }
+    });
     // The return date and time are required only for a round trip.
     this.form.controls.roundTrip.valueChanges.subscribe((roundTrip) => {
       for (const c of [this.form.controls.returnDate, this.form.controls.returnTime]) {
@@ -212,6 +232,11 @@ export class TripStepComponent {
     if (this.saved?.roundTrip) {
       this.form.controls.roundTrip.setValue(true);
     }
+  }
+
+  /** Pickup times are typed and shown in the time zone of the airport. */
+  private zoneOf(airportId: number | null): string {
+    return this.airports().find((a) => a.id === airportId)?.timeZone ?? TUNIS_ZONE;
   }
 
   name(item: Airport): string {
@@ -238,6 +263,7 @@ export class TripStepComponent {
     if (v.airportId === null || v.areaId === null || !area) {
       return;
     }
+    const timeZone = this.zoneOf(v.airportId);
     this.draft.trip.set({
       direction: v.direction,
       roundTrip: v.roundTrip,
@@ -249,8 +275,9 @@ export class TripStepComponent {
       returnDate: v.returnDate,
       returnTime: v.returnTime,
       passengers: v.passengers,
-      pickupAt: tunisLocalToIso(v.date, v.time),
-      returnPickupAt: v.roundTrip ? tunisLocalToIso(v.returnDate, v.returnTime) : null
+      timeZone,
+      pickupAt: localToIso(v.date, v.time, timeZone),
+      returnPickupAt: v.roundTrip ? localToIso(v.returnDate, v.returnTime, timeZone) : null
     });
     this.draft.go(2);
   }

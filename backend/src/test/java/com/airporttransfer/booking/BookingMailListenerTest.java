@@ -39,12 +39,12 @@ class BookingMailListenerTest {
 
     private BookingsCreatedEvent event(Locale locale) {
         BookingDto dto = new BookingDto(1L, "HMS-ABCD2345", null, TripDirection.AIRPORT_TO_ADDRESS,
-            BookingStatus.PENDING, new AirportSummary(1L, "TUN", "Tunis-Carthage", "Tunis-Carthage Airport", "مطار تونس قرطاج"),
+            BookingStatus.PENDING, new AirportSummary(1L, "TUN", "Tunis-Carthage", "Tunis-Carthage Airport", "مطار تونس قرطاج", "TN", "Africa/Tunis"),
             new ZoneSummary(1L, "Z01", "Grand Tunis", "Greater Tunis", "تونس الكبرى"), "12 Rue de Marseille",
             "TU714",
             // 10:30 UTC is 11:30 in Tunis (UTC+1, no daylight saving time).
             Instant.parse("2026-12-01T10:30:00Z"), 2, 1,
-            new VehicleTypeSummary(1L, "SEDAN", "Berline", "Sedan", "سيارة", 3), null, new BigDecimal("50.000"),
+            new VehicleTypeSummary(1L, "SEDAN", "Berline", "Sedan", "سيارة", null, 3), null, new BigDecimal("50.000"),
             "TND", null, new BigDecimal("50.000"), true, PaymentMethod.CASH, PaymentStatus.UNPAID, true, true, Instant.now());
         return new BookingsCreatedEvent("client@example.tn", "Ali Ben Salah", locale, List.of(dto));
     }

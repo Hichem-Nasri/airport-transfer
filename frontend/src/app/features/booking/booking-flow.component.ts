@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { LanguageService } from '../../core/language.service';
 import { formatMoney } from '../../core/money';
-import { formatTunis } from '../../core/tunis-time';
+import { formatInZone } from '../../core/zoned-time';
 import { StepIndicatorComponent } from '../../shared/step-indicator.component';
 import { BookingDraftService } from './booking-draft.service';
 import { DetailsStepComponent } from './details-step.component';
@@ -27,7 +27,7 @@ import { VehicleStepComponent } from './vehicle-step.component';
               <li class="rounded-xl bg-brand-soft p-4">
                 <p class="text-sm text-muted">{{ 'booking.direction.' + b.direction | translate }}</p>
                 <p class="text-xl font-extrabold tracking-wide" dir="ltr">{{ b.reference }}</p>
-                <p class="text-sm">{{ when(b.pickupAt) }} · {{ money(b.amount, b.currency) }}</p>
+                <p class="text-sm">{{ when(b.pickupAt, b.airport.timeZone) }} · {{ money(b.amount, b.currency) }}</p>
               </li>
             }
           </ul>
@@ -56,8 +56,8 @@ export class BookingFlowComponent {
 
   readonly labels = ['booking.steps.trip', 'booking.steps.vehicle', 'booking.steps.details'];
 
-  when(iso: string): string {
-    return formatTunis(iso, this.lang.current());
+  when(iso: string, timeZone: string): string {
+    return formatInZone(iso, this.lang.current(), timeZone);
   }
 
   money(amount: number, currency: string): string {

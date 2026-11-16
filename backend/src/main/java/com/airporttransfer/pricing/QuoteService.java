@@ -13,8 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Flat-rate pricing: one price in TND per (airport, destination zone, vehicle type), converted to the
- * requested currency with the latest exchange rate (TND per 1 unit). Rounding is HALF_UP, to the number of
+ * Flat-rate pricing: one price per (airport, destination zone, vehicle type), in the currency the tariff is sold in
+ * (TND in Tunisia, EUR in France). Charged in that same currency it is returned as is; in another currency it is
+ * converted through TND with the latest exchange rates (TND per 1 unit). Rounding is HALF_UP, to the number of
  * decimals of the target currency, and only happens here, at conversion time.
  */
 @Service
@@ -55,16 +56,39 @@ public class QuoteService {
         Tariff tariff = tariffs.findByAirportIdAndZoneIdAndVehicleTypeIdAndActiveTrue(airportId, zoneId, vehicleTypeId)
             .orElseThrow(() -> ApiException.notFound("TARIFF_NOT_FOUND", "No tariff for this airport, zone and vehicle"));
 
-        BigDecimal priceTnd = tariff.getPriceTnd().setScale(3, RoundingMode.HALF_UP);
-        if (BASE.equals(code)) {
-            return new QuoteDto(airportId, zoneId, vehicleTypeId, priceTnd, BASE,
-                priceTnd.setScale(currency.getDecimals(), RoundingMode.HALF_UP), null, tariff.isDemo());
+        String baseCode = tariff.getCurrency();
+        BigDecimal basePrice = tariff.getPrice();
+        boolean demo = tariff.isDemo();
+
+        // The price in TND: the tariff itself, or its conversion when the tariff is sold in another currency.
+        ExchangeRate baseRate = null;
+        BigDecimal priceTnd;
+        if (BASE.equals(baseCode)) {
+            priceTnd = basePrice.setScale(3, RoundingMode.HALF_UP);
+        } else {
+            baseRate = rateOf(baseCode);
+            demo = demo || baseRate.isDemo();
+            priceTnd = basePrice.multiply(baseRate.getTndPerUnit()).setScale(3, RoundingMode.HALF_UP);
         }
 
-        ExchangeRate rate = rates.findFirstByCurrencyCodeOrderByCreatedAtDescIdDesc(code)
-            .orElseThrow(() -> ApiException.notFound("EXCHANGE_RATE_NOT_FOUND", "No exchange rate for " + code));
+        if (code.equals(baseCode)) {
+            // Charged in the currency the tariff is sold in: the tariff amount itself, never a round trip through TND.
+            BigDecimal amount = basePrice.setScale(currency.getDecimals(), RoundingMode.HALF_UP);
+            BigDecimal rate = baseRate == null ? null : baseRate.getTndPerUnit();
+            return new QuoteDto(airportId, zoneId, vehicleTypeId, priceTnd, code, amount, rate, demo);
+        }
+        if (BASE.equals(code)) {
+            return new QuoteDto(airportId, zoneId, vehicleTypeId, priceTnd, BASE,
+                priceTnd.setScale(currency.getDecimals(), RoundingMode.HALF_UP), null, demo);
+        }
+        ExchangeRate rate = rateOf(code);
         BigDecimal amount = priceTnd.divide(rate.getTndPerUnit(), currency.getDecimals(), RoundingMode.HALF_UP);
         return new QuoteDto(airportId, zoneId, vehicleTypeId, priceTnd, code, amount, rate.getTndPerUnit(),
-            tariff.isDemo() || rate.isDemo());
+            demo || rate.isDemo());
+    }
+
+    private ExchangeRate rateOf(String code) {
+        return rates.findFirstByCurrencyCodeOrderByCreatedAtDescIdDesc(code)
+            .orElseThrow(() -> ApiException.notFound("EXCHANGE_RATE_NOT_FOUND", "No exchange rate for " + code));
     }
 }

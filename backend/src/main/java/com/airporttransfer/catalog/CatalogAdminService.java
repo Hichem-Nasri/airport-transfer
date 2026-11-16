@@ -9,6 +9,8 @@ import com.airporttransfer.catalog.CatalogDtos.VehicleTypeRequest;
 import com.airporttransfer.catalog.CatalogDtos.ZoneDto;
 import com.airporttransfer.catalog.CatalogDtos.ZoneRequest;
 import com.airporttransfer.common.ApiException;
+import java.time.DateTimeException;
+import java.time.ZoneId;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +48,7 @@ public class CatalogAdminService {
     @Transactional
     public AirportDto createAirport(AirportRequest request) {
         Airport airport = new Airport();
+        checkTimeZone(request.timeZone());
         mapper.update(request, airport);
         return mapper.toDto(airports.saveAndFlush(airport));
     }
@@ -54,8 +57,17 @@ public class CatalogAdminService {
     public AirportDto updateAirport(Long id, AirportRequest request) {
         Airport airport = airports.findById(id)
             .orElseThrow(() -> ApiException.notFound("AIRPORT_NOT_FOUND", "Unknown airport: " + id));
+        checkTimeZone(request.timeZone());
         mapper.update(request, airport);
         return mapper.toDto(airports.saveAndFlush(airport));
+    }
+
+    private static void checkTimeZone(String timeZone) {
+        try {
+            ZoneId.of(timeZone);
+        } catch (DateTimeException e) {
+            throw ApiException.badRequest("INVALID_TIME_ZONE", "Unknown time zone: " + timeZone);
+        }
     }
 
     @Transactional

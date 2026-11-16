@@ -7,7 +7,8 @@ import { Booking, BookingService } from '../../core/booking.service';
 import { LanguageService } from '../../core/language.service';
 import { localName } from '../../core/localized';
 import { formatMoney } from '../../core/money';
-import { formatTunis, isoToTunisParts, todayInTunis, tunisLocalToIso } from '../../core/tunis-time';
+import { formatTunis, todayInTunis } from '../../core/tunis-time';
+import { TUNIS_ZONE, formatInZone, isoToLocalParts, localToIso } from '../../core/zoned-time';
 import { StatusBadgeComponent } from '../../shared/status-badge.component';
 
 /** One booking: details, edit while PENDING or CONFIRMED, cancel, and a printable receipt. */
@@ -47,7 +48,7 @@ import { StatusBadgeComponent } from '../../shared/status-badge.component';
             <span aria-hidden="true" class="text-brand rtl:rotate-180">→</span>
             <span>{{ to(b) }}</span>
           </p>
-          <p class="text-muted">{{ when(b.pickupAt) }}</p>
+          <p class="text-muted">{{ when(b.pickupAt, b.airport.timeZone) }}</p>
 
           <dl class="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
             <dt class="text-muted">{{ 'booking.fields.address' | translate }}</dt>
@@ -175,6 +176,8 @@ export class BookingDetailComponent {
   private readonly id = Number(inject(ActivatedRoute).snapshot.paramMap.get('id'));
 
   readonly today = todayInTunis();
+  /** Time zone of the booking's airport: the edit form is typed in it. */
+  private readonly zone = signal(TUNIS_ZONE);
   readonly booking = signal<Booking | null>(null);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
@@ -196,7 +199,7 @@ export class BookingDetailComponent {
     {
       validators: (g) => {
         const v = g.value as { date: string; time: string };
-        return v.date && v.time && Date.parse(tunisLocalToIso(v.date, v.time)) <= Date.now() ? { pickupPast: true } : null;
+        return v.date && v.time && Date.parse(localToIso(v.date, v.time, this.zone())) <= Date.now() ? { pickupPast: true } : null;
       }
     }
   );
@@ -215,7 +218,8 @@ export class BookingDetailComponent {
   }
 
   startEdit(b: Booking): void {
-    const parts = isoToTunisParts(b.pickupAt);
+    this.zone.set(b.airport.timeZone);
+    const parts = isoToLocalParts(b.pickupAt, b.airport.timeZone);
     this.form.reset({
       address: b.address,
       date: parts.date,
@@ -241,7 +245,7 @@ export class BookingDetailComponent {
       .update(b.id, {
         address: v.address.trim(),
         flightNumber: v.flightNumber.trim(),
-        pickupAt: tunisLocalToIso(v.date, v.time),
+        pickupAt: localToIso(v.date, v.time, b.airport.timeZone),
         luggageCount: v.luggageCount,
         notes: v.notes.trim()
       })
@@ -293,8 +297,8 @@ export class BookingDetailComponent {
     return localName(b.vehicleType, this.lang.current());
   }
 
-  when(iso: string): string {
-    return formatTunis(iso, this.lang.current());
+  when(iso: string, timeZone: string): string {
+    return formatInZone(iso, this.lang.current(), timeZone);
   }
 
   issued(): string {

@@ -37,21 +37,23 @@ public final class PricingDtos {
         @NotNull @DecimalMin("0.000001") @Digits(integer = 8, fraction = 6) BigDecimal tndPerUnit) {
     }
 
-    // ---- tariffs (always in TND)
-    public record TariffDto(Long id, Long airportId, Long zoneId, Long vehicleTypeId, BigDecimal priceTnd,
-                            boolean active, boolean demo) {
+    // ---- tariffs (each in the currency it is sold in: TND in Tunisia, EUR in France)
+    public record TariffDto(Long id, Long airportId, Long zoneId, Long vehicleTypeId, BigDecimal price,
+                            String currency, boolean active, boolean demo) {
     }
 
     public record TariffRequest(
         @NotNull Long airportId,
         @NotNull Long zoneId,
         @NotNull Long vehicleTypeId,
-        @NotNull @DecimalMin("0.001") @Digits(integer = 7, fraction = 3) BigDecimal priceTnd,
+        @NotNull @DecimalMin("0.001") @Digits(integer = 7, fraction = 3) BigDecimal price,
+        @NotBlank @Pattern(regexp = "[A-Z]{3}") String currency,
         @NotNull Boolean active) {
     }
 
     /**
-     * A price quote. {@code priceTnd} is the base price, {@code amount} the price in {@code currency}
+     * A price quote. {@code priceTnd} is the price in TND (the tariff itself when it is in TND, otherwise its
+     * conversion at the current rate, for accounting), {@code amount} the price in {@code currency}
      * (rounded HALF_UP to the currency's decimals), {@code exchangeRate} the TND-per-unit rate used
      * (null when the currency is TND). {@code demo} is true when a placeholder tariff or rate was used.
      */

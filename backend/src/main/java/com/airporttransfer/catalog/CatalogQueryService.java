@@ -49,7 +49,7 @@ public class CatalogQueryService {
         }
         return zones.findAllByActiveTrueOrderByDisplayOrderAscIdAsc().stream()
             .map(z -> new ZoneWithAreasDto(z.getId(), z.getCode(), z.getNameFr(), z.getNameEn(), z.getNameAr(),
-                areasByZone.getOrDefault(z.getId(), List.of())))
+                z.getCountry(), areasByZone.getOrDefault(z.getId(), List.of())))
             .toList();
     }
 }

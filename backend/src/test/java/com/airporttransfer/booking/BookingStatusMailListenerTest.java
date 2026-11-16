@@ -45,10 +45,10 @@ class BookingStatusMailListenerTest {
 
     private BookingDto booking(BookingStatus status) {
         return new BookingDto(1L, "HMS-ABCD2345", null, TripDirection.AIRPORT_TO_ADDRESS, status,
-            new AirportSummary(1L, "TUN", "Tunis-Carthage", "Tunis-Carthage Airport", "مطار تونس قرطاج"),
+            new AirportSummary(1L, "TUN", "Tunis-Carthage", "Tunis-Carthage Airport", "مطار تونس قرطاج", "TN", "Africa/Tunis"),
             new ZoneSummary(1L, "Z01", "Grand Tunis", "Greater Tunis", "تونس الكبرى"), "12 Rue de Marseille", null,
             Instant.parse("2026-12-01T10:30:00Z"), 2, 1,
-            new VehicleTypeSummary(1L, "SEDAN", "Berline", "Sedan", "سيارة", 3), null, new BigDecimal("50.000"),
+            new VehicleTypeSummary(1L, "SEDAN", "Berline", "Sedan", "سيارة", null, 3), null, new BigDecimal("50.000"),
             "TND", null, new BigDecimal("50.000"), false, PaymentMethod.CASH, PaymentStatus.UNPAID, false, false, Instant.now());
     }
 

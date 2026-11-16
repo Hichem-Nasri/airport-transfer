@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 class AdminApiIT extends AbstractIT {
 
     private static final String NEW_AIRPORT = """
-        {"iataCode":"XYZ","nameFr":"Test","nameEn":"Test","nameAr":"اختبار","latitude":35.5,"longitude":10.5,"active":true}
+        {"iataCode":"XYZ","nameFr":"Test","nameEn":"Test","nameAr":"اختبار","country":"TN","timeZone":"Africa/Tunis","latitude":35.5,"longitude":10.5,"active":true}
         """;
 
     @Autowired MockMvc mvc;
@@ -88,7 +88,7 @@ class AdminApiIT extends AbstractIT {
     @WithMockUser(roles = "ADMIN")
     void invalidAirportReturnsFieldErrorsInTheStandardFormat() throws Exception {
         mvc.perform(post("/api/admin/airports").contentType(MediaType.APPLICATION_JSON)
-                .content("{\"iataCode\":\"xy\",\"nameFr\":\"\",\"nameEn\":\"A\",\"nameAr\":\"A\",\"active\":true}"))
+                .content("{\"iataCode\":\"xy\",\"nameFr\":\"\",\"nameEn\":\"A\",\"nameAr\":\"A\",\"country\":\"TN\",\"timeZone\":\"Africa/Tunis\",\"active\":true}"))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code").value("VALIDATION_FAILED"))
             .andExpect(jsonPath("$.fieldErrors.iataCode").value("Pattern"))
@@ -174,9 +174,10 @@ class AdminApiIT extends AbstractIT {
 
         mvc.perform(put("/api/admin/tariffs/" + tariffId).contentType(MediaType.APPLICATION_JSON)
                 .content("{\"airportId\":" + tun + ",\"zoneId\":" + z01 + ",\"vehicleTypeId\":" + sedan
-                    + ",\"priceTnd\":65.500,\"active\":true}"))
+                    + ",\"price\":65.500,\"currency\":\"TND\",\"active\":true}"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.priceTnd").value(comparesEqualTo(65.5)))
+            .andExpect(jsonPath("$.price").value(comparesEqualTo(65.5)))
+            .andExpect(jsonPath("$.currency").value("TND"))
             .andExpect(jsonPath("$.demo").value(false));
 
         mvc.perform(get("/api/public/quote").param("airportId", "" + tun).param("zoneId", "" + z01)
@@ -194,7 +195,7 @@ class AdminApiIT extends AbstractIT {
 
         mvc.perform(post("/api/admin/tariffs").contentType(MediaType.APPLICATION_JSON)
                 .content("{\"airportId\":" + tun + ",\"zoneId\":" + z01 + ",\"vehicleTypeId\":" + sedan
-                    + ",\"priceTnd\":99,\"active\":true}"))
+                    + ",\"price\":99,\"currency\":\"TND\",\"active\":true}"))
             .andExpect(status().isConflict())
             .andExpect(jsonPath("$.code").value("CONFLICT"));
     }
@@ -203,9 +204,9 @@ class AdminApiIT extends AbstractIT {
     @WithMockUser(roles = "ADMIN")
     void nonPositiveTariffPriceIsRejected() throws Exception {
         mvc.perform(post("/api/admin/tariffs").contentType(MediaType.APPLICATION_JSON)
-                .content("{\"airportId\":1,\"zoneId\":1,\"vehicleTypeId\":1,\"priceTnd\":0,\"active\":true}"))
+                .content("{\"airportId\":1,\"zoneId\":1,\"vehicleTypeId\":1,\"price\":0,\"currency\":\"TND\",\"active\":true}"))
             .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.fieldErrors.priceTnd").value("DecimalMin"));
+            .andExpect(jsonPath("$.fieldErrors.price").value("DecimalMin"));
     }
 
     @Test

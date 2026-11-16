@@ -10,7 +10,8 @@ import { LanguageService } from '../../core/language.service';
 import { localName } from '../../core/localized';
 import { formatMoney } from '../../core/money';
 import { Page, Person, StaffBooking, StaffService } from '../../core/staff.service';
-import { formatTunis, tunisDayEndIso, tunisDayStartIso } from '../../core/tunis-time';
+import { tunisDayEndIso, tunisDayStartIso } from '../../core/tunis-time';
+import { formatInZone } from '../../core/zoned-time';
 import { StatusBadgeComponent } from '../../shared/status-badge.component';
 
 const STATUSES: BookingStatus[] = ['PENDING', 'CONFIRMED', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'];
@@ -109,7 +110,7 @@ const PAGE_SIZE = 20;
                   <span aria-hidden="true" class="text-brand rtl:rotate-180">→</span>
                   <span>{{ to(row) }}</span>
                 </span>
-                <span class="mt-1 block text-sm text-muted">{{ when(row.booking.pickupAt) }}</span>
+                <span class="mt-1 block text-sm text-muted">{{ when(row.booking.pickupAt, row.booking.airport.timeZone) }}</span>
                 <span class="mt-3 grid gap-x-4 gap-y-1 text-sm sm:grid-cols-3">
                   <span><span class="text-muted">{{ 'staff.customer' | translate }} : </span><strong>{{ row.customer?.fullName }}</strong></span>
                   <span>
@@ -191,8 +192,8 @@ export class StaffBookingsComponent {
     return b.direction === 'AIRPORT_TO_ADDRESS' ? localName(b.zone, this.lang.current()) : b.airport.iataCode;
   }
 
-  when(iso: string): string {
-    return formatTunis(iso, this.lang.current());
+  when(iso: string, timeZone: string): string {
+    return formatInZone(iso, this.lang.current(), timeZone);
   }
 
   money(row: StaffBooking): string {

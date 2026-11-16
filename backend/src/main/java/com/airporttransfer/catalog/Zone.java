@@ -25,10 +25,21 @@ public class Zone {
     @Column(name = "display_order", nullable = false)
     private int displayOrder;
 
+    @Column(nullable = false, length = 2)
+    private String country = "TN";
+
     @Column(nullable = false)
     private boolean active;
 
     public Zone() {
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public Long getId() {

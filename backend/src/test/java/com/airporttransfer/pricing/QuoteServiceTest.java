@@ -57,7 +57,16 @@ class QuoteServiceTest {
 
     private void givenTariff(String priceTnd, boolean demo) {
         Tariff t = new Tariff();
-        t.setPriceTnd(new BigDecimal(priceTnd));
+        t.setPrice(new BigDecimal(priceTnd));
+        t.setDemo(demo);
+        t.setActive(true);
+        when(tariffs.findByAirportIdAndZoneIdAndVehicleTypeIdAndActiveTrue(1L, 2L, 3L)).thenReturn(Optional.of(t));
+    }
+
+    private void givenEuroTariff(String priceEur, boolean demo) {
+        Tariff t = new Tariff();
+        t.setPrice(new BigDecimal(priceEur));
+        t.setCurrency("EUR");
         t.setDemo(demo);
         t.setActive(true);
         when(tariffs.findByAirportIdAndZoneIdAndVehicleTypeIdAndActiveTrue(1L, 2L, 3L)).thenReturn(Optional.of(t));
@@ -109,6 +118,62 @@ class QuoteServiceTest {
         givenTariff("0.105", false);
         givenRate("EUR", "1.000000", false);
         assertThat(service.quote(1L, 2L, 3L, "EUR").amount()).isEqualTo(new BigDecimal("0.11")); // 0.105 -> HALF_UP
+    }
+
+    @Test
+    void euroTariffChargedInEuroIsExactWhateverTheRate() {
+        givenEuroTariff("150", false);
+        givenRate("EUR", "3.337000", false); // 150 x 3.337 = 500.55 TND, and back: no rounding drift
+
+        QuoteDto q = service.quote(1L, 2L, 3L, "EUR");
+
+        assertThat(q.amount()).isEqualTo(new BigDecimal("150.00"));
+        assertThat(q.currency()).isEqualTo("EUR");
+        assertThat(q.priceTnd()).isEqualTo(new BigDecimal("500.550"));
+        assertThat(q.exchangeRate()).isEqualByComparingTo("3.337");
+        assertThat(q.demo()).isFalse();
+    }
+
+    @Test
+    void euroTariffChargedInTndIsConvertedWithTheEuroRate() {
+        givenEuroTariff("160", false);
+        givenRate("EUR", "3.400000", false);
+
+        QuoteDto q = service.quote(1L, 2L, 3L, "TND");
+
+        assertThat(q.amount()).isEqualTo(new BigDecimal("544.000"));
+        assertThat(q.exchangeRate()).isNull();
+        assertThat(q.priceTnd()).isEqualTo(new BigDecimal("544.000"));
+    }
+
+    @Test
+    void euroTariffChargedInUsdGoesThroughTnd() {
+        givenEuroTariff("150", false);
+        givenRate("EUR", "3.400000", false);
+        givenRate("USD", "3.100000", false);
+
+        QuoteDto q = service.quote(1L, 2L, 3L, "USD");
+
+        assertThat(q.priceTnd()).isEqualTo(new BigDecimal("510.000"));
+        assertThat(q.amount()).isEqualTo(new BigDecimal("164.52")); // 510 / 3.1 = 164.516...
+        assertThat(q.exchangeRate()).isEqualByComparingTo("3.1");
+    }
+
+    @Test
+    void euroTariffNeedsAnEuroRateEvenWhenChargedInEuro() {
+        givenEuroTariff("150", false);
+
+        assertThatThrownBy(() -> service.quote(1L, 2L, 3L, "EUR"))
+            .isInstanceOf(ApiException.class)
+            .hasMessageContaining("exchange rate");
+    }
+
+    @Test
+    void demoRateMarksAnEuroQuoteAsDemo() {
+        givenEuroTariff("150", false);
+        givenRate("EUR", "3.400000", true);
+
+        assertThat(service.quote(1L, 2L, 3L, "EUR").demo()).isTrue();
     }
 
     @Test

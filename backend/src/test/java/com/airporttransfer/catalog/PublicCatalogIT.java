@@ -19,8 +19,8 @@ class PublicCatalogIT extends AbstractIT {
     void listsTheActiveAirports() throws Exception {
         mvc.perform(get("/api/public/airports"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(8))
-            .andExpect(jsonPath("$[0].iataCode").value("DJE")) // sorted by IATA code
+            .andExpect(jsonPath("$.length()").value(10))
+            .andExpect(jsonPath("$[0].iataCode").value("CDG")) // sorted by IATA code
             .andExpect(jsonPath("$[0].nameAr").isNotEmpty());
     }
 
@@ -28,7 +28,7 @@ class PublicCatalogIT extends AbstractIT {
     void listsZonesWithTheirAreas() throws Exception {
         mvc.perform(get("/api/public/zones"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(15))
+            .andExpect(jsonPath("$.length()").value(16))
             .andExpect(jsonPath("$[0].code").value("Z01"))
             .andExpect(jsonPath("$[0].areas.length()").value(4)); // Tunis, Ariana, Ben Arous, Manouba
     }
@@ -37,7 +37,7 @@ class PublicCatalogIT extends AbstractIT {
     void listsTheVehicleTypesInDisplayOrder() throws Exception {
         mvc.perform(get("/api/public/vehicle-types"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(3))
+            .andExpect(jsonPath("$.length()").value(5))
             .andExpect(jsonPath("$[0].code").value("SEDAN"))
             .andExpect(jsonPath("$[2].code").value("MINIBUS"))
             .andExpect(jsonPath("$[2].maxPassengers").value(16));

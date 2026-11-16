@@ -6,6 +6,8 @@ import { Localized } from './localized';
 export interface Airport extends Localized {
   id: number;
   iataCode: string;
+  country: string;
+  timeZone: string;
 }
 
 export interface Area extends Localized {
@@ -17,12 +19,14 @@ export interface Area extends Localized {
 export interface ZoneWithAreas extends Localized {
   id: number;
   code: string;
+  country: string;
   areas: Area[];
 }
 
 export interface VehicleType extends Localized {
   id: number;
   code: string;
+  models: string | null;
   minPassengers: number;
   maxPassengers: number;
 }

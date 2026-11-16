@@ -29,8 +29,12 @@ public class Tariff {
     @JoinColumn(name = "vehicle_type_id", nullable = false)
     private VehicleType vehicleType;
 
-    @Column(name = "price_tnd", nullable = false, precision = 10, scale = 3)
-    private BigDecimal priceTnd;
+    /** Price in {@link #currency}: the tariff is stored in the currency it is sold in (TND in Tunisia, EUR in France). */
+    @Column(nullable = false, precision = 10, scale = 3)
+    private BigDecimal price;
+
+    @Column(nullable = false, length = 3)
+    private String currency = "TND";
 
     @Column(nullable = false)
     private boolean active;
@@ -77,12 +81,20 @@ public class Tariff {
         this.vehicleType = vehicleType;
     }
 
-    public BigDecimal getPriceTnd() {
-        return priceTnd;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public void setPriceTnd(BigDecimal priceTnd) {
-        this.priceTnd = priceTnd;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     public boolean isActive() {

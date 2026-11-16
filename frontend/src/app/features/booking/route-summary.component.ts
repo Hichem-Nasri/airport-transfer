@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Airport, CatalogService, ZoneWithAreas } from '../../core/catalog.service';
 import { LanguageService } from '../../core/language.service';
 import { localName } from '../../core/localized';
-import { formatTunis } from '../../core/tunis-time';
+import { formatInZone } from '../../core/zoned-time';
 import { BookingDraftService } from './booking-draft.service';
 
 /** Recap of the trip chosen in step 1, shown above steps 2 and 3. */
@@ -51,8 +51,8 @@ export class RouteSummaryComponent {
     return {
       from: toAirport ? areaLabel : airportLabel,
       to: toAirport ? airportLabel : areaLabel,
-      when: formatTunis(trip.pickupAt, lang),
-      back: trip.returnPickupAt ? formatTunis(trip.returnPickupAt, lang) : null,
+      when: formatInZone(trip.pickupAt, lang, trip.timeZone),
+      back: trip.returnPickupAt ? formatInZone(trip.returnPickupAt, lang, trip.timeZone) : null,
       passengers: trip.passengers
     };
   });

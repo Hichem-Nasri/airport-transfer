@@ -13,9 +13,9 @@
     "admin": "Administration"
   },
   "home": {
-    "badge": "Toute la Tunisie, 7j/7",
-    "title": "Du terminal à votre porte, partout en Tunisie.",
-    "subtitle": "Réservez un chauffeur privé en quelques clics. Prix fixé à l’avance, accueil à l’arrivée, paiement dans la devise de votre choix.",
+    "badge": "France et Tunisie, 7j/7",
+    "title": "Du terminal à votre porte, en France et en Tunisie.",
+    "subtitle": "Réservez un chauffeur privé en quelques clics, à Paris (Orly, Roissy-Charles de Gaulle) comme partout en Tunisie. Prix fixé à l’avance, accueil à l’arrivée, paiement dans la devise de votre choix.",
     "cta": "Réserver un transfert",
     "points": {
       "fixed": "Prix fixé à l’avance",
@@ -35,7 +35,7 @@
       "capacity": "{{min}} à {{max}} passagers"
     },
     "airports": {
-      "title": "Depuis et vers tous les aéroports de Tunisie"
+      "title": "Depuis et vers les aéroports de Paris et de Tunisie"
     },
     "how": {
       "title": "Comment ça marche",
@@ -53,7 +53,7 @@
       }
     },
     "footer": {
-      "tagline": "TRANSFERT AÉROPORT",
+      "tagline": "TRANSFERTS FRANCE · TUNISIE",
       "links": "Liens du pied de page",
       "rights": "© {{year}} HMS Transport. Tous droits réservés."
     }
@@ -176,7 +176,8 @@
     "ALREADY_PAID": "Cette réservation est déjà payée.",
     "PAYMENT_METHOD_MISMATCH": "Cette réservation ne se paie pas en espèces.",
     "TOO_MANY_REQUESTS": "Trop de tentatives. Réessayez plus tard.",
-    "CONFLICT": "Cette opération entre en conflit avec des données existantes (doublon ou élément encore utilisé)."
+    "CONFLICT": "Cette opération entre en conflit avec des données existantes (doublon ou élément encore utilisé).",
+    "INVALID_TIME_ZONE": "Le fuseau horaire est inconnu."
   },
   "status": {
     "PENDING": "En attente",
@@ -242,7 +243,8 @@
       "capacity": "{{min}} à {{max}} passagers",
       "tooSmall": "Trop petit pour {{n}} passagers",
       "unavailable": "Indisponible",
-      "loading": "Calcul du prix…"
+      "loading": "Calcul du prix…",
+      "none": "Aucun véhicule n’est proposé pour ce trajet. Contactez-nous."
     },
     "demoNotice": "Prix de démonstration : les tarifs réels seront publiés prochainement.",
     "payment": {
@@ -388,7 +390,10 @@
       "maxPassengers": "Passagers maximum",
       "active": "Actif (visible pour les clients)",
       "inactive": "Inactif",
-      "saved": "Enregistré."
+      "saved": "Enregistré.",
+      "country": "Pays (code à 2 lettres)",
+      "timeZone": "Fuseau horaire",
+      "models": "Modèles (exemples)"
     },
     "currencies": {
       "title": "Devises et taux de change",

@@ -57,14 +57,14 @@ export interface Booking {
   groupId: string | null;
   direction: Direction;
   status: BookingStatus;
-  airport: Localized & { id: number; iataCode: string };
+  airport: Localized & { id: number; iataCode: string; country: string; timeZone: string };
   zone: Localized & { id: number; code: string };
   address: string;
   flightNumber: string | null;
   pickupAt: string;
   passengers: number;
   luggageCount: number;
-  vehicleType: Localized & { id: number; code: string; maxPassengers: number };
+  vehicleType: Localized & { id: number; code: string; models: string | null; maxPassengers: number };
   notes: string | null;
   priceTnd: number;
   currency: string;

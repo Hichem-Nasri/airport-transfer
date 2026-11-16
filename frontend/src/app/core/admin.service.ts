@@ -42,6 +42,8 @@ export interface UserFilter {
 export interface AdminAirport extends Localized {
   id: number;
   iataCode: string;
+  country: string;
+  timeZone: string;
   latitude: number | null;
   longitude: number | null;
   active: boolean;
@@ -50,6 +52,7 @@ export interface AdminAirport extends Localized {
 export interface AdminZone extends Localized {
   id: number;
   code: string;
+  country: string;
   displayOrder: number;
   active: boolean;
 }
@@ -64,6 +67,7 @@ export interface AdminArea extends Localized {
 export interface AdminVehicleType extends Localized {
   id: number;
   code: string;
+  models: string | null;
   minPassengers: number;
   maxPassengers: number;
   displayOrder: number;
@@ -91,7 +95,8 @@ export interface AdminTariff {
   airportId: number;
   zoneId: number;
   vehicleTypeId: number;
-  priceTnd: number;
+  price: number;
+  currency: string;
   active: boolean;
   demo: boolean;
 }
@@ -100,7 +105,8 @@ export interface TariffWrite {
   airportId: number;
   zoneId: number;
   vehicleTypeId: number;
-  priceTnd: number;
+  price: number;
+  currency: string;
   active: boolean;
 }
 

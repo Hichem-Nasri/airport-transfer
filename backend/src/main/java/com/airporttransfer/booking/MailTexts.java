@@ -7,17 +7,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import org.springframework.context.MessageSource;
 
-/** Text pieces shared by the booking e-mails. Pickup times are always shown in Tunis time. */
+/** Text pieces shared by the booking e-mails. Pickup times are shown in the time zone of the booking's airport. */
 final class MailTexts {
 
-    private static final ZoneId TUNIS = ZoneId.of("Africa/Tunis");
     private static final DateTimeFormatter WHEN = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     private MailTexts() {
     }
 
-    static String when(Instant instant) {
-        return WHEN.format(instant.atZone(TUNIS));
+    static String when(Instant instant, String timeZone) {
+        return WHEN.format(instant.atZone(ZoneId.of(timeZone)));
     }
 
     static String airportName(BookingDto b, Locale locale) {
@@ -35,7 +34,7 @@ final class MailTexts {
             messages.getMessage("mail.direction." + b.direction(), null, locale),
             airportName(b, locale),
             b.address(),
-            when(b.pickupAt()),
+            when(b.pickupAt(), b.airport().timeZone()),
             b.amount().toPlainString() + " " + b.currency()
         }, locale);
     }

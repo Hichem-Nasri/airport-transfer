@@ -38,14 +38,15 @@ public final class BookingDtos {
         @Pattern(regexp = "^$|^[A-Za-z0-9 ]{2,10}$") String returnFlightNumber) {
     }
 
-    public record AirportSummary(Long id, String iataCode, String nameFr, String nameEn, String nameAr) {
+    public record AirportSummary(Long id, String iataCode, String nameFr, String nameEn, String nameAr,
+                                 String country, String timeZone) {
     }
 
     public record ZoneSummary(Long id, String code, String nameFr, String nameEn, String nameAr) {
     }
 
     public record VehicleTypeSummary(Long id, String code, String nameFr, String nameEn, String nameAr,
-                                     int maxPassengers) {
+                                     String models, int maxPassengers) {
     }
 
     /** A booking as shown to its customer. {@code amount} is what is charged, in {@code currency}. */

@@ -19,11 +19,11 @@ class SeedDataIT extends AbstractIT {
     }
 
     @Test
-    void seedsTheEightAirportsThreeVehicleTypesAndThreeCurrencies() {
-        assertThat(count("SELECT count(*) FROM airports")).isEqualTo(8);
+    void seedsTheAirportsVehicleTypesAndCurrencies() {
+        assertThat(count("SELECT count(*) FROM airports")).isEqualTo(10); // 8 in Tunisia, 2 in Paris
         assertThat(count("SELECT count(*) FROM airports WHERE iata_code IN ('TUN','MIR','NBE','DJE','SFA','TOE','TBJ','GAF')"))
             .isEqualTo(8);
-        assertThat(count("SELECT count(*) FROM vehicle_types")).isEqualTo(3);
+        assertThat(count("SELECT count(*) FROM vehicle_types")).isEqualTo(5); // 3 for Tunisia, Eco and Eco Plus for France
         assertThat(count("SELECT count(*) FROM currencies WHERE code IN ('TND','EUR','USD')")).isEqualTo(3);
     }
 
@@ -39,8 +39,9 @@ class SeedDataIT extends AbstractIT {
 
     @Test
     void coversAllGovernoratesWithMedenineSplitIntoDjerbaAndMainland() {
-        assertThat(count("SELECT count(*) FROM zones")).isEqualTo(15);
-        assertThat(count("SELECT count(*) FROM areas")).isEqualTo(25); // 24 governorates, Médenine counted twice
+        assertThat(count("SELECT count(*) FROM zones WHERE country = 'TN'")).isEqualTo(15);
+        assertThat(count("SELECT count(*) FROM areas a JOIN zones z ON z.id = a.zone_id WHERE z.country = 'TN'"))
+            .isEqualTo(25); // 24 governorates, Médenine counted twice
         assertThat(count("SELECT count(*) FROM areas WHERE code LIKE 'TN-82-%'")).isEqualTo(2);
         assertThat(count("""
             SELECT count(*) FROM areas a1 JOIN areas a2 ON a1.code = 'TN-82-DJERBA' AND a2.code = 'TN-82-MAIN'
@@ -57,9 +58,19 @@ class SeedDataIT extends AbstractIT {
     }
 
     @Test
-    void everyAirportZoneVehicleCombinationHasExactlyOneDemoTariff() {
-        assertThat(count("SELECT count(*) FROM tariffs")).isEqualTo(8 * 15 * 3);
-        assertThat(count("SELECT count(*) FROM tariffs WHERE is_demo = FALSE")).isZero();
+    void everyTunisianAirportZoneVehicleCombinationHasExactlyOneDemoTariffInTnd() {
+        assertThat(count("SELECT count(*) FROM tariffs WHERE currency = 'TND'")).isEqualTo(8 * 15 * 3);
+        assertThat(count("SELECT count(*) FROM tariffs WHERE currency = 'TND' AND is_demo = FALSE")).isZero();
+    }
+
+    @Test
+    void parisAirportsHaveTheClientsRealEuroPrices() {
+        assertThat(count("SELECT count(*) FROM airports WHERE country = 'FR' AND time_zone = 'Europe/Paris'")).isEqualTo(2);
+        assertThat(count("SELECT count(*) FROM tariffs WHERE currency = 'EUR'")).isEqualTo(4);
+        assertThat(count("SELECT count(*) FROM tariffs t JOIN vehicle_types v ON v.id = t.vehicle_type_id "
+            + "WHERE t.currency = 'EUR' AND t.is_demo = FALSE AND v.code = 'ECO' AND t.price = 150")).isEqualTo(2);
+        assertThat(count("SELECT count(*) FROM tariffs t JOIN vehicle_types v ON v.id = t.vehicle_type_id "
+            + "WHERE t.currency = 'EUR' AND t.is_demo = FALSE AND v.code = 'ECO_PLUS' AND t.price = 160")).isEqualTo(2);
     }
 
     @Test
@@ -69,7 +80,7 @@ class SeedDataIT extends AbstractIT {
             JOIN vehicle_types sv ON sv.id = s.vehicle_type_id AND sv.code = 'SEDAN'
             JOIN tariffs m ON m.airport_id = s.airport_id AND m.zone_id = s.zone_id
             JOIN vehicle_types mv ON mv.id = m.vehicle_type_id AND mv.code = 'MINIBUS'
-            WHERE m.price_tnd <= s.price_tnd
+            WHERE m.price <= s.price
             """)).isZero();
     }
 

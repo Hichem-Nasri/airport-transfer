@@ -45,13 +45,13 @@ import { parseTndInput } from '../../core/tariff-input';
         <p class="mt-6 text-muted" role="status">{{ 'account.loading' | translate }}</p>
       } @else {
         <ul class="mt-6 space-y-3">
-          @for (z of zones(); track z.id) {
+          @for (z of visibleZones(); track z.id) {
             <li class="rounded-2xl border border-brand-line bg-white p-4" [class.opacity-60]="!z.active">
               <h3 class="font-extrabold">{{ z.code }} · {{ zoneName(z) }}</h3>
               <div class="mt-3 grid gap-3 sm:grid-cols-3">
                 @for (v of vehicleTypes(); track v.id) {
                   <div>
-                    <label class="field-label" [for]="'p-' + z.id + '-' + v.id">{{ vehicleName(v) }} (TND)</label>
+                    <label class="field-label" [for]="'p-' + z.id + '-' + v.id">{{ vehicleName(v) }} ({{ currencyOf(z.id, v.id) }})</label>
                     <input
                       [id]="'p-' + z.id + '-' + v.id"
                       class="field-input"
@@ -106,6 +106,20 @@ export class AdminTariffsComponent {
     return map;
   });
 
+  private readonly airportCountry = computed(() => this.airports().find((a) => a.id === this.airportId())?.country);
+
+  /** Only the zones of the airport's country are priced from it. */
+  readonly visibleZones = computed(() => this.zones().filter((z) => z.country === this.airportCountry()));
+
+  /** New tariffs are sold in euros from France and in dinars from Tunisia. */
+  private defaultCurrency(): string {
+    return this.airportCountry() === 'FR' ? 'EUR' : 'TND';
+  }
+
+  currencyOf(zoneId: number, vehicleTypeId: number): string {
+    return this.tariff(zoneId, vehicleTypeId)?.currency ?? this.defaultCurrency();
+  }
+
   airportName(a: AdminAirport): string {
     return localName(a, this.lang.current());
   }
@@ -135,7 +149,7 @@ export class AdminTariffsComponent {
       return d;
     }
     const t = this.byKey().get(k);
-    return t ? this.plain(t.priceTnd) : '';
+    return t ? this.plain(t.price) : '';
   }
 
   setDraft(zoneId: number, vehicleTypeId: number, value: string): void {
@@ -167,7 +181,7 @@ export class AdminTariffsComponent {
         return [];
       }
       const existing = this.tariff(zoneId, v.id);
-      const body = { airportId, zoneId, vehicleTypeId: v.id, priceTnd: price, active: existing?.active ?? true };
+      const body = { airportId, zoneId, vehicleTypeId: v.id, price, currency: existing?.currency ?? this.defaultCurrency(), active: existing?.active ?? true };
       return [existing ? this.admin.updateTariff(existing.id, body) : this.admin.createTariff(body)];
     });
     this.saving.set(true);
@@ -204,7 +218,7 @@ export class AdminTariffsComponent {
       return null;
     }
     // A demo tariff re-saved with the same number becomes a real one, so it counts as a change.
-    return existing && !existing.demo && existing.priceTnd === parsed ? null : parsed;
+    return existing && !existing.demo && existing.price === parsed ? null : parsed;
   }
 
   private load(airportId: number): void {

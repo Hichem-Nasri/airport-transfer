@@ -56,10 +56,13 @@ type Row = AdminAirport | AdminZone | AdminArea | AdminVehicleType;
 
         @switch (section()) {
           @case ('airports') {
+            <div><label class="field-label" for="c-country">{{ 'admin.catalog.country' | translate }}</label><input id="c-country" class="field-input" formControlName="country" maxlength="2" dir="ltr" /></div>
+            <div><label class="field-label" for="c-tz">{{ 'admin.catalog.timeZone' | translate }}</label><input id="c-tz" class="field-input" formControlName="timeZone" dir="ltr" /></div>
             <div><label class="field-label" for="c-lat">{{ 'admin.catalog.latitude' | translate }}</label><input id="c-lat" type="number" step="any" class="field-input" formControlName="latitude" dir="ltr" /></div>
             <div><label class="field-label" for="c-lng">{{ 'admin.catalog.longitude' | translate }}</label><input id="c-lng" type="number" step="any" class="field-input" formControlName="longitude" dir="ltr" /></div>
           }
           @case ('zones') {
+            <div><label class="field-label" for="c-zcountry">{{ 'admin.catalog.country' | translate }}</label><input id="c-zcountry" class="field-input" formControlName="country" maxlength="2" dir="ltr" /></div>
             <div><label class="field-label" for="c-ord">{{ 'admin.catalog.order' | translate }}</label><input id="c-ord" type="number" min="0" class="field-input" formControlName="displayOrder" /></div>
           }
           @case ('areas') {
@@ -71,6 +74,7 @@ type Row = AdminAirport | AdminZone | AdminArea | AdminVehicleType;
             </div>
           }
           @case ('vehicles') {
+            <div class="sm:col-span-2"><label class="field-label" for="c-models">{{ 'admin.catalog.models' | translate }}</label><input id="c-models" class="field-input" formControlName="models" /></div>
             <div><label class="field-label" for="c-min">{{ 'admin.catalog.minPassengers' | translate }}</label><input id="c-min" type="number" min="1" class="field-input" formControlName="minPassengers" /></div>
             <div><label class="field-label" for="c-max">{{ 'admin.catalog.maxPassengers' | translate }}</label><input id="c-max" type="number" min="1" class="field-input" formControlName="maxPassengers" /></div>
             <div><label class="field-label" for="c-ord2">{{ 'admin.catalog.order' | translate }}</label><input id="c-ord2" type="number" min="0" class="field-input" formControlName="displayOrder" /></div>
@@ -132,6 +136,9 @@ export class AdminCatalogComponent {
     nameFr: ['', Validators.required],
     nameEn: ['', Validators.required],
     nameAr: ['', Validators.required],
+    country: ['TN', [Validators.required, Validators.pattern(/^[A-Z]{2}$/)]],
+    timeZone: ['Africa/Tunis'],
+    models: [''],
     latitude: [null as number | null],
     longitude: [null as number | null],
     displayOrder: [0],
@@ -185,7 +192,7 @@ export class AdminCatalogComponent {
 
   openNew(): void {
     this.editingId = null;
-    this.form.reset({ displayOrder: 0, zoneId: this.zones()[0]?.id ?? 0, minPassengers: 1, maxPassengers: 3, active: true });
+    this.form.reset({ country: 'TN', timeZone: 'Africa/Tunis', models: '', displayOrder: 0, zoneId: this.zones()[0]?.id ?? 0, minPassengers: 1, maxPassengers: 3, active: true });
     this.formError.set(null);
     this.formOpen.set(true);
   }
@@ -197,6 +204,9 @@ export class AdminCatalogComponent {
       nameFr: row.nameFr,
       nameEn: row.nameEn,
       nameAr: row.nameAr,
+      country: 'country' in row ? row.country : 'TN',
+      timeZone: 'timeZone' in row ? row.timeZone : 'Africa/Tunis',
+      models: 'models' in row ? (row.models ?? '') : '',
       latitude: 'latitude' in row ? row.latitude : null,
       longitude: 'longitude' in row ? row.longitude : null,
       displayOrder: 'displayOrder' in row ? row.displayOrder : 0,
@@ -227,18 +237,18 @@ export class AdminCatalogComponent {
     switch (this.section()) {
       case 'airports':
         request = this.admin.saveAirport(id, {
-          iataCode: v.code.trim().toUpperCase(), ...names, latitude: v.latitude, longitude: v.longitude, active: v.active
+          iataCode: v.code.trim().toUpperCase(), ...names, country: v.country, timeZone: v.timeZone.trim(), latitude: v.latitude, longitude: v.longitude, active: v.active
         });
         break;
       case 'zones':
-        request = this.admin.saveZone(id, { code: v.code.trim(), ...names, displayOrder: v.displayOrder, active: v.active });
+        request = this.admin.saveZone(id, { code: v.code.trim(), ...names, country: v.country, displayOrder: v.displayOrder, active: v.active });
         break;
       case 'areas':
         request = this.admin.saveArea(id, { code: v.code.trim(), ...names, zoneId: v.zoneId, active: v.active });
         break;
       default:
         request = this.admin.saveVehicleType(id, {
-          code: v.code.trim(), ...names, minPassengers: v.minPassengers, maxPassengers: v.maxPassengers,
+          code: v.code.trim(), ...names, models: v.models.trim() || null, minPassengers: v.minPassengers, maxPassengers: v.maxPassengers,
           displayOrder: v.displayOrder, active: v.active
         });
     }

@@ -15,6 +15,8 @@ export interface TripDraft {
   returnDate: string;
   returnTime: string;
   passengers: number;
+  /** IANA time zone of the airport: the date and time fields above are wall-clock times in it. */
+  timeZone: string;
   /** UTC instants, ISO-8601. */
   pickupAt: string;
   returnPickupAt: string | null;

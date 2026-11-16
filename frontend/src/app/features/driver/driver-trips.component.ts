@@ -6,7 +6,7 @@ import { DriverService, DriverTrip } from '../../core/driver.service';
 import { LanguageService } from '../../core/language.service';
 import { localName } from '../../core/localized';
 import { formatMoney } from '../../core/money';
-import { formatTunis } from '../../core/tunis-time';
+import { formatInZone } from '../../core/zoned-time';
 import { StatusBadgeComponent } from '../../shared/status-badge.component';
 
 @Component({
@@ -43,7 +43,7 @@ import { StatusBadgeComponent } from '../../shared/status-badge.component';
           @for (t of trips(); track t.booking.id) {
             <li class="rounded-2xl border border-brand-line bg-white p-4">
               <div class="flex flex-wrap items-center justify-between gap-2">
-                <p class="text-lg font-extrabold" dir="ltr">{{ when(t.booking.pickupAt) }}</p>
+                <p class="text-lg font-extrabold" dir="ltr">{{ when(t.booking.pickupAt, t.booking.airport.timeZone) }}</p>
                 <app-status-badge [status]="t.booking.status" />
               </div>
               <p class="mt-2 text-sm font-semibold text-brand">{{ 'booking.direction.' + t.booking.direction | translate }}</p>
@@ -133,8 +133,8 @@ export class DriverTripsComponent {
     return localName(item, this.lang.current());
   }
 
-  when(iso: string): string {
-    return formatTunis(iso, this.lang.current());
+  when(iso: string, timeZone: string): string {
+    return formatInZone(iso, this.lang.current(), timeZone);
   }
 
   /** Cash can be recorded once the trip has started, until it is recorded. */

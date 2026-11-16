@@ -23,7 +23,7 @@ type QuoteState = { status: 'loading' } | { status: 'ok'; quote: BookingQuote } 
       <app-route-summary />
 
       <div role="radiogroup" [attr.aria-label]="'booking.steps.vehicle' | translate" class="space-y-3">
-        @for (v of vehicleTypes(); track v.id) {
+        @for (v of visibleVehicles(); track v.id) {
           <button type="button" role="radio"
                   class="block w-full rounded-2xl border-2 bg-white p-4 text-start focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   [class.border-brand]="draft.vehicleTypeId() === v.id"
@@ -38,6 +38,9 @@ type QuoteState = { status: 'loading' } | { status: 'ok'; quote: BookingQuote } 
                 <span class="mt-0.5 block text-sm text-muted">
                   {{ 'booking.vehicle.capacity' | translate: { min: v.minPassengers, max: v.maxPassengers } }}
                 </span>
+                @if (v.models) {
+                  <span class="mt-0.5 block text-sm font-semibold">{{ v.models }}</span>
+                }
                 @if (!fits(v)) {
                   <span class="mt-1 block text-sm font-semibold text-brand-dark">
                     {{ 'booking.vehicle.tooSmall' | translate: { n: passengers() } }}
@@ -52,8 +55,6 @@ type QuoteState = { status: 'loading' } | { status: 'ok'; quote: BookingQuote } 
                       {{ 'booking.perLeg' | translate: { price: money(q.leg.amount, q.leg.currency) } }}
                     </span>
                   }
-                } @else if (isUnavailable(v.id)) {
-                  <span class="block text-sm font-semibold text-muted">{{ 'booking.vehicle.unavailable' | translate }}</span>
                 } @else {
                   <span class="block text-sm text-muted" role="status">{{ 'booking.vehicle.loading' | translate }}</span>
                 }
@@ -62,6 +63,12 @@ type QuoteState = { status: 'loading' } | { status: 'ok'; quote: BookingQuote } 
           </button>
         }
       </div>
+
+      @if (noneAvailable()) {
+        <p class="rounded-xl border border-brand-line bg-white px-4 py-3 text-sm font-semibold" role="alert">
+          {{ 'booking.vehicle.none' | translate }}
+        </p>
+      }
 
       @if (anyDemo()) {
         <p class="rounded-xl bg-white px-4 py-3 text-sm text-muted border border-brand-line" role="note">
@@ -92,6 +99,11 @@ export class VehicleStepComponent {
   readonly vehicleTypes = toSignal(this.catalog.vehicleTypes(), { initialValue: [] as VehicleType[] });
   private readonly quotes = signal<Record<number, QuoteState>>({});
 
+  /** Only vehicles sold on this route are listed (the others have no tariff for it). */
+  readonly visibleVehicles = computed(() => this.vehicleTypes().filter((v) => !this.isUnavailable(v.id)));
+  readonly noneAvailable = computed(
+    () => this.vehicleTypes().length > 0 && Object.keys(this.quotes()).length > 0 && this.visibleVehicles().length === 0
+  );
   readonly passengers = computed(() => this.draft.trip()?.passengers ?? 1);
   readonly selectedQuote = computed(() => {
     const id = this.draft.vehicleTypeId();

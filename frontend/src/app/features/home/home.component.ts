@@ -3,7 +3,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { Observable, catchError, map, of, startWith, switchMap } from 'rxjs';
+import { Observable, catchError, forkJoin, map, of, startWith, switchMap } from 'rxjs';
 import { BookingService, Direction } from '../../core/booking.service';
 import { Airport, CatalogService, VehicleType, ZoneWithAreas } from '../../core/catalog.service';
 import { CurrencyService } from '../../core/currency.service';
@@ -54,7 +54,7 @@ type Preview =
           <div class="mt-4 grid gap-4 sm:grid-cols-2">
             <div>
               <label class="field-label" for="h-airport">{{ 'booking.fields.airport' | translate }}</label>
-              <select id="h-airport" name="airportId" class="field-input" [ngModel]="airportId()" (ngModelChange)="airportId.set($any($event))">
+              <select id="h-airport" name="airportId" class="field-input" [ngModel]="airportId()" (ngModelChange)="chooseAirport($any($event))">
                 <option [ngValue]="null">{{ 'booking.choose' | translate }}</option>
                 @for (a of airports(); track a.id) { <option [ngValue]="a.id">{{ a.iataCode }} — {{ airportName(a) }}</option> }
               </select>
@@ -120,6 +120,7 @@ type Preview =
               </svg>
               <h3 class="mt-4 text-xl font-extrabold">{{ vehicleName(v) }}</h3>
               <p class="mt-1 text-muted">{{ 'home.vehicles.capacity' | translate: { min: v.minPassengers, max: v.maxPassengers } }}</p>
+              @if (v.models) { <p class="mt-1 text-sm font-semibold">{{ v.models }}</p> }
             </li>
           }
         </ul>
@@ -195,27 +196,29 @@ export class HomeComponent {
   readonly time = signal('');
   readonly passengers = signal(1);
 
-  readonly areas = computed(() =>
-    this.zones()
+  /** Destinations of the chosen airport's country (all of them until an airport is chosen). */
+  readonly areas = computed(() => {
+    const country = this.airports().find((a) => a.id === this.airportId())?.country;
+    return this.zones()
+      .filter((z) => !country || z.country === country)
       .flatMap((z) => z.areas.map((a) => ({ id: a.id, zoneId: z.id, label: localName(a, this.lang.current()) })))
-      .sort((a, b) => a.label.localeCompare(b.label, this.lang.current()))
-  );
+      .sort((a, b) => a.label.localeCompare(b.label, this.lang.current()));
+  });
 
   readonly maxPassengers = computed(() => Math.max(1, ...this.vehicleTypes().map((v) => v.maxPassengers)));
 
-  /** The smallest vehicle that carries the group: the price shown is the starting price for this trip. */
-  private readonly vehicle = computed(() =>
+  /** Vehicles that carry the group, smallest first: the price shown is for the first one sold on this route. */
+  private readonly candidates = computed(() =>
     [...this.vehicleTypes()]
+      .filter((v) => v.maxPassengers >= this.passengers())
       .sort((a, b) => a.maxPassengers - b.maxPassengers)
-      .find((v) => v.maxPassengers >= this.passengers())
   );
 
   private readonly quoteParams = computed(() => {
     const area = this.areas().find((a) => a.id === this.areaId());
     const airportId = this.airportId();
-    const vehicle = this.vehicle();
-    return airportId !== null && area && vehicle
-      ? { airportId, zoneId: area.zoneId, vehicleTypeId: vehicle.id, currency: this.currency.current(), vehicle }
+    return airportId !== null && area && this.candidates().length > 0
+      ? { airportId, zoneId: area.zoneId, currency: this.currency.current(), vehicles: this.candidates() }
       : null;
   });
 
@@ -225,13 +228,24 @@ export class HomeComponent {
       switchMap((p): Observable<Preview> =>
         p === null
           ? of<Preview>({ state: 'idle' })
-          : this.bookings
-              .quote({ airportId: p.airportId, zoneId: p.zoneId, vehicleTypeId: p.vehicleTypeId, currency: p.currency, roundTrip: false })
-              .pipe(
-                map((q): Preview => ({ state: 'ok', amount: q.leg.amount, currency: q.leg.currency, vehicle: p.vehicle, demo: q.leg.demo })),
-                catchError(() => of<Preview>({ state: 'none' })),
-                startWith<Preview>({ state: 'loading' })
+          : forkJoin(
+              p.vehicles.map((vehicle) =>
+                this.bookings
+                  .quote({ airportId: p.airportId, zoneId: p.zoneId, vehicleTypeId: vehicle.id, currency: p.currency, roundTrip: false })
+                  .pipe(
+                    map((q) => ({ vehicle, quote: q })),
+                    catchError(() => of(null))
+                  )
               )
+            ).pipe(
+              map((results): Preview => {
+                const first = results.find((r): r is NonNullable<typeof r> => r !== null);
+                return first
+                  ? { state: 'ok', amount: first.quote.leg.amount, currency: first.quote.leg.currency, vehicle: first.vehicle, demo: first.quote.leg.demo }
+                  : { state: 'none' };
+              }),
+              startWith<Preview>({ state: 'loading' })
+            )
       )
     ),
     { initialValue: { state: 'idle' } as Preview }
@@ -241,6 +255,14 @@ export class HomeComponent {
     const p = this.preview();
     return p.state === 'ok' ? p : null;
   });
+
+  /** Picking an airport of another country drops a destination that no longer applies. */
+  chooseAirport(id: number | null): void {
+    this.airportId.set(id);
+    if (!this.areas().some((a) => a.id === this.areaId())) {
+      this.areaId.set(null);
+    }
+  }
 
   airportName(item: Airport): string {
     return localName(item, this.lang.current());

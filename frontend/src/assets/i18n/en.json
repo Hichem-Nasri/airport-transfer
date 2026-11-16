@@ -13,9 +13,9 @@
     "admin": "Administration"
   },
   "home": {
-    "badge": "All over Tunisia, 7 days a week",
-    "title": "From the terminal to your door, anywhere in Tunisia.",
-    "subtitle": "Book a private driver in a few clicks. Fixed price in advance, meet and greet on arrival, pay in the currency of your choice.",
+    "badge": "France and Tunisia, 7 days a week",
+    "title": "From the terminal to your door, in France and Tunisia.",
+    "subtitle": "Book a private driver in a few clicks, in Paris (Orly, Charles de Gaulle) and all over Tunisia. Fixed price in advance, meet and greet on arrival, pay in the currency of your choice.",
     "cta": "Book a transfer",
     "points": {
       "fixed": "Fixed price in advance",
@@ -35,7 +35,7 @@
       "capacity": "{{min}} to {{max}} passengers"
     },
     "airports": {
-      "title": "From and to every airport in Tunisia"
+      "title": "From and to the airports of Paris and Tunisia"
     },
     "how": {
       "title": "How it works",
@@ -53,7 +53,7 @@
       }
     },
     "footer": {
-      "tagline": "AIRPORT TRANSFER",
+      "tagline": "FRANCE · TUNISIA TRANSFERS",
       "links": "Footer links",
       "rights": "© {{year}} HMS Transport. All rights reserved."
     }
@@ -176,7 +176,8 @@
     "ALREADY_PAID": "This booking is already paid.",
     "PAYMENT_METHOD_MISMATCH": "This booking is not paid in cash.",
     "TOO_MANY_REQUESTS": "Too many attempts. Please try again later.",
-    "CONFLICT": "This operation conflicts with existing data (duplicate or still in use)."
+    "CONFLICT": "This operation conflicts with existing data (duplicate or still in use).",
+    "INVALID_TIME_ZONE": "Unknown time zone."
   },
   "status": {
     "PENDING": "Pending",
@@ -242,7 +243,8 @@
       "capacity": "{{min}} to {{max}} passengers",
       "tooSmall": "Too small for {{n}} passengers",
       "unavailable": "Unavailable",
-      "loading": "Calculating price…"
+      "loading": "Calculating price…",
+      "none": "No vehicle is offered for this trip. Please contact us."
     },
     "demoNotice": "Demo prices: the real tariffs will be published soon.",
     "payment": {
@@ -388,7 +390,10 @@
       "maxPassengers": "Maximum passengers",
       "active": "Active (visible to customers)",
       "inactive": "Inactive",
-      "saved": "Saved."
+      "saved": "Saved.",
+      "country": "Country (2-letter code)",
+      "timeZone": "Time zone",
+      "models": "Models (examples)"
     },
     "currencies": {
       "title": "Currencies and exchange rates",
