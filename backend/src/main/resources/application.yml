@@ -57,4 +57,4 @@ app:
     provider: ${SMS_PROVIDER:log}
     poll-interval-ms: ${SMS_POLL_INTERVAL_MS:60000}
   mail:
-    from: ${MAIL_FROM:noreply@hms-transport.example}
+    from: ${MAIL_FROM:noreply@hms-shuttle.example}

@@ -15,7 +15,7 @@ import { LogoComponent } from './shared/logo.component';
   template: `
     <a href="#main" class="skip-link" (click)="skipToMain($event)">{{ 'a11y.skip' | translate }}</a>
     <header class="flex flex-wrap print:hidden items-center justify-between gap-4 px-6 py-5 md:px-12">
-      <a routerLink="/" aria-label="HMS Transport"><app-logo /></a>
+      <a routerLink="/" aria-label="HMS Shuttle"><app-logo /></a>
       <nav class="flex flex-wrap gap-7 text-[15px] font-semibold" [attr.aria-label]="'a11y.mainNav' | translate">
         <a routerLink="/book" class="hover:text-brand">{{ 'nav.book' | translate }}</a>
         <a routerLink="/pack" class="hover:text-brand">{{ 'pack.nav' | translate }}</a>

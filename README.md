@@ -1,6 +1,6 @@
 # airport-transfer
 
-HMS Transport: airport transfer booking in France and Tunisia (TND / EUR / USD). See CLAUDE.md for conventions and roadmap.
+HMS Shuttle: airport transfer booking in France and Tunisia (TND / EUR / USD). See CLAUDE.md for conventions and roadmap.
 
 ```bash
 docker compose up -d
@@ -62,7 +62,7 @@ cd backend && mvn verify   # + integration tests (*IT); needs Docker, or set TES
 
 Each booking stores its own price snapshot (TND price, currency, exchange rate, charged amount); later tariff or rate changes never alter it. Pickup times are stored in UTC and shown in Africa/Tunis. A confirmation e-mail is sent after the booking is committed (MailHog UI: http://localhost:8025); a mail failure never fails the booking.
 
-Environment variable: `MAIL_FROM` (default `noreply@hms-transport.example`), next to `MAIL_HOST` / `MAIL_PORT`.
+Environment variable: `MAIL_FROM` (default `noreply@hms-shuttle.example`), next to `MAIL_HOST` / `MAIL_PORT`.
 
 Frontend tests: `cd frontend && npm install && npm test` (Karma + Jasmine, needs Chrome).
 

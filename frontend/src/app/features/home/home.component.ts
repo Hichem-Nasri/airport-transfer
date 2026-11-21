@@ -162,7 +162,7 @@ type Preview =
     <footer class="border-t border-brand-line bg-white px-4 py-10 sm:px-6 md:px-12">
       <div class="mx-auto flex w-full max-w-6xl flex-wrap items-start justify-between gap-6">
         <div>
-          <p class="text-xl font-extrabold text-brand">HMS Transport</p>
+          <p class="text-xl font-extrabold text-brand">HMS Shuttle</p>
           <p class="text-xs font-semibold tracking-widest text-muted">{{ 'home.footer.tagline' | translate }}</p>
         </div>
         <nav class="flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold" [attr.aria-label]="'home.footer.links' | translate">

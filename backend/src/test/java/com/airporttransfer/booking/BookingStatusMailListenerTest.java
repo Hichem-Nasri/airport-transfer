@@ -69,7 +69,7 @@ class BookingStatusMailListenerTest {
 
         SimpleMailMessage mail = sent(1).get(0);
         assertThat(mail.getTo()).containsExactly("client@example.tn");
-        assertThat(mail.getSubject()).isEqualTo("HMS Transport - Booking HMS-ABCD2345 confirmed");
+        assertThat(mail.getSubject()).isEqualTo("HMS Shuttle - Booking HMS-ABCD2345 confirmed");
         assertThat(mail.getText()).contains("Hello Ali Ben Salah", "01/12/2026 11:30", "Tunis-Carthage Airport");
     }
 

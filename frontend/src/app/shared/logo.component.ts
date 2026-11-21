@@ -13,7 +13,7 @@ import { Component } from '@angular/core';
         <circle cx="10" cy="35" r="1.7" fill="#D2001A" />
       </svg>
       <div dir="ltr" class="text-start">
-        <div class="text-[22px] font-extrabold leading-none tracking-tight">HMS <span class="text-brand">Transport</span></div>
+        <div class="text-[22px] font-extrabold leading-none tracking-tight">HMS <span class="text-brand">Shuttle</span></div>
         <div class="mt-1 text-[10.5px] font-semibold tracking-[0.18em] text-muted">FRANCE · TUNISIE</div>
       </div>
     </div>
