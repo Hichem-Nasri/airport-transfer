@@ -13,7 +13,7 @@
     "admin": "Administration"
   },
   "home": {
-    "badge": "France et Tunisie, 7j/7",
+    "badge": "Réserver – Payer – Voyager en quelques clics",
     "title": "Du terminal à votre porte, en France et en Tunisie.",
     "subtitle": "Réservez un chauffeur privé en quelques clics, à Paris (Orly, Roissy-Charles de Gaulle) comme partout en Tunisie. Prix fixé à l’avance, accueil à l’arrivée, paiement dans la devise de votre choix.",
     "cta": "Réserver un transfert",
@@ -178,7 +178,8 @@
     "PAYMENT_METHOD_MISMATCH": "Cette réservation ne se paie pas en espèces.",
     "TOO_MANY_REQUESTS": "Trop de tentatives. Réessayez plus tard.",
     "CONFLICT": "Cette opération entre en conflit avec des données existantes (doublon ou élément encore utilisé).",
-    "INVALID_TIME_ZONE": "Le fuseau horaire est inconnu."
+    "INVALID_TIME_ZONE": "Le fuseau horaire est inconnu.",
+    "RETURN_FLIGHT_REQUIRED": "Le numéro de vol du retour est obligatoire."
   },
   "status": {
     "PENDING": "En attente",
@@ -223,10 +224,15 @@
       "passengers": "Passagers",
       "address": "Adresse complète",
       "flightNumber": "N° de vol (facultatif)",
-      "returnFlightNumber": "N° de vol du retour (facultatif)",
+      "returnFlightNumber": "N° de vol du retour",
       "luggage": "Bagages",
       "notes": "Remarques pour le chauffeur (facultatif)",
-      "paymentMethod": "Mode de paiement"
+      "paymentMethod": "Mode de paiement",
+      "fromAirport": "Départ (aéroport)",
+      "fromArea": "Départ (ville ou gouvernorat)",
+      "toAirport": "Destination (aéroport)",
+      "toArea": "Destination (ville ou gouvernorat)",
+      "addressShort": "Adresse (hôtel, rue, ville)"
     },
     "hints": {
       "address": "Hôtel, rue, numéro, ville : le chauffeur vous y retrouve."
@@ -268,7 +274,10 @@
       "open": "Modifier",
       "saved": "Réservation mise à jour.",
       "locked": "Un chauffeur est affecté : pour toute modification, contactez-nous ou annulez la réservation."
-    }
+    },
+    "tripKind": "Type de trajet",
+    "oneWay": "Aller simple",
+    "swap": "Inverser le sens"
   },
   "staff": {
     "title": "Gestion des réservations",
@@ -441,7 +450,7 @@
   "pack": {
     "nav": "Pack voyage",
     "title": "Pack voyage France – Tunisie",
-    "subtitle": "Réservez vos transferts liés en une fois : départ de chez vous en France, accueil à l’arrivée en Tunisie, et le retour. Un prix par trajet, un total clair.",
+    "subtitle": "Réservez votre aller-retour en une fois : départ de chez vous en France, accueil à l’arrivée en Tunisie, puis le retour. Un prix par trajet, un total clair.",
     "leg": "Trajet {{n}}",
     "addLeg": "Ajouter un trajet",
     "removeLeg": "Retirer ce trajet",
@@ -450,6 +459,13 @@
     "confirm": "Réserver le pack",
     "incomplete": "Complétez tous les champs de chaque trajet.",
     "done": "Pack réservé. Références :",
-    "cta": "Pack voyage France – Tunisie"
+    "cta": "Pack voyage France – Tunisie",
+    "legs": {
+      "1": "Aller · départ (France)",
+      "2": "Aller · arrivée (Tunisie)",
+      "3": "Retour · départ (Tunisie)",
+      "4": "Retour · arrivée (France)"
+    },
+    "flightRequired": "Indiquez le numéro de vol du retour pour chaque trajet de retour."
   }
 }

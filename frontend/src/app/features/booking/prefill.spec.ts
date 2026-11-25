@@ -26,6 +26,25 @@ describe('parsePrefill', () => {
     expect(Object.values(p).every((v) => v === undefined)).toBeTrue();
   });
 
+  it('reads the round trip, address and luggage handed over by the card', () => {
+    const p = parsePrefill(
+      convertToParamMap({ roundTrip: '1', returnDate: '2026-12-09', returnTime: '18:15', address: ' Hôtel Marhaba, Sousse ', luggage: '3' }),
+      today
+    );
+    expect(p.roundTrip).toBeTrue();
+    expect(p.returnDate).toBe('2026-12-09');
+    expect(p.returnTime).toBe('18:15');
+    expect(p.address).toBe('Hôtel Marhaba, Sousse');
+    expect(p.luggage).toBe(3);
+  });
+
+  it('ignores a malformed return, luggage and an empty address', () => {
+    const p = parsePrefill(convertToParamMap({ roundTrip: '1', returnDate: '2026-11-01', luggage: '900', address: '  ' }), today);
+    expect(p.returnDate).toBeUndefined();
+    expect(p.luggage).toBeUndefined();
+    expect(p.address).toBeUndefined();
+  });
+
   it('accepts today', () => {
     expect(parsePrefill(convertToParamMap({ date: today }), today).date).toBe(today);
   });

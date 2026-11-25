@@ -76,6 +76,9 @@ public class BookingService {
         if (roundTrip && !request.returnPickupAt().isAfter(request.pickupAt())) {
             throw ApiException.badRequest("RETURN_BEFORE_OUTBOUND", "The return must be after the first trip");
         }
+        if (roundTrip && (request.returnFlightNumber() == null || request.returnFlightNumber().isBlank())) {
+            throw ApiException.badRequest("RETURN_FLIGHT_REQUIRED", "The return flight number is required for a round trip");
+        }
         if (!ENABLED_PAYMENT_METHODS.contains(request.paymentMethod())) {
             throw ApiException.badRequest("PAYMENT_METHOD_NOT_AVAILABLE",
                 "This payment method is not available yet");

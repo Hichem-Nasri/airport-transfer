@@ -181,13 +181,13 @@ export class TripStepComponent {
   readonly form = inject(FormBuilder).nonNullable.group(
     {
       direction: [this.saved?.direction ?? this.prefill.direction ?? ('AIRPORT_TO_ADDRESS' as Direction)],
-      roundTrip: [this.saved?.roundTrip ?? false],
+      roundTrip: [this.saved?.roundTrip ?? this.prefill.roundTrip ?? false],
       airportId: [this.saved?.airportId ?? this.prefill.airportId ?? (null as number | null), Validators.required],
       areaId: [this.saved?.areaId ?? this.prefill.areaId ?? (null as number | null), Validators.required],
       date: [this.saved?.date ?? this.prefill.date ?? '', Validators.required],
       time: [this.saved?.time ?? this.prefill.time ?? '', Validators.required],
-      returnDate: [this.saved?.returnDate ?? ''],
-      returnTime: [this.saved?.returnTime ?? ''],
+      returnDate: [this.saved?.returnDate ?? this.prefill.returnDate ?? ''],
+      returnTime: [this.saved?.returnTime ?? this.prefill.returnTime ?? ''],
       passengers: [
         this.saved?.passengers ?? this.prefill.passengers ?? 1,
         [
@@ -229,7 +229,7 @@ export class TripStepComponent {
         c.updateValueAndValidity();
       }
     });
-    if (this.saved?.roundTrip) {
+    if (this.form.controls.roundTrip.value) {
       this.form.controls.roundTrip.setValue(true);
     }
   }
@@ -277,7 +277,9 @@ export class TripStepComponent {
       passengers: v.passengers,
       timeZone,
       pickupAt: localToIso(v.date, v.time, timeZone),
-      returnPickupAt: v.roundTrip ? localToIso(v.returnDate, v.returnTime, timeZone) : null
+      returnPickupAt: v.roundTrip ? localToIso(v.returnDate, v.returnTime, timeZone) : null,
+      address: this.saved?.address ?? this.prefill.address,
+      luggageCount: this.saved?.luggageCount ?? this.prefill.luggage
     });
     this.draft.go(2);
   }

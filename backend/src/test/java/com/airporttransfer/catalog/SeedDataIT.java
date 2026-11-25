@@ -29,9 +29,9 @@ class SeedDataIT extends AbstractIT {
 
     @Test
     void vehicleCapacitiesFollowTheSpecification() {
-        assertThat(count("SELECT count(*) FROM vehicle_types WHERE code='SEDAN' AND min_passengers=1 AND max_passengers=3"))
+        assertThat(count("SELECT count(*) FROM vehicle_types WHERE code='SEDAN' AND min_passengers=1 AND max_passengers=4"))
             .isEqualTo(1);
-        assertThat(count("SELECT count(*) FROM vehicle_types WHERE code='VAN' AND min_passengers=4 AND max_passengers=7"))
+        assertThat(count("SELECT count(*) FROM vehicle_types WHERE code='VAN' AND min_passengers=5 AND max_passengers=8"))
             .isEqualTo(1);
         assertThat(count("SELECT count(*) FROM vehicle_types WHERE code='MINIBUS' AND min_passengers=8 AND max_passengers=16"))
             .isEqualTo(1);

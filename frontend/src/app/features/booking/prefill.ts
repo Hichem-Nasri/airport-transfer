@@ -8,6 +8,11 @@ export interface TripPrefill {
   date?: string;
   time?: string;
   passengers?: number;
+  roundTrip?: boolean;
+  returnDate?: string;
+  returnTime?: string;
+  address?: string;
+  luggage?: number;
 }
 
 function positiveInt(value: string | null): number | undefined {
@@ -37,6 +42,25 @@ export function parsePrefill(params: ParamMap, todayInTunis: string): TripPrefil
   const passengers = positiveInt(params.get('passengers'));
   if (passengers !== undefined && passengers <= 100) {
     result.passengers = passengers;
+  }
+  if (params.get('roundTrip') === '1') {
+    result.roundTrip = true;
+    const returnDate = params.get('returnDate');
+    if (returnDate !== null && /^\d{4}-\d{2}-\d{2}$/.test(returnDate) && returnDate >= todayInTunis) {
+      result.returnDate = returnDate;
+    }
+    const returnTime = params.get('returnTime');
+    if (returnTime !== null && /^([01]\d|2[0-3]):[0-5]\d$/.test(returnTime)) {
+      result.returnTime = returnTime;
+    }
+  }
+  const address = params.get('address')?.trim();
+  if (address) {
+    result.address = address.slice(0, 500);
+  }
+  const luggage = params.get('luggage');
+  if (luggage !== null && /^\d{1,3}$/.test(luggage) && Number(luggage) <= 100) {
+    result.luggage = Number(luggage);
   }
   return result;
 }

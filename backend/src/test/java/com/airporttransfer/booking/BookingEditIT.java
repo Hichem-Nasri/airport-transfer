@@ -83,6 +83,7 @@ class BookingEditIT extends OperationsTestSupport {
         Instant back = Instant.now().plus(6, ChronoUnit.DAYS);
         ObjectNode request = bookingRequest(out);
         request.put("returnPickupAt", back.truncatedTo(ChronoUnit.SECONDS).toString());
+        request.put("returnFlightNumber", "TU715");
         JsonNode created = json.readTree(mvc.perform(post("/api/bookings").header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON).content(request.toString()))
             .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString());

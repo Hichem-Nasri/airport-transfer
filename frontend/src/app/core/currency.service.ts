@@ -4,8 +4,8 @@ export type Currency = 'TND' | 'EUR' | 'USD';
 
 @Injectable({ providedIn: 'root' })
 export class CurrencyService {
-  readonly available: Currency[] = ['TND', 'EUR', 'USD'];
-  readonly current = signal<Currency>('TND');
+  readonly available: Currency[] = ['EUR', 'USD', 'TND'];
+  readonly current = signal<Currency>('EUR');
 
   set(currency: Currency): void {
     this.current.set(currency);

@@ -136,3 +136,7 @@ Paris airports (ORY, CDG) are sold with flat EUR prices per trip: EUR 150 Eco, E
 
 ## SMS reminders (step 11d)
 Off by default. `SMS_ENABLED=true` starts the job that texts customers 24 h and 1 h before pickup. Until a provider adapter exists (`SMS_PROVIDER`), messages are only logged.
+
+
+## Client feedback round (step 11e)
+Currency order EUR/USD/TND, public booking flow with sign-up before confirming, redesigned home card, 4-leg round-trip pack, return flight number required on round trips, new vehicle capacities (migration V15).

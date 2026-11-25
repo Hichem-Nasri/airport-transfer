@@ -15,7 +15,6 @@ export const routes: Routes = [
   },
   {
     path: 'book',
-    canActivate: [authGuard],
     loadComponent: () => import('./features/booking/booking-flow.component').then((m) => m.BookingFlowComponent)
   },
   {

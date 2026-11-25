@@ -40,32 +40,69 @@ type Preview =
               [attr.aria-label]="'home.card.title' | translate">
           <h2 class="text-xl font-extrabold">{{ 'home.card.title' | translate }}</h2>
 
-          <div role="group" [attr.aria-label]="'booking.directionLabel' | translate"
+          <div role="group" [attr.aria-label]="'booking.tripKind' | translate"
                class="mt-4 grid grid-cols-2 gap-2 rounded-2xl border border-brand-line bg-brand-soft p-1.5">
-            @for (d of directions; track d) {
-              <button type="button" class="min-h-11 rounded-xl px-3 text-sm font-semibold"
-                      [class.bg-brand]="direction() === d" [class.text-white]="direction() === d"
-                      [attr.aria-pressed]="direction() === d" (click)="direction.set(d)">
-                {{ 'booking.direction.' + d | translate }}
-              </button>
+            <button type="button" class="min-h-11 rounded-xl px-3 text-sm font-semibold"
+                    [class.bg-brand]="!roundTrip()" [class.text-white]="!roundTrip()"
+                    [attr.aria-pressed]="!roundTrip()" (click)="roundTrip.set(false)">
+              {{ 'booking.oneWay' | translate }}
+            </button>
+            <button type="button" class="min-h-11 rounded-xl px-3 text-sm font-semibold"
+                    [class.bg-brand]="roundTrip()" [class.text-white]="roundTrip()"
+                    [attr.aria-pressed]="roundTrip()" (click)="roundTrip.set(true)">
+              ⇄ {{ 'booking.roundTrip' | translate }}
+            </button>
+          </div>
+
+          <div class="mt-4 space-y-3">
+            @if (direction() === 'AIRPORT_TO_ADDRESS') {
+              <div>
+                <label class="field-label" for="h-airport">{{ 'booking.fields.fromAirport' | translate }}</label>
+                <select id="h-airport" name="airportId" class="field-input" [ngModel]="airportId()" (ngModelChange)="chooseAirport($any($event))">
+                  <option [ngValue]="null">{{ 'booking.choose' | translate }}</option>
+                  @for (a of airports(); track a.id) { <option [ngValue]="a.id">{{ a.iataCode }} — {{ airportName(a) }}</option> }
+                </select>
+              </div>
+            } @else {
+              <div>
+                <label class="field-label" for="h-area">{{ 'booking.fields.fromArea' | translate }}</label>
+                <select id="h-area" name="areaId" class="field-input" [ngModel]="areaId()" (ngModelChange)="areaId.set($any($event))">
+                  <option [ngValue]="null">{{ 'booking.choose' | translate }}</option>
+                  @for (a of areas(); track a.id) { <option [ngValue]="a.id">{{ a.label }}</option> }
+                </select>
+              </div>
             }
+
+            <div class="flex justify-center">
+              <button type="button" class="btn-secondary px-4" (click)="swap()">⇅ {{ 'booking.swap' | translate }}</button>
+            </div>
+
+            @if (direction() === 'AIRPORT_TO_ADDRESS') {
+              <div>
+                <label class="field-label" for="h-area">{{ 'booking.fields.toArea' | translate }}</label>
+                <select id="h-area" name="areaId" class="field-input" [ngModel]="areaId()" (ngModelChange)="areaId.set($any($event))">
+                  <option [ngValue]="null">{{ 'booking.choose' | translate }}</option>
+                  @for (a of areas(); track a.id) { <option [ngValue]="a.id">{{ a.label }}</option> }
+                </select>
+              </div>
+            } @else {
+              <div>
+                <label class="field-label" for="h-airport">{{ 'booking.fields.toAirport' | translate }}</label>
+                <select id="h-airport" name="airportId" class="field-input" [ngModel]="airportId()" (ngModelChange)="chooseAirport($any($event))">
+                  <option [ngValue]="null">{{ 'booking.choose' | translate }}</option>
+                  @for (a of airports(); track a.id) { <option [ngValue]="a.id">{{ a.iataCode }} — {{ airportName(a) }}</option> }
+                </select>
+              </div>
+            }
+
+            <div>
+              <label class="field-label" for="h-address">{{ 'booking.fields.addressShort' | translate }}</label>
+              <input id="h-address" name="address" type="text" maxlength="500" class="field-input" autocomplete="street-address"
+                     [ngModel]="address()" (ngModelChange)="address.set($event)" />
+            </div>
           </div>
 
           <div class="mt-4 grid gap-4 sm:grid-cols-2">
-            <div>
-              <label class="field-label" for="h-airport">{{ 'booking.fields.airport' | translate }}</label>
-              <select id="h-airport" name="airportId" class="field-input" [ngModel]="airportId()" (ngModelChange)="chooseAirport($any($event))">
-                <option [ngValue]="null">{{ 'booking.choose' | translate }}</option>
-                @for (a of airports(); track a.id) { <option [ngValue]="a.id">{{ a.iataCode }} — {{ airportName(a) }}</option> }
-              </select>
-            </div>
-            <div>
-              <label class="field-label" for="h-area">{{ 'booking.fields.destination' | translate }}</label>
-              <select id="h-area" name="areaId" class="field-input" [ngModel]="areaId()" (ngModelChange)="areaId.set($any($event))">
-                <option [ngValue]="null">{{ 'booking.choose' | translate }}</option>
-                @for (a of areas(); track a.id) { <option [ngValue]="a.id">{{ a.label }}</option> }
-              </select>
-            </div>
             <div>
               <label class="field-label" for="h-date">{{ 'booking.fields.date' | translate }}</label>
               <input id="h-date" name="date" type="date" class="field-input" [min]="today" [ngModel]="date()" (ngModelChange)="date.set($event)" />
@@ -74,7 +111,17 @@ type Preview =
               <label class="field-label" for="h-time">{{ 'booking.fields.time' | translate }}</label>
               <input id="h-time" name="time" type="time" class="field-input" [ngModel]="time()" (ngModelChange)="time.set($event)" />
             </div>
-            <div class="sm:col-span-2">
+            @if (roundTrip()) {
+              <div>
+                <label class="field-label" for="h-rdate">{{ 'booking.fields.returnDate' | translate }}</label>
+                <input id="h-rdate" name="returnDate" type="date" class="field-input" [min]="date() || today" [ngModel]="returnDate()" (ngModelChange)="returnDate.set($event)" />
+              </div>
+              <div>
+                <label class="field-label" for="h-rtime">{{ 'booking.fields.returnTime' | translate }}</label>
+                <input id="h-rtime" name="returnTime" type="time" class="field-input" [ngModel]="returnTime()" (ngModelChange)="returnTime.set($event)" />
+              </div>
+            }
+            <div>
               <label class="field-label" for="h-pax">{{ 'booking.fields.passengers' | translate }}</label>
               <div class="mt-1 flex items-center gap-3">
                 <button type="button" class="btn-secondary w-11 px-0 text-xl" (click)="step(-1)"
@@ -84,6 +131,11 @@ type Preview =
                 <button type="button" class="btn-secondary w-11 px-0 text-xl" (click)="step(1)"
                         [attr.aria-label]="'booking.more' | translate" [disabled]="passengers() >= maxPassengers()">+</button>
               </div>
+            </div>
+            <div>
+              <label class="field-label" for="h-bags">{{ 'booking.fields.luggage' | translate }}</label>
+              <input id="h-bags" name="luggage" type="number" min="0" max="100" inputmode="numeric" class="field-input"
+                     [ngModel]="luggage()" (ngModelChange)="setLuggage($event)" />
             </div>
           </div>
 
@@ -115,11 +167,7 @@ type Preview =
         <ul class="mt-8 grid gap-4 md:grid-cols-3">
           @for (v of vehicleTypes(); track v.id) {
             <li class="rounded-2xl border border-brand-line bg-white p-6">
-              <svg viewBox="0 0 48 24" class="h-8 w-16 text-brand" fill="none" stroke="currentColor" stroke-width="2.5"
-                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M4 17v-4l4-6h22l8 7h6v3" /><path d="M4 17h40" /><circle cx="13" cy="18" r="3" fill="white" /><circle cx="35" cy="18" r="3" fill="white" />
-              </svg>
-              <h3 class="mt-4 text-xl font-extrabold">{{ vehicleName(v) }}</h3>
+              <h3 class="text-xl font-extrabold">{{ vehicleName(v) }}</h3>
               <p class="mt-1 text-muted">{{ 'home.vehicles.capacity' | translate: { min: v.minPassengers, max: v.maxPassengers } }}</p>
               @if (v.models) { <p class="mt-1 text-sm font-semibold">{{ v.models }}</p> }
             </li>
@@ -182,7 +230,6 @@ export class HomeComponent {
   private readonly lang = inject(LanguageService);
   private readonly router = inject(Router);
 
-  readonly directions: Direction[] = ['AIRPORT_TO_ADDRESS', 'ADDRESS_TO_AIRPORT'];
   readonly today = todayInTunis();
   readonly year = new Date().getFullYear();
 
@@ -196,6 +243,11 @@ export class HomeComponent {
   readonly date = signal('');
   readonly time = signal('');
   readonly passengers = signal(1);
+  readonly roundTrip = signal(false);
+  readonly returnDate = signal('');
+  readonly returnTime = signal('');
+  readonly address = signal('');
+  readonly luggage = signal(0);
 
   /** Destinations of the chosen airport's country (all of them until an airport is chosen). */
   readonly areas = computed(() => {
@@ -286,6 +338,15 @@ export class HomeComponent {
     this.passengers.set(Number.isFinite(n) ? Math.min(this.maxPassengers(), Math.max(1, n)) : 1);
   }
 
+  swap(): void {
+    this.direction.set(this.direction() === 'AIRPORT_TO_ADDRESS' ? 'ADDRESS_TO_AIRPORT' : 'AIRPORT_TO_ADDRESS');
+  }
+
+  setLuggage(value: number | string | null): void {
+    const n = Math.floor(Number(value));
+    this.luggage.set(Number.isFinite(n) ? Math.min(100, Math.max(0, n)) : 0);
+  }
+
   /** Hands the card's choices to the booking flow (which asks to sign in if needed). */
   go(): void {
     const queryParams: Record<string, string | number> = { direction: this.direction(), passengers: this.passengers() };
@@ -300,6 +361,21 @@ export class HomeComponent {
     }
     if (this.time()) {
       queryParams['time'] = this.time();
+    }
+    if (this.roundTrip()) {
+      queryParams['roundTrip'] = '1';
+      if (this.returnDate()) {
+        queryParams['returnDate'] = this.returnDate();
+      }
+      if (this.returnTime()) {
+        queryParams['returnTime'] = this.returnTime();
+      }
+    }
+    if (this.address().trim()) {
+      queryParams['address'] = this.address().trim();
+    }
+    if (this.luggage() > 0) {
+      queryParams['luggage'] = this.luggage();
     }
     void this.router.navigate(['/book'], { queryParams });
   }

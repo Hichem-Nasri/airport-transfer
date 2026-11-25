@@ -1,9 +1,11 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { catchError, of, switchMap } from 'rxjs';
 import { errorKey } from '../../core/api-error';
+import { AuthService } from '../../core/auth.service';
 import { BookingQuote, BookingService, CreateBookingRequest } from '../../core/booking.service';
 import { CatalogService, VehicleType } from '../../core/catalog.service';
 import { CurrencyService } from '../../core/currency.service';
@@ -65,7 +67,9 @@ const FLIGHT_PATTERN = /^$|^[A-Za-z0-9 ]{2,10}$/;
           <label class="field-label" for="returnFlightNumber">{{ 'booking.fields.returnFlightNumber' | translate }}</label>
           <input id="returnFlightNumber" type="text" class="field-input uppercase" formControlName="returnFlightNumber"
                  maxlength="10" placeholder="TU 715" [attr.aria-invalid]="form.controls.returnFlightNumber.invalid" />
-          @if (form.controls.returnFlightNumber.invalid) {
+          @if (form.controls.returnFlightNumber.touched && form.controls.returnFlightNumber.hasError('required')) {
+            <p class="field-error">{{ 'validation.required' | translate }}</p>
+          } @else if (form.controls.returnFlightNumber.invalid) {
             <p class="field-error">{{ 'validation.flight' | translate }}</p>
           }
         </div>
@@ -115,6 +119,8 @@ export class DetailsStepComponent {
   private readonly currency = inject(CurrencyService);
   private readonly lang = inject(LanguageService);
   readonly draft = inject(BookingDraftService);
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
   private readonly vehicleTypes = toSignal(this.catalog.vehicleTypes(), { initialValue: [] as VehicleType[] });
   readonly trip = this.draft.trip;
@@ -124,14 +130,24 @@ export class DetailsStepComponent {
   readonly error = signal<string | null>(null);
 
   readonly form = inject(FormBuilder).nonNullable.group({
-    address: ['', [Validators.required, Validators.maxLength(500)]],
+    address: [this.draft.trip()?.address ?? '', [Validators.required, Validators.maxLength(500)]],
     flightNumber: ['', Validators.pattern(FLIGHT_PATTERN)],
     returnFlightNumber: ['', Validators.pattern(FLIGHT_PATTERN)],
-    luggageCount: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
+    luggageCount: [this.draft.trip()?.luggageCount ?? 0, [Validators.required, Validators.min(0), Validators.max(100)]],
     notes: ['', Validators.maxLength(1000)]
   });
 
   constructor() {
+    if (this.draft.trip()?.roundTrip) {
+      const returnFlight = this.form.controls.returnFlightNumber;
+      returnFlight.addValidators(Validators.required);
+      returnFlight.updateValueAndValidity();
+    }
+    const pending = this.draft.pendingDetails();
+    if (pending) {
+      this.form.patchValue(pending);
+      this.draft.pendingDetails.set(null);
+    }
     // The total shown in the bar is the server's preview, fetched again if the currency changes.
     toObservable(this.currency.current)
       .pipe(
@@ -190,6 +206,11 @@ export class DetailsStepComponent {
         ? { returnFlightNumber: v.returnFlightNumber.trim() }
         : {})
     };
+    if (!this.auth.isLoggedIn()) {
+      this.draft.persist(v);
+      void this.router.navigate(['/register'], { queryParams: { returnUrl: '/book' } });
+      return;
+    }
     this.loading.set(true);
     this.error.set(null);
     this.bookings.create(request).subscribe({

@@ -193,6 +193,7 @@ class BookingIT extends AbstractIT {
         ObjectNode req = request();
         req.put("currency", "EUR");
         req.put("returnPickupAt", Instant.now().plus(6, ChronoUnit.DAYS).toString());
+        req.put("returnFlightNumber", "TU715");
 
         String preview = mvc.perform(get("/api/public/booking-quote?airportId=" + tun + "&zoneId=" + z01
                 + "&vehicleTypeId=" + sedan + "&currency=EUR&roundTrip=true"))
@@ -223,12 +224,12 @@ class BookingIT extends AbstractIT {
         String token = newCustomerToken();
 
         ObjectNode tooMany = request();
-        tooMany.put("passengers", 4);
+        tooMany.put("passengers", 5);
         create(token, tooMany).andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code").value("VEHICLE_CAPACITY_EXCEEDED"));
 
         ObjectNode vanForFour = request();
-        vanForFour.put("passengers", 4);
+        vanForFour.put("passengers", 5);
         vanForFour.put("vehicleTypeId", van);
         create(token, vanForFour).andExpect(status().isCreated());
 
@@ -249,6 +250,11 @@ class BookingIT extends AbstractIT {
         returnBefore.put("returnPickupAt", Instant.now().plus(1, ChronoUnit.DAYS).toString());
         create(token, returnBefore).andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code").value("RETURN_BEFORE_OUTBOUND"));
+
+        ObjectNode noReturnFlight = request();
+        noReturnFlight.put("returnPickupAt", Instant.now().plus(6, ChronoUnit.DAYS).toString());
+        create(token, noReturnFlight).andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("RETURN_FLIGHT_REQUIRED"));
 
         ObjectNode card = request();
         card.put("paymentMethod", "CARD");
@@ -342,6 +348,7 @@ class BookingIT extends AbstractIT {
         String token = newCustomerToken();
         ObjectNode req = request();
         req.put("returnPickupAt", Instant.now().plus(6, ChronoUnit.DAYS).toString());
+        req.put("returnFlightNumber", "TU715");
         JsonNode created = createOk(token, req).get("bookings");
 
         mvc.perform(post("/api/bookings/" + created.get(0).get("id").asLong() + "/cancel")

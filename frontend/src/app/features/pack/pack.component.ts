@@ -54,7 +54,7 @@ type LegGroup = FormGroup<{
           <div formArrayName="legs" class="space-y-6">
             @for (leg of legs.controls; track leg; let i = $index) {
               <fieldset [formGroupName]="i" class="space-y-4 rounded-2xl border border-brand-line bg-white p-4">
-                <legend class="px-2 font-extrabold">{{ 'pack.leg' | translate: { n: i + 1 } }}</legend>
+                <legend class="px-2 font-extrabold">{{ 'pack.legs.' + (i + 1) | translate }}</legend>
 
                 <div role="group" [attr.aria-label]="'booking.directionLabel' | translate" class="grid grid-cols-2 gap-2">
                   @for (d of directions; track d) {
@@ -124,21 +124,13 @@ type LegGroup = FormGroup<{
                     <input [id]="'bags-' + i" type="number" min="0" max="100" class="field-input" formControlName="luggageCount" />
                   </div>
                   <div>
-                    <label class="field-label" [for]="'flight-' + i">{{ 'booking.fields.flightNumber' | translate }}</label>
+                    <label class="field-label" [for]="'flight-' + i">{{ (i >= 2 ? 'booking.fields.returnFlightNumber' : 'booking.fields.flightNumber') | translate }}</label>
                     <input [id]="'flight-' + i" class="field-input uppercase" formControlName="flightNumber" maxlength="10" />
                   </div>
                 </div>
-
-                @if (legs.length > 2) {
-                  <button type="button" class="btn-secondary" (click)="removeLeg(i)">{{ 'pack.removeLeg' | translate }}</button>
-                }
               </fieldset>
             }
           </div>
-
-          @if (legs.length < 4) {
-            <button type="button" class="btn-secondary w-full" (click)="addLeg()">{{ 'pack.addLeg' | translate }}</button>
-          }
 
           @if (error(); as key) {
             <p class="rounded-xl bg-white px-4 py-3 text-sm font-semibold text-brand-dark" role="alert">{{ key | translate }}</p>
@@ -185,7 +177,12 @@ export class PackComponent {
   private readonly tick = signal(0);
 
   readonly form = this.fb.group({
-    legs: this.fb.array<LegGroup>([this.newLeg('ADDRESS_TO_AIRPORT'), this.newLeg('AIRPORT_TO_ADDRESS')])
+    legs: this.fb.array<LegGroup>([
+      this.newLeg('ADDRESS_TO_AIRPORT', false),
+      this.newLeg('AIRPORT_TO_ADDRESS', false),
+      this.newLeg('ADDRESS_TO_AIRPORT', true),
+      this.newLeg('AIRPORT_TO_ADDRESS', true)
+    ])
   });
 
   get legs(): FormArray<LegGroup> {
@@ -252,25 +249,21 @@ export class PackComponent {
     leg.controls.areaId.setValue(null);
   }
 
-  addLeg(): void {
-    const last = this.legs.at(this.legs.length - 1).controls.direction.value;
-    this.legs.push(this.newLeg(last === 'AIRPORT_TO_ADDRESS' ? 'ADDRESS_TO_AIRPORT' : 'AIRPORT_TO_ADDRESS'));
-  }
-
-  removeLeg(index: number): void {
-    this.legs.removeAt(index);
-  }
-
   submit(): void {
     this.error.set(null);
     if (!this.auth.isLoggedIn()) {
       this.saveDraft();
-      void this.router.navigate(['/login'], { queryParams: { returnUrl: '/pack' } });
+      void this.router.navigate(['/register'], { queryParams: { returnUrl: '/pack' } });
       return;
     }
     const requests = [];
-    for (const leg of this.legs.controls) {
+    for (const [index, leg] of this.legs.controls.entries()) {
       const v = leg.getRawValue();
+      if (index >= 2 && !v.flightNumber.trim()) {
+        leg.markAllAsTouched();
+        this.error.set('pack.flightRequired');
+        return;
+      }
       const airport = this.airports().find((a) => a.id === v.airportId);
       const zoneId = this.zoneIdOf(v.areaId);
       if (!airport || zoneId === null || v.vehicleTypeId === null || !v.address.trim() || !v.date || !v.time) {
@@ -320,11 +313,8 @@ export class PackComponent {
       }
       sessionStorage.removeItem(DRAFT_KEY);
       const saved = JSON.parse(raw) as ReturnType<LegGroup['getRawValue']>[];
-      if (!Array.isArray(saved) || saved.length < 2 || saved.length > 4) {
+      if (!Array.isArray(saved) || saved.length !== this.legs.length) {
         return;
-      }
-      while (this.legs.length < saved.length) {
-        this.addLeg();
       }
       this.legs.patchValue(saved);
     } catch {
@@ -339,13 +329,13 @@ export class PackComponent {
     return this.zones().find((z) => z.areas.some((a) => a.id === areaId))?.id ?? null;
   }
 
-  private newLeg(direction: Direction): LegGroup {
+  private newLeg(direction: Direction, flightRequired: boolean): LegGroup {
     return this.fb.group({
       airportId: this.fb.control<number | null>(null, Validators.required),
       direction: this.fb.control<Direction>(direction),
       areaId: this.fb.control<number | null>(null, Validators.required),
       address: this.fb.control('', Validators.required),
-      flightNumber: this.fb.control(''),
+      flightNumber: this.fb.control('', flightRequired ? Validators.required : []),
       date: this.fb.control('', Validators.required),
       time: this.fb.control('', Validators.required),
       vehicleTypeId: this.fb.control<number | null>(null, Validators.required),
