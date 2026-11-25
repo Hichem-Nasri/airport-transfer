@@ -256,6 +256,11 @@ class BookingIT extends AbstractIT {
         create(token, noReturnFlight).andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code").value("RETURN_FLIGHT_REQUIRED"));
 
+        ObjectNode badTerminal = request();
+        badTerminal.put("terminal", "Terminal 9");
+        create(token, badTerminal).andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("TERMINAL_NOT_FOUND"));
+
         ObjectNode card = request();
         card.put("paymentMethod", "CARD");
         create(token, card).andExpect(status().isBadRequest())

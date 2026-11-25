@@ -45,6 +45,7 @@ export interface CreateBookingRequest {
   luggageCount: number;
   vehicleTypeId: number;
   notes?: string;
+  terminal?: string;
   currency: string;
   paymentMethod: PaymentMethod;
   returnPickupAt?: string;
@@ -66,6 +67,7 @@ export interface Booking {
   luggageCount: number;
   vehicleType: Localized & { id: number; code: string; models: string | null; maxPassengers: number };
   notes: string | null;
+  terminal: string | null;
   priceTnd: number;
   currency: string;
   exchangeRate: number | null;

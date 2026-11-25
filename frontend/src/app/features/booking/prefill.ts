@@ -5,6 +5,7 @@ export interface TripPrefill {
   direction?: Direction;
   airportId?: number;
   areaId?: number;
+  terminal?: string;
   date?: string;
   time?: string;
   passengers?: number;
@@ -31,6 +32,10 @@ export function parsePrefill(params: ParamMap, todayInTunis: string): TripPrefil
   }
   result.airportId = positiveInt(params.get('airportId'));
   result.areaId = positiveInt(params.get('areaId'));
+  const terminal = params.get('terminal')?.trim();
+  if (terminal && terminal.length <= 60) {
+    result.terminal = terminal;
+  }
   const date = params.get('date');
   if (date !== null && /^\d{4}-\d{2}-\d{2}$/.test(date) && date >= todayInTunis) {
     result.date = date;

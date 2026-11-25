@@ -197,6 +197,7 @@ export class DetailsStepComponent {
       passengers: trip.passengers,
       luggageCount: v.luggageCount,
       vehicleTypeId,
+      terminal: trip.terminal || undefined,
       currency: this.currency.current(),
       paymentMethod: 'CASH',
       ...(v.flightNumber.trim() ? { flightNumber: v.flightNumber.trim() } : {}),

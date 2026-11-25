@@ -22,6 +22,7 @@ export interface TripDraft {
   /** UTC instants, ISO-8601. */
   pickupAt: string;
   returnPickupAt: string | null;
+  terminal?: string;
   address?: string;
   luggageCount?: number;
 }

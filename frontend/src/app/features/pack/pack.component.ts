@@ -18,6 +18,7 @@ const DRAFT_KEY = 'hms.pack.draft';
 
 type LegGroup = FormGroup<{
   airportId: FormControl<number | null>;
+  terminal: FormControl<string>;
   direction: FormControl<Direction>;
   areaId: FormControl<number | null>;
   address: FormControl<string>;
@@ -72,11 +73,25 @@ type LegGroup = FormGroup<{
                   <label class="field-label" [for]="'airport-' + i">{{ 'booking.fields.airport' | translate }}</label>
                   <select [id]="'airport-' + i" class="field-input" formControlName="airportId" (change)="airportChanged(leg)">
                     <option [ngValue]="null" disabled>{{ 'booking.choose' | translate }}</option>
-                    @for (a of airports(); track a.id) {
-                      <option [ngValue]="a.id">{{ a.iataCode }} — {{ name(a) }}</option>
+                    @for (g of airportGroups(); track g.country) {
+                      <optgroup [label]="'booking.country.' + g.country | translate">
+                        @for (a of g.airports; track a.id) {
+                          <option [ngValue]="a.id">{{ a.iataCode }} — {{ name(a) }}</option>
+                        }
+                      </optgroup>
                     }
                   </select>
                 </div>
+
+                @if (terminalsFor(leg).length > 0) {
+                  <div>
+                    <label class="field-label" [for]="'terminal-' + i">{{ 'booking.fields.terminal' | translate }}</label>
+                    <select [id]="'terminal-' + i" class="field-input" formControlName="terminal">
+                      <option value="">{{ 'booking.terminalAny' | translate }}</option>
+                      @for (t of terminalsFor(leg); track t) { <option [value]="t">{{ t }}</option> }
+                    </select>
+                  </div>
+                }
 
                 <div>
                   <label class="field-label" [for]="'area-' + i">{{ 'booking.fields.destination' | translate }}</label>
@@ -247,6 +262,22 @@ export class PackComponent {
 
   airportChanged(leg: LegGroup): void {
     leg.controls.areaId.setValue(null);
+    leg.controls.terminal.setValue('');
+  }
+
+  readonly airportGroups = computed(() => {
+    const byCountry = new Map<string, Airport[]>();
+    for (const a of this.airports()) {
+      byCountry.set(a.country, [...(byCountry.get(a.country) ?? []), a]);
+    }
+    return [...byCountry.entries()]
+      .sort(([a], [b]) => (a === 'FR' ? -1 : b === 'FR' ? 1 : a.localeCompare(b)))
+      .map(([country, airports]) => ({ country, airports }));
+  });
+
+  terminalsFor(leg: LegGroup): string[] {
+    const list = this.airports().find((a) => a.id === leg.controls.airportId.value)?.terminals;
+    return list ? list.split(',').map((t) => t.trim()).filter((t) => t.length > 0) : [];
   }
 
   submit(): void {
@@ -280,7 +311,8 @@ export class PackComponent {
         pickupAt: localToIso(v.date, v.time, airport.timeZone),
         passengers: v.passengers,
         luggageCount: v.luggageCount,
-        vehicleTypeId: v.vehicleTypeId
+        vehicleTypeId: v.vehicleTypeId,
+        terminal: v.terminal || undefined
       });
     }
     this.saving.set(true);
@@ -332,6 +364,7 @@ export class PackComponent {
   private newLeg(direction: Direction, flightRequired: boolean): LegGroup {
     return this.fb.group({
       airportId: this.fb.control<number | null>(null, Validators.required),
+      terminal: this.fb.control(''),
       direction: this.fb.control<Direction>(direction),
       areaId: this.fb.control<number | null>(null, Validators.required),
       address: this.fb.control('', Validators.required),

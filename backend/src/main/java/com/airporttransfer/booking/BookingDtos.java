@@ -33,6 +33,7 @@ public final class BookingDtos {
         @Min(0) @Max(100) Integer luggageCount,
         @NotNull Long vehicleTypeId,
         @Size(max = 1000) String notes,
+        @Size(max = 60) String terminal,
         @NotBlank @Pattern(regexp = "[A-Za-z]{3}") String currency,
         @NotNull PaymentMethod paymentMethod,
         Instant returnPickupAt,
@@ -50,7 +51,8 @@ public final class BookingDtos {
         @NotNull @Min(1) @Max(100) Integer passengers,
         @Min(0) @Max(100) Integer luggageCount,
         @NotNull Long vehicleTypeId,
-        @Size(max = 1000) String notes) {
+        @Size(max = 1000) String notes,
+        @Size(max = 60) String terminal) {
     }
 
     /**
@@ -93,7 +95,7 @@ public final class BookingDtos {
         Instant pickupAt, int passengers, int luggageCount, VehicleTypeSummary vehicleType, String notes,
         BigDecimal priceTnd, String currency, BigDecimal exchangeRate, BigDecimal amount, boolean priceDemo,
         PaymentMethod paymentMethod, PaymentStatus paymentStatus, boolean cancellable, boolean editable,
-        Instant createdAt) {
+        String terminal, Instant createdAt) {
     }
 
     /**

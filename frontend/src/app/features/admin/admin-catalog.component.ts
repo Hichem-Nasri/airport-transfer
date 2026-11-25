@@ -58,6 +58,7 @@ type Row = AdminAirport | AdminZone | AdminArea | AdminVehicleType;
           @case ('airports') {
             <div><label class="field-label" for="c-country">{{ 'admin.catalog.country' | translate }}</label><input id="c-country" class="field-input" formControlName="country" maxlength="2" dir="ltr" /></div>
             <div><label class="field-label" for="c-tz">{{ 'admin.catalog.timeZone' | translate }}</label><input id="c-tz" class="field-input" formControlName="timeZone" dir="ltr" /></div>
+            <div><label class="field-label" for="c-terminals">{{ 'admin.catalog.terminals' | translate }}</label><input id="c-terminals" class="field-input" formControlName="terminals" maxlength="200" dir="ltr" [placeholder]="'admin.catalog.terminalsHint' | translate" /></div>
             <div><label class="field-label" for="c-lat">{{ 'admin.catalog.latitude' | translate }}</label><input id="c-lat" type="number" step="any" class="field-input" formControlName="latitude" dir="ltr" /></div>
             <div><label class="field-label" for="c-lng">{{ 'admin.catalog.longitude' | translate }}</label><input id="c-lng" type="number" step="any" class="field-input" formControlName="longitude" dir="ltr" /></div>
           }
@@ -138,6 +139,7 @@ export class AdminCatalogComponent {
     nameAr: ['', Validators.required],
     country: ['TN', [Validators.required, Validators.pattern(/^[A-Z]{2}$/)]],
     timeZone: ['Africa/Tunis'],
+    terminals: [''],
     models: [''],
     latitude: [null as number | null],
     longitude: [null as number | null],
@@ -192,7 +194,7 @@ export class AdminCatalogComponent {
 
   openNew(): void {
     this.editingId = null;
-    this.form.reset({ country: 'TN', timeZone: 'Africa/Tunis', models: '', displayOrder: 0, zoneId: this.zones()[0]?.id ?? 0, minPassengers: 1, maxPassengers: 3, active: true });
+    this.form.reset({ country: 'TN', timeZone: 'Africa/Tunis', terminals: '', models: '', displayOrder: 0, zoneId: this.zones()[0]?.id ?? 0, minPassengers: 1, maxPassengers: 3, active: true });
     this.formError.set(null);
     this.formOpen.set(true);
   }
@@ -206,6 +208,7 @@ export class AdminCatalogComponent {
       nameAr: row.nameAr,
       country: 'country' in row ? row.country : 'TN',
       timeZone: 'timeZone' in row ? row.timeZone : 'Africa/Tunis',
+      terminals: 'terminals' in row ? (row.terminals ?? '') : '',
       models: 'models' in row ? (row.models ?? '') : '',
       latitude: 'latitude' in row ? row.latitude : null,
       longitude: 'longitude' in row ? row.longitude : null,
@@ -237,7 +240,7 @@ export class AdminCatalogComponent {
     switch (this.section()) {
       case 'airports':
         request = this.admin.saveAirport(id, {
-          iataCode: v.code.trim().toUpperCase(), ...names, country: v.country, timeZone: v.timeZone.trim(), latitude: v.latitude, longitude: v.longitude, active: v.active
+          iataCode: v.code.trim().toUpperCase(), ...names, country: v.country, timeZone: v.timeZone.trim(), terminals: v.terminals.trim() || null, latitude: v.latitude, longitude: v.longitude, active: v.active
         });
         break;
       case 'zones':

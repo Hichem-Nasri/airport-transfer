@@ -105,18 +105,19 @@ public class BookingService {
         int luggage = request.luggageCount() == null ? 0 : request.luggageCount();
         String address = request.address().trim();
         String notes = blankToNull(request.notes());
+        String terminal = checkedTerminal(airport, request.terminal());
 
         List<Booking> legs = roundTrip
             ? List.of(
                 build(groupId, customerId, airport, request.direction(), zone, address,
                     request.flightNumber(), request.pickupAt(), request.passengers(), request.paymentMethod(),
-                    luggage, vehicle, notes, leg),
+                    luggage, vehicle, notes, leg, terminal),
                 build(groupId, customerId, airport, request.direction().opposite(), zone, address,
                     request.returnFlightNumber(), request.returnPickupAt(), request.passengers(),
-                    request.paymentMethod(), luggage, vehicle, notes, leg))
+                    request.paymentMethod(), luggage, vehicle, notes, leg, terminal))
             : List.of(build(groupId, customerId, airport, request.direction(), zone, address,
                 request.flightNumber(), request.pickupAt(), request.passengers(), request.paymentMethod(),
-                luggage, vehicle, notes, leg));
+                luggage, vehicle, notes, leg, terminal));
 
         return saveAll(customer, groupId, legs);
     }
@@ -159,7 +160,7 @@ public class BookingService {
             QuoteDto leg = pricing.quote(airport.getId(), zone.getId(), vehicle.getId(), request.currency(), 1).leg();
             legs.add(build(groupId, customerId, airport, l.direction(), zone, l.address().trim(), l.flightNumber(),
                 l.pickupAt(), l.passengers(), request.paymentMethod(), l.luggageCount() == null ? 0 : l.luggageCount(),
-                vehicle, blankToNull(l.notes()), leg));
+                vehicle, blankToNull(l.notes()), leg, checkedTerminal(airport, l.terminal())));
         }
         return saveAll(customer, groupId, legs);
     }
@@ -233,12 +234,28 @@ public class BookingService {
     private Booking build(UUID groupId, Long customerId, Airport airport, TripDirection direction, Zone zone,
                           String address, String flightNumber, Instant pickupAt, int passengers,
                           PaymentMethod paymentMethod, int luggage, VehicleType vehicle, String notes,
-                          QuoteDto leg) {
+                          QuoteDto leg, String terminal) {
         String reference = references.nextFree(bookings::existsByReference);
-        return new Booking(reference, groupId, customerId, airport, direction, zone, address,
+        Booking booking = new Booking(reference, groupId, customerId, airport, direction, zone, address,
             normalizeFlight(flightNumber), pickupAt, passengers, luggage, vehicle, notes,
             leg.priceTnd(), leg.currency(), leg.exchangeRate(), leg.amount(), leg.demo(),
             paymentMethod);
+        booking.setTerminal(terminal);
+        return booking;
+    }
+
+    /** A terminal is optional, but when given it must be one the airport lists. */
+    private static String checkedTerminal(Airport airport, String terminal) {
+        String value = blankToNull(terminal);
+        if (value == null) {
+            return null;
+        }
+        String listed = airport.getTerminals() == null ? "" : airport.getTerminals();
+        boolean known = java.util.Arrays.stream(listed.split(",")).map(String::trim).anyMatch(value::equals);
+        if (!known) {
+            throw ApiException.badRequest("TERMINAL_NOT_FOUND", "Unknown terminal for this airport");
+        }
+        return value;
     }
 
     /** Only fr, en and ar have mail texts; anything else (including a missing header) means French. */

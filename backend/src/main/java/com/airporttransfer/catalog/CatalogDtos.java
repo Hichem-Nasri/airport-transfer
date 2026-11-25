@@ -17,7 +17,7 @@ public final class CatalogDtos {
 
     // ---- airports
     public record AirportDto(Long id, String iataCode, String nameFr, String nameEn, String nameAr,
-                             String country, String timeZone,
+                             String country, String timeZone, String terminals,
                              BigDecimal latitude, BigDecimal longitude, boolean active) {
     }
 
@@ -28,6 +28,7 @@ public final class CatalogDtos {
         @NotBlank @Size(max = 150) String nameAr,
         @NotBlank @Pattern(regexp = "[A-Z]{2}") String country,
         @NotBlank @Size(max = 40) String timeZone,
+        @Size(max = 200) String terminals,
         @DecimalMin("-90") @DecimalMax("90") BigDecimal latitude,
         @DecimalMin("-180") @DecimalMax("180") BigDecimal longitude,
         @NotNull Boolean active) {

@@ -10,6 +10,7 @@ import { LanguageService } from '../../core/language.service';
 import { localName } from '../../core/localized';
 import { todayInTunis } from '../../core/tunis-time';
 import { TUNIS_ZONE, localToIso } from '../../core/zoned-time';
+import { AirportPickerComponent } from '../../shared/airport-picker.component';
 import { StickyBarComponent } from '../../shared/sticky-bar.component';
 import { BookingDraftService } from './booking-draft.service';
 import { TripPrefill, parsePrefill } from './prefill';
@@ -50,53 +51,68 @@ function tripTimes(zoneOf: (airportId: number | null) => string) {
 @Component({
   selector: 'app-trip-step',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslateModule, StickyBarComponent],
+  imports: [ReactiveFormsModule, TranslateModule, StickyBarComponent, AirportPickerComponent],
   template: `
     <form [formGroup]="form" (ngSubmit)="next()" novalidate class="space-y-6 pb-28">
-      <div role="group" [attr.aria-label]="'booking.directionLabel' | translate" class="grid grid-cols-2 gap-2 rounded-2xl bg-white p-1.5 border border-brand-line">
-        @for (d of directions; track d) {
-          <button type="button" class="min-h-11 rounded-xl px-3 text-sm font-semibold"
-                  [class.bg-brand]="form.controls.direction.value === d"
-                  [class.text-white]="form.controls.direction.value === d"
-                  [attr.aria-pressed]="form.controls.direction.value === d"
-                  (click)="form.controls.direction.setValue(d)">
-            {{ 'booking.direction.' + d | translate }}
-          </button>
-        }
+      <div role="group" [attr.aria-label]="'booking.tripKind' | translate"
+           class="grid grid-cols-2 gap-2 rounded-2xl border border-brand-line bg-white p-1.5">
+        <button type="button" class="min-h-11 rounded-xl px-3 text-sm font-semibold"
+                [class.bg-brand]="!form.controls.roundTrip.value" [class.text-white]="!form.controls.roundTrip.value"
+                [attr.aria-pressed]="!form.controls.roundTrip.value" (click)="form.controls.roundTrip.setValue(false)">
+          {{ 'booking.oneWay' | translate }}
+        </button>
+        <button type="button" class="min-h-11 rounded-xl px-3 text-sm font-semibold"
+                [class.bg-brand]="form.controls.roundTrip.value" [class.text-white]="form.controls.roundTrip.value"
+                [attr.aria-pressed]="form.controls.roundTrip.value" (click)="form.controls.roundTrip.setValue(true)">
+          ⇄ {{ 'booking.roundTrip' | translate }}
+        </button>
       </div>
 
-      <label class="flex min-h-11 items-center gap-3 font-semibold">
-        <input type="checkbox" class="h-5 w-5 accent-[#D2001A]" formControlName="roundTrip" />
-        {{ 'booking.roundTrip' | translate }}
-      </label>
+      @if (fromAirport()) {
+        <app-airport-picker inputId="airportId" label="booking.fields.from" [airports]="airports()"
+                            [invalid]="form.controls.airportId.touched && form.controls.airportId.invalid"
+                            [airportId]="form.controls.airportId.value" (airportIdChange)="form.controls.airportId.setValue($event); form.controls.airportId.markAsTouched()"
+                            [terminal]="form.controls.terminal.value" (terminalChange)="form.controls.terminal.setValue($event)" />
+      } @else {
+        <div>
+          <label class="field-label" for="areaId">{{ 'booking.fields.from' | translate }}</label>
+          <select id="areaId" class="field-input" formControlName="areaId"
+                  [attr.aria-invalid]="form.controls.areaId.touched && form.controls.areaId.invalid">
+            <option [ngValue]="null" disabled>{{ 'booking.choose' | translate }}</option>
+            @for (a of areas(); track a.id) {
+              <option [ngValue]="a.id">{{ a.label }}</option>
+            }
+          </select>
+        </div>
+      }
 
-      <div>
-        <label class="field-label" for="airportId">{{ 'booking.fields.airport' | translate }}</label>
-        <select id="airportId" class="field-input" formControlName="airportId"
-                [attr.aria-invalid]="form.controls.airportId.touched && form.controls.airportId.invalid">
-          <option [ngValue]="null" disabled>{{ 'booking.choose' | translate }}</option>
-          @for (a of airports(); track a.id) {
-            <option [ngValue]="a.id">{{ a.iataCode }} — {{ name(a) }}</option>
+      <div class="flex justify-center">
+        <button type="button" class="btn-secondary px-4" (click)="swap()">⇅ {{ 'booking.swap' | translate }}</button>
+      </div>
+
+      @if (fromAirport()) {
+        <div>
+          <label class="field-label" for="areaId">{{ 'booking.fields.to' | translate }}</label>
+          <select id="areaId" class="field-input" formControlName="areaId"
+                  [attr.aria-invalid]="form.controls.areaId.touched && form.controls.areaId.invalid">
+            <option [ngValue]="null" disabled>{{ 'booking.choose' | translate }}</option>
+            @for (a of areas(); track a.id) {
+              <option [ngValue]="a.id">{{ a.label }}</option>
+            }
+          </select>
+          @if (form.controls.areaId.touched && form.controls.areaId.invalid) {
+            <p class="field-error">{{ 'validation.required' | translate }}</p>
           }
-        </select>
-        @if (form.controls.airportId.touched && form.controls.airportId.invalid) {
-          <p class="field-error">{{ 'validation.required' | translate }}</p>
-        }
-      </div>
-
-      <div>
-        <label class="field-label" for="areaId">{{ 'booking.fields.destination' | translate }}</label>
-        <select id="areaId" class="field-input" formControlName="areaId"
-                [attr.aria-invalid]="form.controls.areaId.touched && form.controls.areaId.invalid">
-          <option [ngValue]="null" disabled>{{ 'booking.choose' | translate }}</option>
-          @for (a of areas(); track a.id) {
-            <option [ngValue]="a.id">{{ a.label }}</option>
-          }
-        </select>
-        @if (form.controls.areaId.touched && form.controls.areaId.invalid) {
-          <p class="field-error">{{ 'validation.required' | translate }}</p>
-        }
-      </div>
+        </div>
+      } @else {
+        <app-airport-picker inputId="airportId" label="booking.fields.to" [airports]="airports()"
+                            [invalid]="form.controls.airportId.touched && form.controls.airportId.invalid"
+                            [airportId]="form.controls.airportId.value" (airportIdChange)="form.controls.airportId.setValue($event); form.controls.airportId.markAsTouched()"
+                            [terminal]="form.controls.terminal.value" (terminalChange)="form.controls.terminal.setValue($event)" />
+      }
+      @if (form.controls.airportId.touched && form.controls.airportId.invalid) {
+        <p class="field-error">{{ 'validation.required' | translate }}</p>
+      }
 
       <div class="grid grid-cols-2 gap-3">
         <div>
@@ -164,7 +180,6 @@ export class TripStepComponent {
   private readonly lang = inject(LanguageService);
   private readonly draft = inject(BookingDraftService);
 
-  readonly directions: Direction[] = ['AIRPORT_TO_ADDRESS', 'ADDRESS_TO_AIRPORT'];
   readonly today = todayInTunis();
 
   readonly airports = toSignal(this.catalog.airports(), { initialValue: [] as Airport[] });
@@ -182,6 +197,7 @@ export class TripStepComponent {
     {
       direction: [this.saved?.direction ?? this.prefill.direction ?? ('AIRPORT_TO_ADDRESS' as Direction)],
       roundTrip: [this.saved?.roundTrip ?? this.prefill.roundTrip ?? false],
+      terminal: [this.saved?.terminal ?? this.prefill.terminal ?? ''],
       airportId: [this.saved?.airportId ?? this.prefill.airportId ?? (null as number | null), Validators.required],
       areaId: [this.saved?.areaId ?? this.prefill.areaId ?? (null as number | null), Validators.required],
       date: [this.saved?.date ?? this.prefill.date ?? '', Validators.required],
@@ -199,6 +215,12 @@ export class TripStepComponent {
     },
     { validators: tripTimes((id) => this.zoneOf(id)) }
   );
+
+  private readonly directionValue = toSignal(
+    this.form.controls.direction.valueChanges.pipe(startWith(this.form.controls.direction.value)),
+    { initialValue: this.form.controls.direction.value }
+  );
+  readonly fromAirport = computed(() => this.directionValue() === 'AIRPORT_TO_ADDRESS');
 
   private readonly airportId = toSignal(
     this.form.controls.airportId.valueChanges.pipe(startWith(this.form.controls.airportId.value)),
@@ -239,8 +261,9 @@ export class TripStepComponent {
     return this.airports().find((a) => a.id === airportId)?.timeZone ?? TUNIS_ZONE;
   }
 
-  name(item: Airport): string {
-    return localName(item, this.lang.current());
+  swap(): void {
+    const c = this.form.controls.direction;
+    c.setValue(c.value === 'AIRPORT_TO_ADDRESS' ? 'ADDRESS_TO_AIRPORT' : 'AIRPORT_TO_ADDRESS');
   }
 
   showRequired(control: 'date' | 'time' | 'returnDate' | 'returnTime'): boolean {
@@ -270,6 +293,7 @@ export class TripStepComponent {
       airportId: v.airportId,
       areaId: v.areaId,
       zoneId: area.zoneId,
+      terminal: v.terminal || undefined,
       date: v.date,
       time: v.time,
       returnDate: v.returnDate,

@@ -10,6 +10,7 @@ import { CurrencyService } from '../../core/currency.service';
 import { LanguageService } from '../../core/language.service';
 import { localName } from '../../core/localized';
 import { formatMoney } from '../../core/money';
+import { AirportPickerComponent } from '../../shared/airport-picker.component';
 import { todayInTunis } from '../../core/tunis-time';
 
 type Preview =
@@ -19,16 +20,12 @@ type Preview =
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [FormsModule, RouterLink, TranslateModule],
+  imports: [FormsModule, RouterLink, TranslateModule, AirportPickerComponent],
   template: `
     <section class="bg-brand-soft/60 px-4 pb-20 pt-10 sm:px-6 md:px-12 md:pb-28 md:pt-16">
       <div class="mx-auto grid w-full max-w-6xl items-start gap-10 lg:grid-cols-2">
         <div>
-          <span class="inline-block rounded-full bg-[#FDE3E5] px-3.5 py-1.5 text-sm font-semibold text-brand-dark">
-            {{ 'home.badge' | translate }}
-          </span>
-          <h1 class="mt-5 text-4xl font-extrabold leading-tight md:text-6xl">{{ 'home.title' | translate }}</h1>
-          <p class="mt-4 max-w-lg text-lg leading-relaxed text-muted">{{ 'home.subtitle' | translate }}</p>
+          <h1 class="text-3xl font-extrabold leading-tight md:text-5xl">{{ 'home.tagline' | translate }}</h1>
           <ul class="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold">
             <li>✓ {{ 'home.points.fixed' | translate }}</li>
             <li>✓ {{ 'home.points.meet' | translate }}</li>
@@ -56,16 +53,12 @@ type Preview =
 
           <div class="mt-4 space-y-3">
             @if (direction() === 'AIRPORT_TO_ADDRESS') {
-              <div>
-                <label class="field-label" for="h-airport">{{ 'booking.fields.fromAirport' | translate }}</label>
-                <select id="h-airport" name="airportId" class="field-input" [ngModel]="airportId()" (ngModelChange)="chooseAirport($any($event))">
-                  <option [ngValue]="null">{{ 'booking.choose' | translate }}</option>
-                  @for (a of airports(); track a.id) { <option [ngValue]="a.id">{{ a.iataCode }} — {{ airportName(a) }}</option> }
-                </select>
-              </div>
+              <app-airport-picker inputId="h-airport" label="booking.fields.from" [airports]="airports()"
+                                  [airportId]="airportId()" (airportIdChange)="chooseAirport($event)"
+                                  [(terminal)]="terminal" />
             } @else {
               <div>
-                <label class="field-label" for="h-area">{{ 'booking.fields.fromArea' | translate }}</label>
+                <label class="field-label" for="h-area">{{ 'booking.fields.from' | translate }}</label>
                 <select id="h-area" name="areaId" class="field-input" [ngModel]="areaId()" (ngModelChange)="areaId.set($any($event))">
                   <option [ngValue]="null">{{ 'booking.choose' | translate }}</option>
                   @for (a of areas(); track a.id) { <option [ngValue]="a.id">{{ a.label }}</option> }
@@ -79,20 +72,16 @@ type Preview =
 
             @if (direction() === 'AIRPORT_TO_ADDRESS') {
               <div>
-                <label class="field-label" for="h-area">{{ 'booking.fields.toArea' | translate }}</label>
+                <label class="field-label" for="h-area">{{ 'booking.fields.to' | translate }}</label>
                 <select id="h-area" name="areaId" class="field-input" [ngModel]="areaId()" (ngModelChange)="areaId.set($any($event))">
                   <option [ngValue]="null">{{ 'booking.choose' | translate }}</option>
                   @for (a of areas(); track a.id) { <option [ngValue]="a.id">{{ a.label }}</option> }
                 </select>
               </div>
             } @else {
-              <div>
-                <label class="field-label" for="h-airport">{{ 'booking.fields.toAirport' | translate }}</label>
-                <select id="h-airport" name="airportId" class="field-input" [ngModel]="airportId()" (ngModelChange)="chooseAirport($any($event))">
-                  <option [ngValue]="null">{{ 'booking.choose' | translate }}</option>
-                  @for (a of airports(); track a.id) { <option [ngValue]="a.id">{{ a.iataCode }} — {{ airportName(a) }}</option> }
-                </select>
-              </div>
+              <app-airport-picker inputId="h-airport" label="booking.fields.to" [airports]="airports()"
+                                  [airportId]="airportId()" (airportIdChange)="chooseAirport($event)"
+                                  [(terminal)]="terminal" />
             }
 
             <div>
@@ -240,6 +229,7 @@ export class HomeComponent {
   readonly direction = signal<Direction>('AIRPORT_TO_ADDRESS');
   readonly airportId = signal<number | null>(null);
   readonly areaId = signal<number | null>(null);
+  readonly terminal = signal('');
   readonly date = signal('');
   readonly time = signal('');
   readonly passengers = signal(1);
@@ -352,6 +342,9 @@ export class HomeComponent {
     const queryParams: Record<string, string | number> = { direction: this.direction(), passengers: this.passengers() };
     if (this.airportId() !== null) {
       queryParams['airportId'] = this.airportId() as number;
+    }
+    if (this.terminal()) {
+      queryParams['terminal'] = this.terminal();
     }
     if (this.areaId() !== null) {
       queryParams['areaId'] = this.areaId() as number;

@@ -31,7 +31,6 @@ import { LogoComponent } from './shared/logo.component';
         @if (auth.hasRole('DRIVER')) {
           <a routerLink="/driver" class="hover:text-brand">{{ 'nav.driver' | translate }}</a>
         }
-        <a href="#" class="hover:text-brand">{{ 'nav.destinations' | translate }}</a>
         <a href="#" class="hover:text-brand">{{ 'nav.vehicles' | translate }}</a>
         <a href="#" class="hover:text-brand">{{ 'nav.how' | translate }}</a>
       </nav>

@@ -140,3 +140,7 @@ Off by default. `SMS_ENABLED=true` starts the job that texts customers 24 h and 
 
 ## Client feedback round (step 11e)
 Currency order EUR/USD/TND, public booking flow with sign-up before confirming, redesigned home card, 4-leg round-trip pack, return flight number required on round trips, new vehicle capacities (migration V15).
+
+## Client feedback round 2 (step 11f)
+
+Airports can list terminals (`airports.terminals`, comma-separated, editable in Admin > Catalog); the customer may pick one (stored in `bookings.terminal`, optional, shown to staff and drivers). Seeded: CDG Terminal 1-3, ORY Orly 1-4 (check them). The home page has one short tagline, the card toggle reads "Aller" / "Retour", and `/book` uses the same Départ / Destination layout. The "Destinations" nav link is gone. Migration `V16`.

@@ -14,6 +14,7 @@ export interface PackLegRequest {
   luggageCount: number;
   vehicleTypeId: number;
   notes?: string;
+  terminal?: string;
 }
 
 export interface CreatePackRequest {

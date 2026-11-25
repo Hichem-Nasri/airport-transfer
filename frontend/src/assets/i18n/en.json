@@ -1,6 +1,5 @@
 {
   "nav": {
-    "destinations": "Destinations",
     "vehicles": "Vehicles",
     "how": "How it works",
     "login": "Log in",
@@ -13,9 +12,6 @@
     "admin": "Administration"
   },
   "home": {
-    "badge": "Book – Pay – Travel in just a few clicks",
-    "title": "From the terminal to your door, in France and Tunisia.",
-    "subtitle": "Book a private driver in a few clicks, in Paris (Orly, Charles de Gaulle) and all over Tunisia. Fixed price in advance, meet and greet on arrival, pay in the currency of your choice.",
     "cta": "Book a transfer",
     "points": {
       "fixed": "Fixed price in advance",
@@ -56,7 +52,8 @@
       "tagline": "FRANCE · TUNISIA TRANSFERS",
       "links": "Footer links",
       "rights": "© {{year}} HMS Shuttle. All rights reserved."
-    }
+    },
+    "tagline": "Book – Pay – Travel in a few clicks"
   },
   "api": {
     "checking": "Connecting to the API…",
@@ -212,7 +209,7 @@
       "AIRPORT_TO_ADDRESS": "Airport → address",
       "ADDRESS_TO_AIRPORT": "Address → airport"
     },
-    "roundTrip": "Round trip",
+    "roundTrip": "Return",
     "choose": "Choose…",
     "fields": {
       "airport": "Airport",
@@ -232,7 +229,10 @@
       "fromArea": "From (city or governorate)",
       "toAirport": "To (airport)",
       "toArea": "To (city or governorate)",
-      "addressShort": "Address (hotel, street, city)"
+      "addressShort": "Address (hotel, street, city)",
+      "from": "From",
+      "to": "To",
+      "terminal": "Terminal"
     },
     "hints": {
       "address": "Hotel, street, number, city: the driver meets you there."
@@ -276,8 +276,13 @@
       "locked": "A driver is assigned: to change anything, contact us or cancel the booking."
     },
     "tripKind": "Trip type",
-    "oneWay": "One way",
-    "swap": "Swap direction"
+    "oneWay": "Outbound",
+    "swap": "Swap direction",
+    "terminalAny": "Terminal not specified",
+    "country": {
+      "FR": "France",
+      "TN": "Tunisia"
+    }
   },
   "staff": {
     "title": "Booking management",
@@ -403,7 +408,9 @@
       "saved": "Saved.",
       "country": "Country (2-letter code)",
       "timeZone": "Time zone",
-      "models": "Models (examples)"
+      "models": "Models (examples)",
+      "terminals": "Terminals",
+      "terminalsHint": "Terminal 1,Terminal 2"
     },
     "currencies": {
       "title": "Currencies and exchange rates",

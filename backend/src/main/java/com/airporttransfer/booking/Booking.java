@@ -122,6 +122,9 @@ public class Booking {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 
+    @Column(length = 60)
+    private String terminal;
+
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt = Instant.now();
 
@@ -152,6 +155,14 @@ public class Booking {
         this.amount = amount;
         this.priceDemo = priceDemo;
         this.paymentMethod = paymentMethod;
+    }
+
+    void setTerminal(String terminal) {
+        this.terminal = terminal;
+    }
+
+    public String getTerminal() {
+        return terminal;
     }
 
     /** Only {@link BookingStatusService} may call this: it is the single place that enforces transitions. */

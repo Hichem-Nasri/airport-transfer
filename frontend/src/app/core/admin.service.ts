@@ -44,6 +44,7 @@ export interface AdminAirport extends Localized {
   iataCode: string;
   country: string;
   timeZone: string;
+  terminals: string | null;
   latitude: number | null;
   longitude: number | null;
   active: boolean;

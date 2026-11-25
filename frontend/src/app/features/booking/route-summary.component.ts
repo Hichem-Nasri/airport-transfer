@@ -45,7 +45,7 @@ export class RouteSummaryComponent {
     const lang = this.lang.current();
     const airport = this.airports().find((a) => a.id === trip.airportId);
     const area = this.zones().flatMap((z) => z.areas).find((a) => a.id === trip.areaId);
-    const airportLabel = airport ? `${airport.iataCode} · ${localName(airport, lang)}` : '';
+    const airportLabel = airport ? `${airport.iataCode} · ${localName(airport, lang)}${trip.terminal ? ' · ' + trip.terminal : ''}` : '';
     const areaLabel = area ? localName(area, lang) : '';
     const toAirport = trip.direction === 'ADDRESS_TO_AIRPORT';
     return {

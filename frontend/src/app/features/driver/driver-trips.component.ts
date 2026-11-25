@@ -47,7 +47,7 @@ import { StatusBadgeComponent } from '../../shared/status-badge.component';
                 <app-status-badge [status]="t.booking.status" />
               </div>
               <p class="mt-2 text-sm font-semibold text-brand">{{ 'booking.direction.' + t.booking.direction | translate }}</p>
-              <p class="font-semibold">{{ t.booking.airport.iataCode }} · {{ name(t.booking.airport) }}</p>
+              <p class="font-semibold">{{ t.booking.airport.iataCode }} · {{ name(t.booking.airport) }}@if (t.booking.terminal) { · {{ t.booking.terminal }} }</p>
               <dl class="mt-3 space-y-1 text-sm">
                 <div><dt class="inline text-muted">{{ 'booking.fields.address' | translate }} : </dt><dd class="inline font-semibold">{{ name(t.booking.zone) }} — {{ t.booking.address }}</dd></div>
                 @if (t.booking.flightNumber) {

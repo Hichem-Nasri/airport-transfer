@@ -37,7 +37,7 @@ import { StatusBadgeComponent } from '../../shared/status-badge.component';
           <section class="rounded-2xl border border-brand-line bg-white p-4">
             <h2 class="font-extrabold">{{ 'staff.trip' | translate }}</h2>
             <dl class="mt-3 space-y-2 text-sm">
-              <div><dt class="text-muted">{{ 'booking.fields.airport' | translate }}</dt><dd class="font-semibold">{{ d.booking.airport.iataCode }} · {{ name(d.booking.airport) }}</dd></div>
+              <div><dt class="text-muted">{{ 'booking.fields.airport' | translate }}</dt><dd class="font-semibold">{{ d.booking.airport.iataCode }} · {{ name(d.booking.airport) }}@if (d.booking.terminal) { · {{ d.booking.terminal }} }</dd></div>
               <div><dt class="text-muted">{{ 'booking.direction.' + d.booking.direction | translate }}</dt><dd class="font-semibold">{{ name(d.booking.zone) }}</dd></div>
               <div><dt class="text-muted">{{ 'booking.fields.address' | translate }}</dt><dd class="font-semibold">{{ d.booking.address }}</dd></div>
               <div><dt class="text-muted">{{ 'staff.pickup' | translate }}</dt><dd class="font-semibold">{{ when(d.booking.pickupAt, d.booking.airport.timeZone) }}</dd></div>

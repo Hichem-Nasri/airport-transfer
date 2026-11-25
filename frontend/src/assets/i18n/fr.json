@@ -1,6 +1,5 @@
 {
   "nav": {
-    "destinations": "Destinations",
     "vehicles": "Véhicules",
     "how": "Comment ça marche",
     "login": "Connexion",
@@ -13,9 +12,6 @@
     "admin": "Administration"
   },
   "home": {
-    "badge": "Réserver – Payer – Voyager en quelques clics",
-    "title": "Du terminal à votre porte, en France et en Tunisie.",
-    "subtitle": "Réservez un chauffeur privé en quelques clics, à Paris (Orly, Roissy-Charles de Gaulle) comme partout en Tunisie. Prix fixé à l’avance, accueil à l’arrivée, paiement dans la devise de votre choix.",
     "cta": "Réserver un transfert",
     "points": {
       "fixed": "Prix fixé à l’avance",
@@ -56,7 +52,8 @@
       "tagline": "TRANSFERTS FRANCE · TUNISIE",
       "links": "Liens du pied de page",
       "rights": "© {{year}} HMS Shuttle. Tous droits réservés."
-    }
+    },
+    "tagline": "Réserver – Payer – Voyager en quelques clics"
   },
   "api": {
     "checking": "Connexion à l’API…",
@@ -212,7 +209,7 @@
       "AIRPORT_TO_ADDRESS": "Aéroport → adresse",
       "ADDRESS_TO_AIRPORT": "Adresse → aéroport"
     },
-    "roundTrip": "Aller-retour",
+    "roundTrip": "Retour",
     "choose": "Choisir…",
     "fields": {
       "airport": "Aéroport",
@@ -232,7 +229,10 @@
       "fromArea": "Départ (ville ou gouvernorat)",
       "toAirport": "Destination (aéroport)",
       "toArea": "Destination (ville ou gouvernorat)",
-      "addressShort": "Adresse (hôtel, rue, ville)"
+      "addressShort": "Adresse (hôtel, rue, ville)",
+      "from": "Départ",
+      "to": "Destination",
+      "terminal": "Terminal"
     },
     "hints": {
       "address": "Hôtel, rue, numéro, ville : le chauffeur vous y retrouve."
@@ -276,8 +276,13 @@
       "locked": "Un chauffeur est affecté : pour toute modification, contactez-nous ou annulez la réservation."
     },
     "tripKind": "Type de trajet",
-    "oneWay": "Aller simple",
-    "swap": "Inverser le sens"
+    "oneWay": "Aller",
+    "swap": "Inverser le sens",
+    "terminalAny": "Terminal non précisé",
+    "country": {
+      "FR": "France",
+      "TN": "Tunisie"
+    }
   },
   "staff": {
     "title": "Gestion des réservations",
@@ -403,7 +408,9 @@
       "saved": "Enregistré.",
       "country": "Pays (code à 2 lettres)",
       "timeZone": "Fuseau horaire",
-      "models": "Modèles (exemples)"
+      "models": "Modèles (exemples)",
+      "terminals": "Terminaux",
+      "terminalsHint": "Terminal 1,Terminal 2"
     },
     "currencies": {
       "title": "Devises et taux de change",

@@ -314,6 +314,6 @@ export class BookingDetailComponent {
   }
 
   private airport(b: Booking): string {
-    return `${b.airport.iataCode} — ${localName(b.airport, this.lang.current())}`;
+    return `${b.airport.iataCode} — ${localName(b.airport, this.lang.current())}${b.terminal ? ' · ' + b.terminal : ''}`;
   }
 }

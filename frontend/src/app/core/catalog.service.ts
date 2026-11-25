@@ -8,6 +8,7 @@ export interface Airport extends Localized {
   iataCode: string;
   country: string;
   timeZone: string;
+  terminals: string | null;
 }
 
 export interface Area extends Localized {

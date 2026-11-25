@@ -37,6 +37,10 @@ public class Airport {
     @Column(name = "time_zone", nullable = false, length = 40)
     private String timeZone = "Africa/Tunis";
 
+    /** Comma-separated terminal names (for instance "Terminal 1,Terminal 2"); empty when the airport has no choice. */
+    @Column(length = 200)
+    private String terminals;
+
     @Column(nullable = false)
     private boolean active;
 
@@ -109,6 +113,14 @@ public class Airport {
 
     public void setTimeZone(String timeZone) {
         this.timeZone = timeZone;
+    }
+
+    public String getTerminals() {
+        return terminals;
+    }
+
+    public void setTerminals(String terminals) {
+        this.terminals = terminals;
     }
 
     public boolean isActive() {
